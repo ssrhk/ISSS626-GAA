@@ -1,0 +1,119 @@
+---
+title: "In-class Exercise 2"
+author: "Sei Sar Hla Kyi"
+date: "2 September 2024"
+date-modified: "2 September 2024"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---
+
+# **Issue 1: Installing maptools (For sp method)**
+
+For R shiny, Posit Public Package manager
+
+```{r}
+#| eval: false
+install.packages("maptools",repos= "https://packagemanager.posit.co/cran/2023-10-13")
+```
+
+# **Issue 2: creating coastal outline**
+
+sp - store spatial data (import and export)
+
+sf - programmatic gis software
+
+-   st_combine()- map no boundaries (with control)
+
+-   st_union()- no control
+
+*Need this code to run %\>%*
+
+```{r}
+pacman::p_load(sf, raster, spatstat, tmap, tidyverse)
+```
+
+```{r}
+mpsz_sf <- st_read(dsn = "data", 
+                layer = "MP14_SUBZONE_WEB_PL")
+```
+
+```{r}
+sg_sf <- mpsz_sf %>%
+  st_union()
+
+plot(sg_sf)
+```
+
+# **Issue 3: spatstat.geom**
+
+-   ppp - use this if input data is sp object (Don't use sp)
+
+-   **as.ppp** - use this if input data is sf object, allow to create point object
+
+-   **as.owin** - use this if input data is polygon, give boundary (ALL SPATIAL DATA NEED THIS)
+
+# **Kernel Density Estimation**
+
+Assuming that maptools is installed
+
+```{r}
+childcare_sf <- st_read("data/child-care-services-geojson.geojson") %>%
+  st_transform(crs = 3414)
+sg_sf <- st_read(dsn = "data", layer="CostalOutline")
+
+```
+
+```{r}
+childcare_ppp <- as.ppp(childcare_sf)
+childcare_ppp
+
+sg_owin <- as.owin(sg_sf)
+childcareSG_ppp = childcare_ppp[sg_owin]
+childcareSG_ppp.km <- rescale.ppp(childcareSG_ppp, 1000, "km")
+
+bw <- bw.diggle(childcareSG_ppp)
+```
+
+```{r}
+kde_childcareSG_adaptive <- density(childcareSG_ppp.km, sigma=bw.diggle, edge=TRUE, kernel="gaussian")
+plot(kde_childcareSG_adaptive)
+```
+
+A way to do this without maptools
+
+```{r}
+gridded_kde_childcareSG_ad <- as(kde_childcareSG_adaptive,"SpatialGridDataFrame")
+spplot(gridded_kde_childcareSG_ad)
+
+```
+
+# **Monte Carlo Simulation**
+
+At the very beginning start with set.seed(1234)
+
+# **Edge Correction**
+
+Avoid biasness if data point occur at the edge of study area
+
+none: don't do edge correction ( if it's not necessary, don't do it)
+
+Different configuration do different things
+
+# Importing Thai Road Accident Data
+
+Data-preparation
+
+```{r}
+rdacc_sf <- read_csv("data/thai_road_accident_2019_2022.csv") %>%
+  filter (!is.na(longitude) & longitude != "",
+          !is.na(latitude ) & latitude != "") %>%
+  st_as_sf(coords = c(
+    "longitude", "latitude"),
+    crs=4326) %>%
+  st_transform(crs=32647)
+```
+
+Cannot lose more than 25% cannot lose (for big datasets)

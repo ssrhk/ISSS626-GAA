@@ -1,0 +1,163 @@
+---
+title: "In-Class Exercise 3"
+author: "Sei Sar Hla Kyi"
+date: "9 September 2024"
+date-modified: "9 September 2024"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---
+
+sf: to import spatial data and write data out into rds format (R data form)
+
+spNetwork: network constrained KDE, input will always be in a form of sf , not neccessary to convert to ppp format
+
+```{r}
+pacman::p_load(sf, spNetwork, tmap, tidyverse)
+```
+
+# Import the data.
+
+```{r}
+network <- st_read(dsn="data/geospatial", 
+                   layer="Punggol_St")
+```
+
+::: callout-tip
+## TIP! Save the filtered data into rds format
+:::
+
+```{r}
+childcare <- st_read(dsn="data/geospatial",
+                     layer="Punggol_CC") %>%
+  st_zm(drop=TRUE,what= "ZM")
+```
+
+# Plot the map
+
+Correct Answer: Pulling the geometry without value attribute.
+
+```{r}
+plot(st_geometry(network))
+plot(childcare,add=T,col='red',pch=19)
+```
+
+Why you can't do plot(network): Individual columns from network were brought out (there are two columns)
+
+```{r}
+plot(network)
+plot(childcare,add=T,col='red',pch=19)
+```
+
+# Plot using tmap library.
+
+Specify the layer as tm_shape
+
+```{r}
+tmap_mode('plot')
+tm_shape(childcare) + 
+  tm_dots(col='red') + 
+  tm_shape(network) +
+  tm_lines()
+```
+
+# Preparing lixel objects
+
+```{r}
+lixels <- lixelize_lines(network,700,mindist=350)
+```
+
+700 m based on NTU research on willingness to walk.
+
+350 mindist is by instinct.
+
+Split into line segment
+
+As long as road segments pick up some data points, it is good.
+
+```{r}
+samples <- lines_center(lixels) 
+```
+
+```{r}
+tmap_mode('plot')
+tm_shape(lixels) +
+  tm_lines()+
+tm_shape(samples) +
+  tm_dots(size=0.01)
+```
+
+# Performing NKDE
+
+```{r}
+densities <- nkde(network, 
+                  events = childcare,
+                  w = rep(1, nrow(childcare)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 300, 
+                  div= "bw", 
+                  method = "simple", 
+                  digits = 1, 
+                  tol = 1,
+                  grid_shape = c(1,1), 
+                  max_depth = 8,
+                  agg = 5, 
+                  sparse = TRUE,
+                  verbose = FALSE)
+```
+
+See 'values' in R Environment to view density values.
+
+Create new field to input those densities.
+
+::: callout-tip
+## TIP! Don't sort! The sequence will change
+:::
+
+```{r}
+samples$density <- densities
+lixels$density <- densities
+```
+
+Scale it up.
+
+```{r}
+samples$density <- densities*1000
+lixels$density <- densities*1000
+```
+
+::: callout-note
+## Include metric (kilometer) in Legend
+:::
+
+# **K Function**
+
+plotk: accumulative
+
+plotg: ring by ring
+
+both use kfunction (\_)
+
+```{r}
+kfun_childcare <- kfunctions(network, 
+                             childcare,
+                             start = 0, 
+                             end = 1000, 
+                             step = 50, 
+                             width = 50, 
+                             nsim = 50, 
+                             resolution = 50,
+                             verbose = FALSE, 
+                             conf_int = 0.05)
+```
+
+```{r}
+kfun_childcare$plotk
+```
+
+```{r}
+kfun_childcare$plotg
+```

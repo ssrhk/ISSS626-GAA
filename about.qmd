@@ -1,0 +1,15 @@
+---
+title: "About"
+---
+
+Hi there!
+
+I'm Sei Sar, a Master of IT in Business student at SMU.
+
+This website showcases my journey in learning Geospatial Analytics during my third semester under the guidance of Professor Kam Tim Seong. The course includes Hands-on Exercises, In-class Exercises, and Take Home Assignments that offer practical experience and deepen my understanding of this exciting new field I’m exploring.
+
+I developed this site using R-Studio. Feel free to explore my work on my GitHub repository: [ssrhk/ISSS626-GAA](https://github.com/ssrhk/ISSS626-GAA).
+
+If you enjoy my work, let's connect on Linkedin: [(25) Sei Sar \| LinkedIn](https://www.linkedin.com/in/seisarhlakyi/)
+
+Thank you for visiting!

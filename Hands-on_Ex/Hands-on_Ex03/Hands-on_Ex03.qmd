@@ -1,0 +1,173 @@
+---
+title: "Hands-on Exercise 3"
+author: "Sei Sar Hla Kyi"
+date: "3 September 2024"
+date-modified: "3 September 2024"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---
+
+# **7  Network Constrained Spatial Point Patterns Analysis**
+
+Install and launch the four R packages
+
+```{r}
+pacman::p_load(sf, spNetwork, tmap, tidyverse)
+```
+
+Import data
+
+```{r}
+network <- st_read(dsn="data/geospatial", 
+                   layer="Punggol_St")
+```
+
+```{r}
+childcare <- st_read(dsn="data/geospatial",
+                     layer="Punggol_CC")
+```
+
+## **Visualising the Geospatial Data**
+
+```{r}
+plot(st_geometry(network))
+plot(childcare,add=T,col='red',pch = 19)
+```
+
+```{r}
+tmap_mode('plot')
+tm_shape(childcare) + 
+  tm_dots() + 
+  tm_shape(network) +
+  tm_lines()
+```
+
+```{r}
+childcare_ppp <- as.ppp(childcare)
+summary(childcare_ppp)
+```
+
+```{r}
+nndistances_CC <- nndist(childcare_ppp)
+summary(nndistances_CC)
+```
+
+## **Network KDE (NKDE) Analysis**
+
+Notes: Unlike traditional KDE, which assumes events can occur anywhere in a continuous space, NKDE constrains the analysis to the network structure, providing a more accurate reflection of the spatial distribution of events.
+
+NKDE smooths the distribution of observed events along the network. This smoothing accounts for the distance between points along the network, rather than Euclidean distance, which is crucial for correctly analyzing patterns in environments where movement is restricted to specific paths.
+
+### **Preparing the lixels objects**
+
+SpatialLines object need to be cut into lixels with a specified minimal distance.
+
+```{r}
+lix <- lixelize_lines(network, 
+                         700, 
+                         mindist = 375)
+```
+
+-   The length of a lixel, *lx_length* is set to 700m, and
+
+-   The minimum length of a lixel, *mindist* is set to 350m.
+
+After cut, if the length of the final lixel is shorter than the minimum distance, then it is added to the previous lixel. If NULL, then mindist = maxdist/10.
+
+### **Generating line centre points**
+
+Points are located at center of the line based on the length of the line
+
+```{r}
+samples <- lines_center(lix) 
+```
+
+### **Computing NKDE**
+
+Convert the `childcare` geometry to 2D:
+
+```{r}
+childcare <- st_zm(childcare)
+```
+
+```{r}
+densities <- nkde(network, 
+                  events = childcare,
+                  w = rep(1, nrow(childcare)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 300, 
+                  div= "bw", 
+                  method = "simple", 
+                  digits = 1, 
+                  tol = 1,
+                  grid_shape = c(1,1), 
+                  max_depth = 8,
+                  agg = 5, 
+                  sparse = TRUE,
+                  verbose = FALSE)
+```
+
+-   *method* argument indicates that **simple** method is used to calculate the NKDE. Currently, spNetwork support three popular methods, they are:
+
+    -   method=“simple”. The distances between events and sampling points are replaced by network distances, and the formula of the kernel is adapted to calculate the density over a linear unit instead of an areal unit.
+
+    -   method=“discontinuous”. which equally “divides” the mass density of an event at intersections of lixels.
+
+    -   method=“continuous”. If the discontinuous method is unbiased, it leads to a discontinuous kernel function which is a bit counter-intuitive. that divide the mass of the density at intersection but adjusts the density before the intersection to make the function continuous.
+
+### Visualising NKDE
+
+```{r}
+samples$density <- densities
+lixels$density <- densities
+```
+
+Rescaling to help mapping
+
+```{r}
+samples$density <- samples$density*1000
+lixels$density <- lixels$density*1000
+```
+
+```{r}
+tmap_mode('plot')
+tm_shape(lixels)+
+  tm_lines(col="density")+
+tm_shape(childcare)+
+  tm_dots()
+```
+
+## **Network Constrained G- and K-Function Analysis**
+
+**Ho: The observed spatial point events (i.e distribution of childcare centres) are uniformly distributed over a street network in Punggol Planning Area.**
+
+The CSR test is based on the assumption of the binomial point process which implies the hypothesis that the childcare centres are randomly and independently distributed over the street network.
+
+If this hypothesis is rejected, we may infer that the distribution of childcare centres are spatially interacting and dependent on each other; as a result, they may form nonrandom patterns.
+
+```{r}
+kfun_childcare <- kfunctions(network, 
+                             childcare,
+                             start = 0, 
+                             end = 1000, 
+                             step = 50, 
+                             width = 50, 
+                             nsim = 50, 
+                             resolution = 50,
+                             verbose = FALSE, 
+                             conf_int = 0.05)
+```
+
+```{r}
+kfun_childcare$plotk
+```
+
+**Conclusion:** Because the blue line between the distance of 250m-400m are below the gray area, we can infer that the childcare centres in Punggol planning area resemble regular pattern at the distance of 250m-400m. After 400m, the observed distribution of childcare centers along the network does not significantly deviate from the random distribution at any of the analyzed scales. In other words, there's no strong evidence of either clustering or regular spacing of childcare centers within the analyzed distance range on the network.
+
+-   **Null Hypothesis:** The observed spatial distribution of childcare centers is consistent with a random distribution over the street network in Punggol Planning Area.
+
+-   Since the empirical K-function does not show significant deviation from the confidence envelope, *we would not reject the null hypothesis*. The distribution of childcare centers appears to be random along the network, without any significant clustering or regularity at the scales analyzed.

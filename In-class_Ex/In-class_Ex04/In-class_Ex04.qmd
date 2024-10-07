@@ -1,0 +1,207 @@
+---
+title: "In Class Exercise 4"
+author: "Sei Sar Hla Kyi"
+date: "16 September 2024"
+date-modified: "16 September 2024"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+---
+
+# Geographically Weighted Summary Statistics - gwModel Methods
+
+Load the packages
+
+```{r}
+pacman::p_load(sf, ggstatsplot, spdep, tmap, tidyverse, knitr, GWmodel)
+```
+
+## 1. Import and prepare the data
+
+```{r}
+hunan_sf <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan")
+```
+
+```{r}
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+Join the two dataframes.
+
+-   Need to have a common identifier, then select the columns to retain.
+
+```{r}
+hunan <- left_join(hunan_sf,hunan2012)%>% select(1:3, 7, 15, 16, 31, 32)
+```
+
+::: callout-note
+## GWmodel presently is built around the older sp and not sf formats for handling spatial data in R
+:::
+
+Converting to SpatialPolygonDataFrame (list object)
+
+```{r}
+hunan_sp <- hunan %>%
+  as_Spatial()
+```
+
+## 2. Geographically Weighted Summary Statistics with Adaptive Bandwidths
+
+### 2.1 Determine Adaptive Bandwidth
+
+::: panel-tabset
+## Cross Validation
+
+```{r}
+bw_CV<- bw.gwr(GDPPC ~ 1,
+               data = hunan_sp,
+               approach= "CV",
+               adaptive = TRUE,
+               kernel = "bisquare",
+               longlat = T) #Great circle distances will be calculated
+```
+
+```{r}
+bw_CV
+```
+
+## AIC
+
+```{r}
+bw_AIC<- bw.gwr(GDPPC ~ 1,
+               data = hunan_sp,
+               approach= "AIC",
+               adaptive = TRUE,
+               kernel = "bisquare",
+               longlat = T)
+```
+
+```{r}
+bw_AIC
+```
+:::
+
+::: callout-note
+## Take note the AIC values are in kilometer! Both bw_AIC and bw_CV returns 22, that means 22 neighbours
+:::
+
+#### 2.1.1 Computing geographically weighted summary statistics
+
+Once we have the object, pass it over to gwss()
+
+```{r}
+gwstat <- gwss (data = hunan_sp,
+                vars = "GDPPC",
+                bw = bw_AIC,
+                kernel = "bisquare", # These 3 must be the same as the kernel in calculation above
+                adaptive = TRUE,
+                longlat = T)
+```
+
+::: callout-note
+## The output is a gwss object (list)!
+:::
+
+The output dataframe calculated based on the neighbours:
+
+-   LM : local mean
+
+-   LSD: local standard deviation
+
+-   LVar: local variance
+
+-   LSKe: standard estimations
+
+-   LCV: local correlation variance
+
+#### 2.1.2 Preparing output data
+
+Extract SDF data tables from gwss object.
+
+```{r}
+gwstat_df <- as.data.frame(gwstat$SDF)
+```
+
+***cbind()*** is used to append newly derived dataframe onto 'hunan_sf' dataframe.
+
+::: callout-note
+## Cbind() appends blindly with the understanding that there is no changes in the order!
+:::
+
+```{r}
+hunan_gstat <- cbind(hunan_sf,gwstat_df)
+```
+
+#### 2.1.3 Visualizing Geographically weighted summary Statistics
+
+```{r}
+tm_shape(hunan_gstat) +
+  tm_fill('GDPPC_LM',
+          n=5,
+          style="quantile") +
+  tm_borders(alpha =0.5) + #tm_fill + tm_borders same as tm_polygons
+  # closer to 0 will be lighter
+  tm_layout(main.title="Distribution of geographically weighted mean",
+            main.title.position = "center",
+            main.title.size = 1.0,
+            legend.text.size= 0.5,
+            legend.height = 1.5,
+            legend.width = 1.5,
+            frame = TRUE)
+```
+
+#### 2.1.4 Visualizing Correlation
+
+**Business question: Is there any relationship between GDP per capita and Gross Industry Output?**
+
+***Global Correlation***
+
+using ggplot2
+
+It is very close to 1 so there is very strong correlation.
+
+***Local Correlation***
+
+-   Which areas are below the global correlation coefficient?
+-   Spearman correlation (nonparametric)
+
+### 2.2 Determine Fixed Bandwidth
+
+::: panel-tabset
+## Cross validation
+
+```{r}
+bw_CV_fixed<- bw.gwr(GDPPC ~ 1,
+               data = hunan_sp,
+               approach= "CV",
+               adaptive = FALSE,
+               kernel = "bisquare",
+               longlat = T)
+```
+
+```{r}
+bw_CV_fixed
+```
+
+## AIC
+
+```{r}
+bw_AIC_fixed<- bw.gwr(GDPPC ~ 1,
+               data = hunan_sp,
+               approach= "AIC",
+               adaptive = FALSE,
+               kernel = "bisquare",
+               longlat = T)
+```
+
+```{r}
+bw_AIC_fixed
+```
+:::
+
+::: callout-note
+## These results are in kilometer. Not in number of neighbours. Test different methods!
+:::
