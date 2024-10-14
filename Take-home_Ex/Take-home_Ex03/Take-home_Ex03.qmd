@@ -1,0 +1,12 @@
+---
+title: "Take Home Exercise 3: "
+author: "Sei Sar Hla Kyi"
+date: "14 October 2024"
+date-modified: "`r Sys.Date()`"
+execute: 
+  eval: true
+  echo: true
+  message: false
+  freeze: true
+  warning: false
+---
