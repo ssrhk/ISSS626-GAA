@@ -1,5 +1,5 @@
 ---
-title: "In Class Exercise 08"
+title: "In Class Exercise 08: Geographically Weighted Predictive Models"
 author: "Sei Sar Hla Kyi"
 date: "`r Sys.Date()`"
 date-modified: "`r Sys.Date()`"
@@ -10,3 +10,430 @@ execute:
   freeze: true
   warning: false
 ---
+
+# Notes on Take Home Exercise 3
+
+## Load Packages
+
+::: panel-tabset
+## Packages
+
+| Package Name | Explanation                                 |
+|--------------|---------------------------------------------|
+| httr         | let R talk to http                          |
+| rvest        | crawl website and webportals                |
+| jsonlite     | to convert json format to data.frame format |
+
+## Code
+
+```{r}
+pacman::p_load(tidyverse, sf, httr, jsonlite, rvest)
+```
+:::
+
+## Import Dataset
+
+Import and shorten the data too only 2023 onwards until September 2024.
+
+```{r}
+resale <- read_csv("data/resale.csv") %>%
+  filter(month >= "2023-01" & month <= "2024-09")
+```
+
+## Prepare Data
+
+```{r}
+resale_tidy <- resale %>%
+  mutate(address = paste(block,street_name)) %>%
+  mutate(remaining_lease_yr = as.integer(
+    str_sub(remaining_lease, 0, 2)))%>%
+  mutate(remaining_lease_mth = as.integer(
+    str_sub(remaining_lease, 9, 11)))
+```
+
+For the purpose of this in class exercise, the dataset will be filtered.
+
+```{r}
+resale_selected <- resale_tidy %>% filter(month == "2024-09")
+```
+
+Create a list since the API only understand list. Only pick out the unique address before passing it into list.
+
+```{r}
+add_list <- sort(unique(resale_selected$address))
+```
+
+## Geocoding to get Postal Code & Coordinates
+
+```{r}
+get_coords <- function(add_list){
+  
+  # Create a data frame to store all retrieved coordinates
+  postal_coords <- data.frame()
+    
+  for (i in add_list){
+    #print(i)
+
+    r <- GET('https://www.onemap.gov.sg/api/common/elastic/search?',
+           query=list(searchVal=i,
+                     returnGeom='Y',
+                     getAddrDetails='Y'))
+    data <- fromJSON(rawToChar(r$content))
+    found <- data$found
+    res <- data$results
+    
+    # Create a new data frame for each address
+    new_row <- data.frame()
+    
+    # If single result, append 
+    if (found == 1){
+      postal <- res$POSTAL 
+      lat <- res$LATITUDE
+      lng <- res$LONGITUDE
+      new_row <- data.frame(address= i, 
+                            postal = postal, 
+                            latitude = lat, 
+                            longitude = lng)
+    }
+    
+    # If multiple results, drop NIL and append top 1
+    else if (found > 1){
+      # Remove those with NIL as postal
+      res_sub <- res[res$POSTAL != "NIL", ]
+      
+      # Set as NA first if no Postal
+      if (nrow(res_sub) == 0) {
+          new_row <- data.frame(address= i, 
+                                postal = NA, 
+                                latitude = NA, 
+                                longitude = NA)
+      }
+      
+      else{
+        top1 <- head(res_sub, n = 1)
+        postal <- top1$POSTAL 
+        lat <- top1$LATITUDE
+        lng <- top1$LONGITUDE
+        new_row <- data.frame(address= i, 
+                              postal = postal, 
+                              latitude = lat, 
+                              longitude = lng)
+      }
+    }
+
+    else {
+      new_row <- data.frame(address= i, 
+                            postal = NA, 
+                            latitude = NA, 
+                            longitude = NA)
+    }
+    
+    # Add the row
+    postal_coords <- rbind(postal_coords, new_row)
+  }
+  return(postal_coords)
+}
+```
+
+```{r}
+#| eval: False
+coords <- get_coords(add_list)
+```
+
+```{r}
+#| eval: False
+write_rds(coords, "data/rds/coords.rds")
+```
+
+```{r}
+coords <- read_rds("data/rds/coords.rds")
+```
+
+# In-Class Exercise 8
+
+## Load Packages
+
+```{r}
+pacman::p_load(sf, spdep, GWmodel, SpatialML, 
+               tmap, rsample, Metrics, tidyverse,kableExtra)
+```
+
+## Import Dataset
+
+```{r}
+mdata <- read_rds("data/rds/mdata.rds")
+```
+
+## Data Sampling
+
+We use initial_split() of rsample package from tidymodels. There is no stratification here,
+
+```{r}
+set.seed(1234)
+resale_split <- initial_split(mdata, 
+                              prop = 6.5/10,)
+train_data <- training(resale_split)
+test_data <- testing(resale_split)
+```
+
+## Correlation Analysis
+
+*st_drop_geometry* to drop geometry just for purpose of plotting correlation matrix
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+mdata_nogeo<- mdata %>%
+  st_drop_geometry() 
+ggstatsplot::ggcorrmat(mdata_nogeo[,2:17])
+```
+
+## Building non-spatial multiple linear regression
+
+```{r}
+price_mlr <- lm(resale_price ~ floor_area_sqm +
+                  storey_order + remaining_lease_mths +
+                  PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+                  PROX_MRT + PROX_PARK + PROX_MALL + 
+                  PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                data=train_data)
+olsrr::ols_regress(price_mlr)
+```
+
+## Multicollinearity check with VIF
+
+*performance* of easystats package will be used to help visualize easily.
+
+```{r}
+vif <- performance::check_collinearity(price_mlr)
+kable(vif,
+      caption ="Variance Inflation Factor(VIF) Results") %>%
+  kable_styling(font_size = 10)
+
+```
+
+```{r}
+plot(vif)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Since all are below 3, there is no serious signs of multicollinearity.
+
+## Predictive Modeling with MLR
+
+```{r}
+#| eval: False
+bw_adaptive <- bw.gwr(resale_price ~ floor_area_sqm +
+                  storey_order + remaining_lease_mths +
+                  PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+                  PROX_MRT + PROX_PARK + PROX_MALL + 
+                  PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                  data=train_data,
+                  approach="CV",
+                  kernel="gaussian",
+                  adaptive=TRUE,
+                  longlat=FALSE)
+```
+
+```{r}
+#| eval: FALSE
+write_rds(bw_adaptive, "data/rds/bw_adaptive.rds")
+```
+
+```{r}
+bw_adaptive <- read_rds("data/rds/bw_adaptive.rds")
+```
+
+```{r}
+#| eval: False
+gwr_adaptive <- gwr.basic(formula = resale_price ~
+                            floor_area_sqm + storey_order +
+                            remaining_lease_mths + PROX_CBD + 
+                            PROX_ELDERLYCARE + PROX_HAWKER +
+                            PROX_MRT + PROX_PARK + PROX_MALL + 
+                            PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                            WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                            WITHIN_1KM_PRISCH,
+                          data=train_data,
+                          bw=bw_adaptive, 
+                          kernel = 'gaussian', 
+                          adaptive=TRUE,
+                          longlat = FALSE)
+```
+
+```{r}
+#| eval: False
+write_rds(gwr_adaptive, "data/rds/gwr_adaptive.rds")
+```
+
+```{r}
+gwr_adaptive <- read_rds("data/rds/gwr_adaptive.rds")
+```
+
+```{r}
+#| eval: False
+gwr_bw_test_adaptive <- bw.gwr(resale_price ~ floor_area_sqm +
+                  storey_order + remaining_lease_mths +
+                  PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+                  PROX_MRT + PROX_PARK + PROX_MALL + 
+                  PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                  data=test_data,
+                  approach="CV",
+                  kernel="gaussian",
+                  adaptive=TRUE,
+                  longlat=FALSE)
+```
+
+## Predictive Modelling: Spatial ML
+
+```{r}
+#| eval: False
+coords <- st_coordinates(mdata)
+coords_train <- st_coordinates(train_data)
+coords_test <- st_coordinates(test_data)
+```
+
+```{r}
+#| eval: False
+write_rds(coords_train, "data/rds/coords_train.rds" )
+write_rds(coords_test, "data/rds/coords_test.rds" )
+```
+
+```{r}
+coords_train <- read_rds("data/rds/coords_train.rds")
+coords_test <- read_rds("data/rds/coords_test.rds")
+```
+
+## Dropping geometry field to make it a data.frame
+
+```{r}
+train_data_nogeom <- train_data %>%
+  st_drop_geometry()
+```
+
+## Calibrate RF model
+
+```{r}
+#| eval: False
+set.seed(1234)
+rf <- ranger(resale_price ~ floor_area_sqm + storey_order + 
+               remaining_lease_mths + PROX_CBD + PROX_ELDERLYCARE + 
+               PROX_HAWKER + PROX_MRT + PROX_PARK + PROX_MALL + 
+               PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+               WITHIN_350M_CHILDCARE + WITHIN_350M_BUS + 
+               WITHIN_1KM_PRISCH,
+             data=train_data_nogeom)
+rf
+```
+
+```{r}
+#| eval: FALSE
+write_rds(rf, "data/rds/rf.rds")
+```
+
+```{r}
+rf <- read_rds("data/rds/rf.rds")
+rf
+```
+
+## Calibrate with grf()
+
+```{r}
+#|eval: FALSE
+set.seed(1234)
+gwRF_adaptive <- grf(formula = resale_price ~ floor_area_sqm + storey_order +
+                       remaining_lease_mths + PROX_CBD + PROX_ELDERLYCARE +
+                       PROX_HAWKER + PROX_MRT + PROX_PARK + PROX_MALL +
+                       PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                       WITHIN_350M_CHILDCARE + WITHIN_350M_BUS +
+                       WITHIN_1KM_PRISCH,
+                     dframe=train_data_nogeom, 
+                     bw=55,
+                     kernel="adaptive",
+                     coords=coords_train)
+```
+
+```{r}
+#|eval: FALSE
+write_rds(gwRF_adaptive, "data/rds/gwRF_adaptive.rds")
+```
+
+```{r}
+gwRF_adaptive <- read_rds("data/rds/gwRF_adaptive.rds")
+```
+
+## **Predicting by using test data**
+
+```{r}
+test_data_nogeom <- cbind(test_data, coords_test) %>%
+  st_drop_geometry()
+```
+
+Next, `predict.grf()` of spatialML package will be used to predict the resale value by using the test data and gwRF_adaptive model calibrated earlier.
+
+```{r}
+#|eval: FALSE
+gwRF_pred <- predict.grf(gwRF_adaptive, 
+                           test_data_nogeom, 
+                           x.var.name="X",
+                           y.var.name="Y", 
+                           local.w=1,
+                           global.w=0)
+```
+
+```{r}
+#|eval: FALSE
+GRF_pred <- write_rds(gwRF_pred, "data/rds/GRF_pred.rds")
+```
+
+Converting the predictive output into a data frame
+
+::: callout-note
+## To cbind later, we must convert to dataframe
+:::
+
+```{r}
+GRF_pred <- read_rds("data/rds/GRF_pred.rds")
+GRF_pred_df <- as.data.frame(GRF_pred)
+```
+
+Plot out the differences: This should be able to plot and see which are the properties we tend to overestimate or underestimate. Plot the test data.
+
+To do a comparison, we combine back with test data.
+
+```{r}
+test_data_p <- cbind(test_data, GRF_pred_df)
+```
+
+```{r}
+#| eval: False
+write_rds(test_data_p, "data/rds/test_data_p.rds")
+```
+
+```{r}
+test_data_p <- read_rds("data/rds/test_data_p.rds")
+```
+
+### **Calculating Root Mean Square Error**
+
+```{r}
+rmse(test_data_p$resale_price, 
+     test_data_p$GRF_pred)
+```
+
+### **Visualising the predicted values**
+
+```{r}
+ggplot(data = test_data_p,
+       aes(x = GRF_pred,
+           y = resale_price)) +
+  geom_point()
+```
+
+## 

@@ -1,5 +1,5 @@
 ---
-title: "Take Home Exercise 3: "
+title: "Take Home Exercise 3: Modelling Geography of Financial Inclusion in Tanzania with Geographically Weighted Methods "
 author: "Sei Sar Hla Kyi"
 date: "14 October 2024"
 date-modified: "`r Sys.Date()`"
@@ -10,3 +10,122 @@ execute:
   freeze: true
   warning: false
 ---
+
+# 1 Overview
+
+## 1.1 Background
+
+Financial inclusion plays a critical role in fostering equitable economic growth by enabling individuals and businesses to access essential financial services such as banking, loans, equity, and insurance. It is especially important in developing regions where the unbanked population faces limited access to formal financial products, which constrains their ability to save, invest, and secure insurance, leading to income inequality. In this study, we aim to explore the factors that influence financial inclusion at the district level in Tanzania using Geographically Weighted Regression (GWR) methods.
+
+GWR is a powerful spatial analysis tool that accounts for geographical variability in relationships between predictor variables and financial inclusion, providing localized insights into how different factors affect access to financial services across districts.
+
+## 1.2 Objectives
+
+The primary goal of this analysis is to identify and examine the key indicators of financial inclusion in Tanzania.
+
+## 1.3 Defining Financial Inclusion
+
+------------------------------------------------------------------------
+
+# 2 Loading R Packages
+
+::: panel-tabset
+## Packages Used
+
+The following packages were used for this study:
+
+| Package   | Description                                           |
+|-----------|-------------------------------------------------------|
+| tidyverse | For non-spatial data wrangling                        |
+| corrplot  | For correlation analysis among chosen variables       |
+| sf        | For importing, managing, and handling geospatial data |
+| sfdep     | To derive tourism economy indicator layer             |
+| tmap      | For visualizing maps                                  |
+| ggplot2   | To visualize other statistics                         |
+|           |                                                       |
+|           |                                                       |
+
+## Code
+
+```{r}
+pacman::p_load(olsrr, ggstatsplot, ggpubr, sf, spdep, sfdep, GWmodel, tmap, tidyverse, gtsummary,see,performance,datawizard)
+```
+:::
+
+------------------------------------------------------------------------
+
+# 3 Data Preparation
+
+## 3.1 The Datasets
+
+For the purpose of this analysis,
+
+1.  *FinScope* *Tanzania* (2023) from
+2.  **geoBoundaries** of Tanzania from
+
+## 3.2 Import the Data
+
+### 3.2.1 Aspatial Data
+
+The *FinScope* *Tanzania* dataset from 2023, was imported by using *read_csv()* package.
+
+Then, the data was prepared for analysis with the following steps:
+
+-   Remove columns with all missing/NA values.
+
+```{r}
+tanzania <- read_csv("data/rawdata/FinScope_Tanzania.csv")
+```
+
+We will use ***glimpse()*** to quickly check the attributes.
+
+```{r}
+glimpse(tanzania)
+```
+
+Lastly, we will save the prepared dataframe into rds format.
+
+::: panel-tabset
+## Save
+
+```{r}
+#| eval: False
+write_rds(tanzania, "data/rds/tanzania.rds")
+```
+
+## Load
+
+```{r}
+tanzania <- read_rds("data/rds/tanzania.rds")
+```
+:::
+
+### 3.2.2 Geospatial Data - Study Area
+
+The *geo Boundaries of Tanzania* dataset, was imported by using *st_read()* package.
+
+The dataset was prepared for analysis with the following steps:
+
+```{r}
+tanzbounds <- st_read(dsn = "data/rawdata/", 
+                      layer = "geoBoundaries-TZA-ADM2")
+```
+
+```{r}
+st_crs(tanzbounds)
+```
+
+::: panel-tabset
+## Save
+
+```{r}
+#| eval: False
+write_rds(tanzbounds, "data/rds/tanzbounds.rds")
+```
+
+## Load
+
+```{r}
+tanzbounds<- read_rds("data/rds/tanzbounds.rds")
+```
+:::
