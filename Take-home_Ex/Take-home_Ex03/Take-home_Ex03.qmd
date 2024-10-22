@@ -15,35 +15,82 @@ execute:
 
 ## 1.1 Background
 
-Financial inclusion plays a critical role in fostering equitable economic growth by enabling individuals and businesses to access essential financial services such as banking, loans, equity, and insurance. It is especially important in developing regions where the unbanked population faces limited access to formal financial products, which constrains their ability to save, invest, and secure insurance, leading to income inequality. In this study, we aim to explore the factors that influence financial inclusion at the district level in Tanzania using Geographically Weighted Regression (GWR) methods.
+Financial inclusion plays a key role in promoting equitable economic growth by enabling individuals and businesses to access essential financial services such as banking, loans, insurance, and equity products. In Tanzania, financial inclusion initiatives have become a priority in addressing the needs of underserved populations, particularly those in rural or economically disadvantaged areas. These initiatives aim to improve household incomes, reduce income inequality, and foster inclusive economic participation by providing timely and affordable access to financial products and services(United Nations Capital Development Fund \[UNCDF\], 2024).
 
-GWR is a powerful spatial analysis tool that accounts for geographical variability in relationships between predictor variables and financial inclusion, providing localized insights into how different factors affect access to financial services across districts.
+Despite significant progress in financial inclusion efforts, access to financial services is uneven across different geographical regions within Tanzania. Rural areas, particularly in districts with low levels of economic activity, often face greater challenges in accessing financial services compared to more urbanized districts. These spatial disparities raise important questions about the factors driving financial inclusion at the district level and how regional policies can be designed to promote more inclusive economic outcomes.
 
 ## 1.2 Objectives
 
-The primary goal of this analysis is to identify and examine the key indicators of financial inclusion in Tanzania.
+This analysis aims to build an explanatory model using Geographically Weighted Regression (GWR) to identify the key factors affecting financial inclusion across districts in Tanzania. By focusing on multiple socio-economic and infrastructural variables, this study will provide insights into how these factors vary geographically and influence financial access at a district level.
+
+Specifically, the objectives are:
+
+-   **Identify Key Determinants**: Determine the primary socio-economic and infrastructural factors that influence financial inclusion, such as income levels, education, proximity to financial institutions, and mobile money adoption.
+
+-   **Examine Regional Variation**: Explore how the effects of these factors vary across different districts, providing a localized understanding of financial inclusion.
 
 ## 1.3 Defining Financial Inclusion
 
+Financial inclusion refers to the process of ensuring that individuals and businesses have access to useful and affordable financial products and services that meet their needs such as transactions, payments, savings, credit, and insurance. According to the World Bank, financial inclusion is a "key enabler in reducing poverty and boosting shared prosperity by providing the unbanked and underserved populations access to essential financial services" (World Bank, 2023).
+
+A well-functioning financial inclusion system enables individuals to manage risks, invest in education, and build sustainable livelihoods. In the context of Tanzania, financial inclusion is particularly vital for rural populations, where access to traditional banking infrastructure is limited, and reliance on informal financial services can hinder economic opportunities. The development of digital financial services, such as mobile money, has significantly expanded financial inclusion in Sub-Saharan Africa, enabling millions to access financial services without needing to visit a physical bank (World Bank Group, 2024).
+
+While progress has been made, the uneven distribution of financial services and the varying levels of inclusion between rural and urban areas highlight the need to explore the determinants of financial inclusion at a local level. Identifying these factors is crucial for improving access to financial services and promoting inclusive economic development.
+
 ------------------------------------------------------------------------
 
-# 2 Loading R Packages
+# 2 Methodology
+
+The explanatory model will be developed using Geographically Weighted Regression (GWR), which is a spatial extension of multiple linear regression that allows for localized variations in the relationships between predictors and the response variable—in this case, financial inclusion.
+
+The process will follow these steps:
+
+-   **Variable Selection**: Identify key predictor variables from the FinScope dataset, such as income levels, education, proximity to financial institutions, population density, and mobile money adoption. These will serve as explanatory variables in the model.
+
+-   **Model Building**: Build the explanatory model using multiple linear regression techniques, enhanced by GWR to account for geographical variations. This will allow us to evaluate the influence of each predictor on financial inclusion across different districts.
+
+-   **Model Calibration and Validation**: Calibrate the GWR model to ensure that it effectively captures the localized relationships between financial inclusion and its determinants. The model will be validated by examining the accuracy and goodness-of-fit metrics.
+
+-   **Spatial Visualization**: Mapping the results of the GWR model to visualize how the effects of each factor vary geographically, will highlight districts where specific variables have a stronger or weaker influence on financial inclusion.
+
+------------------------------------------------------------------------
+
+# 3 Loading R Packages
 
 ::: panel-tabset
 ## Packages Used
 
 The following packages were used for this study:
 
-| Package   | Description                                           |
-|-----------|-------------------------------------------------------|
-| tidyverse | For non-spatial data wrangling                        |
-| corrplot  | For correlation analysis among chosen variables       |
-| sf        | For importing, managing, and handling geospatial data |
-| sfdep     | To derive tourism economy indicator layer             |
-| tmap      | For visualizing maps                                  |
-| ggplot2   | To visualize other statistics                         |
-|           |                                                       |
-|           |                                                       |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| Package     | Description                                                                                                   |
++=============+===============================================================================================================+
+| olsrr       | For creating and evaluating ordinary least squares regression models.                                         |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| ggstatsplot | for producing statistical visualizations that combine ggplot2 graphics with statistical results               |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| ggpubr      | To create publication-ready visualizations with ggplot2 and arranging multiple plots                          |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| sf          | For importing, managing, and handling geospatial data                                                         |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| sfdep       | To analyze spatial relationships and incorporate them into regression models                                  |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| spdep       | For calculating spatial weights and conducting tests for spatial relationships                                |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| GWmodel     | To explore spatially varying relationships between the dependent and independent variables                    |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| tmap        | For thematic mapping, allowing us to visualize spatial data in an intuitive and aesthetically pleasing manner |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| tidyverse   | For data manipulation, cleaning, and visualization                                                            |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| gtsummary   | To create summary tables for regression results, providing a clear and concise presentation of model outputs  |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| see         | For visualizing model diagnostics and results                                                                 |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| performance | For evaluating model performance and diagnostics                                                              |
++-------------+---------------------------------------------------------------------------------------------------------------+
+| datawizard  | To handle missing values, recode variables, and perform exploratory data analysis before modeling             |
++-------------+---------------------------------------------------------------------------------------------------------------+
 
 ## Code
 
@@ -54,34 +101,35 @@ pacman::p_load(olsrr, ggstatsplot, ggpubr, sf, spdep, sfdep, GWmodel, tmap, tidy
 
 ------------------------------------------------------------------------
 
-# 3 Data Preparation
+# 4 Data Preparation
 
-## 3.1 The Datasets
+## 4.1 The Datasets
 
-For the purpose of this analysis,
+For this analysis, we will use two primary datasets: (1) FinScope Tanzania 2023, which provides district-level data on financial inclusion, and (2) district-level boundary GIS data from the geoBoundaries portal to facilitate spatial analysis.
 
-1.  *FinScope* *Tanzania* (2023) from
-2.  **geoBoundaries** of Tanzania from
+-   **FinScope Tanzania 2023**: This dataset include comprehensive district-level data on access to financial services, covering indicators such as banking services, mobile money usage, savings, loans, and insurance. The dataset will be used to identify the key factors affecting financial inclusion and to develop the explanatory model.
 
-## 3.2 Import the Data
+-   **District Boundary GIS Data**: Geographic boundary data for the districts of Tanzania, sourced from the geoBoundaries, will enable us to link the financial inclusion data to specific geographic locations for spatial analysis using GWR.
 
-### 3.2.1 Aspatial Data
+## 4.2 Import the Data
+
+### 4.2.1 Aspatial Data
 
 The *FinScope* *Tanzania* dataset from 2023, was imported by using *read_csv()* package.
 
 Then, the data was prepared for analysis with the following steps:
 
 -   Remove columns with all missing/NA values.
+-   Then we select the columns with the variables chosen which will be explained in the Variable Selection section.
 
 ```{r}
-tanzania <- read_csv("data/rawdata/FinScope_Tanzania.csv")
+tanzania <- read_csv("data/rawdata/FinScope_Tanzania.csv")%>%
+  select(5,9,11,13:14,16,61,65:67,71,95:96,98:103,107:119,124:125,140,142:151,160:174,177:178,188,183:192,196,215:223,
+         276:278,294:306,344:353,361:372,374:378,395:397,455:460,507:529,574:588,680:685,697:698,700:716,718) %>%
+  select(where(~ !all(is.na(.))))
 ```
 
 We will use ***glimpse()*** to quickly check the attributes.
-
-```{r}
-glimpse(tanzania)
-```
 
 Lastly, we will save the prepared dataframe into rds format.
 
@@ -100,15 +148,47 @@ tanzania <- read_rds("data/rds/tanzania.rds")
 ```
 :::
 
-### 3.2.2 Geospatial Data - Study Area
+### 4.2.2 Geospatial Data - Study Area
 
 The *geo Boundaries of Tanzania* dataset, was imported by using *st_read()* package.
 
 The dataset was prepared for analysis with the following steps:
 
+-   We note that Tanzania is in WGS 84/ UTM Zone 37S. We will use st_transform to reproject coordinate reference system to EPSG: 32737 for Tanzania.
+
+-   To perform left join with the aspatial dataset, we need a common column - districts. Therefore, we need to change the variable, shapeName, to 'dist_name' to make it a common variable with the FinScope Tanzania dataset.
+
+-   To ensure the districts are common, some districts will be renamed from "Arusha Urban" to "Arusha" as the same way it was displayed in FinScope Tanzania dataset. Since the FinScope Tanzania dataset already have a variable that classifies if the surveyee is residing in an urban or rural area, we do not need to have a separate district with the title Urban as it falls under the same district.
+
 ```{r}
 tanzbounds <- st_read(dsn = "data/rawdata/", 
-                      layer = "geoBoundaries-TZA-ADM2")
+                      layer = "geoBoundaries-TZA-ADM2",
+                      crs=4326) %>%
+  st_transform(crs=32737) %>%
+  rename(dist_name = shapeName) %>%
+  mutate(dist_name = ifelse(dist_name == "Arusha Urban", "Arusha", dist_name)) %>%
+  mutate(dist_name = ifelse(dist_name == "Meru", "Arumeru", dist_name)) %>%
+  mutate(dist_name = ifelse(dist_name == "Iringa Urban","Iringa", dist_name)) %>%
+  mutate(dist_name = ifelse(dist_name == "Bukoba Urban", "Bukoba", dist_name)) %>%
+  mutate(dist_name = ifelse(dist_name == "Mpanda Urban", "Mpanda", dist_name)) %>%
+  mutate(dist_name = ifelse(dist_name == "Kigoma  Urban", "Kigoma", dist_name)) %>%
+  mutate(dist_name = ifelse(dist_name == "Moshi Urban", "Moshi", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Lindi Urban", "Lindi", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Musoma Urban", "Musoma", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Mbeya Urban", "Mbeya", dist_name)) %>%
+  mutate(dist_name = ifelse(dist_name == "Babati UrbanBabati Urban", "Babati", dist_name)) %>%
+  mutate(dist_name = ifelse(dist_name == "Dodoma Urban", "Dodoma", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Kibaha Urban", "Kibaha", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Morogoro Urban", "Morogoro", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Mtwara Urban", "Mtwara", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Njombe Urban", "Njombe ", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Mtwara Urban", "Mtwara", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Shinyanga Urban", "Shinyanga", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Singida Urban", "Singida", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Songea Urban", "Songea", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Sumbawanga Urban", "Sumbawanga", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Tabora Urban", "Tabora", dist_name))%>%
+  mutate(dist_name = ifelse(dist_name == "Tanga Urban", "Tanga", dist_name))
 ```
 
 ```{r}
@@ -129,3 +209,417 @@ write_rds(tanzbounds, "data/rds/tanzbounds.rds")
 tanzbounds<- read_rds("data/rds/tanzbounds.rds")
 ```
 :::
+
+### 4.2.3 Left Join
+
+Next, we will create a tourism economy indicators layer by left joining the geospatial dataframe (tanzbound) to the attribute dataframe (tanzania) by using ***left_join()***.
+
+::: callout-note
+## To perform a left_join(), we must ensure that there is a common column between the two. For our case, the common column is 'dist_name'
+:::
+
+```{r}
+tanzania_fin <- left_join(tanzbounds,tanzania)
+```
+
+::: panel-tabset
+## Save
+
+```{r}
+#| eval: False 
+write_rds(tanzania_fin, "data/rds/tanzania_fin.rds")
+```
+
+## Load
+
+```{r}
+tanzania_fin<- read_rds("data/rds/tanzania_fin.rds")
+```
+:::
+
+# 5 Variable Selection
+
+In the development of a robust multiple linear regression model, the selection of appropriate variables is critical to ensuring the model's accuracy and interpretability. This section focuses on the identification and selection of both nominal and continuous variables that will serve as predictors in our regression analysis.
+
+Initially, we will establish a preliminary set of variables based on theoretical foundations and previous empirical research. Nominal variables will encompass categorical factors that may influence financial behaviors, such as the type of financial institution, demographic characteristics, and access to financial services. Continuous variables will include measurable factors like amount borrowed, and age which can provide insight into the financial landscape of the respondents.
+
+Once we have constructed our initial model using these variables, we will conduct a comprehensive model assessment to evaluate its performance. This will involve calculating the Variance Inflation Factor (VIF) to assess multicollinearity among the independent variables. High VIF values indicate potential redundancy among variables, which can compromise the model's reliability. Consequently, we will refine our variable selection by identifying and retaining only those variables that significantly contribute to explaining the variance in our dependent variable, financial inclusion.
+
+## 5.1 Continuous Variables
+
+The following are the continuous variables selected.
+
++----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Variable**                           | **Justification for Selection**                                                                                                                                                                                                                                                                                                                                                                                 |
++========================================+=================================================================================================================================================================================================================================================================================================================================================================================================================+
+| Age                                    | Age is a critical demographic variable that often influences various socio-economic outcomes. It can affect financial behaviors, access to resources, and the types of assistance individuals might require.Research indicates that younger individuals may be more inclined to take risks and invest in education or business ventures, while older individuals might focus on savings and retirement planning |
++----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Amount received from Government or NGO | The amount received from government programs or NGOs is a key indicator of financial support and social safety nets available to individuals and households. This variable is particularly relevant in understanding the economic vulnerability of respondents and their reliance on external assistance.                                                                                                       |
++----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Amount the respondent owe              | Understanding the debt levels within a population helps identify financial risks and vulnerabilities, enabling policymakers to design interventions that address excessive indebtedness and promote financial literacy and management skills.                                                                                                                                                                   |
++----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+Before we prepare our variables, we will convert the column names into a more R-friendly format using `make.names()`.
+
+```{r}
+colnames(tanzania_fin) <- make.names(colnames(tanzania_fin))
+```
+
+For these three variables, we will prepare the data in the following steps:
+
+-   Rename the variable as AmountOwe and replace "Can't remember" and "Refused" with "0"
+
+-   Convert AmountOwe to numeric
+
+-   Rename the last variable as MoneyReceivedfromGovt
+
+-   Replace NA values for both variables with 0
+
+```{r}
+#| eval: False
+tanzania_fin <- tanzania_fin %>%
+  mutate(
+    `G.2.6..Approximately.how.much.money.do.you.owe..in.TZS` = 
+      gsub("Can't remember|Refused", "0", 
+           `G.2.6..Approximately.how.much.money.do.you.owe..in.TZS`, 
+           ignore.case = TRUE), 
+    AmountOwe = as.numeric(`G.2.6..Approximately.how.much.money.do.you.owe..in.TZS`) 
+  )%>%
+  rename(MoneyReceivedfromGovt = `X3.The.last.time.you.received.money..how.much.money.did.you.receive..in.TZS`) %>%
+  mutate(
+    MoneyReceivedfromGovt = ifelse(is.na(MoneyReceivedfromGovt), 0, MoneyReceivedfromGovt),
+    AmountOwe = ifelse(is.na(AmountOwe), 0, AmountOwe)
+  )
+```
+
+## 5.2 Nominal Variables
+
+n our analysis, we will employ one-hot encoding to transform these nominal variables into a format suitable for regression modeling. One-hot encoding allows us to create binary columns for each category, enabling the regression model to assess the impact of each nominal variable effectively. This approach ensures that we capture the distinct effects of categorical factors on the dependent variable while maintaining the integrity of the data.
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Variable**                                                                                                                                                         | **Justification for Selection**                                                    | **Modification**                                                                                                                                                                                         |
++======================================================================================================================================================================+====================================================================================+==========================================================================================================================================================================================================+
+| dist_name                                                                                                                                                            | To see the impact of residing in different districts                               | All districts are encoded to different variables starting with `dist_`. For instance, if a respondent is from Babati, the variable `dist_Babati` will be 1 for that respondent and 0 for all the others. |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Cluster type                                                                                                                                                         | To understand if there are any inequality across urban and rural areas             | Encoded as two columns - 'Urban' and 'Rural'                                                                                                                                                             |
+|                                                                                                                                                                      |                                                                                    |                                                                                                                                                                                                          |
+|                                                                                                                                                                      |                                                                                    | If respondent indicates 'urban', this variable will be 1 and 0 for rural.                                                                                                                                |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Who is the head of this household                                                                                                                                    | To understand the demographic background of respondent                             | Encoded as two columns - 'HHH' for head of household and 'NotHHH' for not head of household                                                                                                              |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Respondent gender                                                                                                                                                    | To understand the demographic background of respondent                             | Encoded as two columns - 'male' and 'female'                                                                                                                                                             |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Education Background                                                                                                                                                 | To understand the demographic background of respondent                             | Encoded as eight columns - 'NoFormalEducation' and 'SomePrimary' and so on                                                                                                                               |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Access to Mobile Phone, Internet and Laptop                                                                                                                          | To understand the socioeconomic status of respondent                               | Encoded as three columns - 'MobilePhone', 'Internet' and 'Laptop'                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Own a Mobile Phone                                                                                                                                                   | To understand the socioeconomic status of respondent                               | Encoded as two columns - 'MobileYes' and 'MobileNo'                                                                                                                                                      |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If Business is registered with government                                                                                                                            | To understand business compliance                                                  | Encoded as two columns - 'BusinessRegistered_Yes' and 'BusinessRegistered_No'                                                                                                                            |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Respondent's main income source                                                                                                                                      | To understand the socioeconomic status of respondent                               | Encoded as binary columns for each income type, such as Formal_sector_salaried, Traders_agriculatural_proudcts, etc.                                                                                     |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Who they discuss their financial matters with                                                                                                                        | To understand social support networks                                              | Encoded as 15 columns - 'Advice_HouseholdMember' and 'Advice_Bank' and so on.                                                                                                                            |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| What they did when they could not meet spending needs                                                                                                                | To understand coping mechanisms                                                    | Encoded as 10 columns - 'UsedSavings' and 'BorrowedFromBank'                                                                                                                                             |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Whether respondent is comfortable with banks                                                                                                                         | To gauge trust in financial institutions                                           | Encoded as 'ComfortableWithBank_Yes' and 'ComfortableWithBank_No'                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Financial Education                                                                                                                                                  | To understand the respondent's financial literacy                                  | Encoded as 'ReceivedFinancialEducation_Yes' and 'ReceivedFinancialEducation_No'                                                                                                                          |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Retirement plans                                                                                                                                                     | To understand future financial planning                                            | Encoded as 'Old_ChildrenWillTakeCareOfMe' and 'Old_Savings'                                                                                                                                              |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Confidence in financial institutions                                                                                                                                 | To understand perceptions of financial institutions                                | Encoded as "ConfidentWithBanks" and 'ConfidentWithPensionFund' and so on                                                                                                                                 |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If they are paying back money they owe within a year                                                                                                                 | To understand debt management                                                      | Encoded as PayingBack_Yes and PayingBack_No.                                                                                                                                                             |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If they have borrowed money from any financial institutions                                                                                                          | To understand access to credit                                                     | Encoded as binary columns for each financial institution type such as 'BorrowedFrom_Bank' and 'BorrowedFrom_MFI'                                                                                         |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| How often a respondent use the payment type for purchases                                                                                                            | To understand spending habits                                                      | Encoded as binary columns for each payment type such as Used_Cash, Used_ATM, Used_CreditCard and so on.                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Assistance from Government or NGO and problems they face receiving assistance                                                                                        | To understand reliance on assistance and issues                                    | Encoded as binary columns such as 'Basic_TASAF_Cash_Transfer ' and 'Money_Didnt_Come'                                                                                                                    |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Reporting problems regarding financial matters                                                                                                                       | To understand barriers in reporting issues                                         | Encoded as binary columns such as 'Do_Not_Know_Where_To_Go' and 'Do_Not_Think_They_Care'                                                                                                                 |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Confidence and Trust in Insurance Companies                                                                                                                          | To assess trust in insurance                                                       | Encoded as relevant indicators such as Trust_Insurance_Companies                                                                                                                                         |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Insurance ownership and type of insurance                                                                                                                            | To understand financial protection                                                 | Encoded as binary columns for each insurance type such as Motor_vehicle_insurance, Health_Insurance, etc.                                                                                                |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If they have any issues accessing financial products                                                                                                                 | To understand barriers to access                                                   | Network_Failure and Agent_Absent                                                                                                                                                                         |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Access and relationship with moneylender                                                                                                                             | To understand trust and access to informal credit                                  | Moneylender_Access and Moneylender_TreatsWell                                                                                                                                                            |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If respondent is involved with a Bank, MFI, PENSION, INSURANCE, SACCO, CAPITAL Fund Managers, FORMAL INVESTMEN, CMG, INFORMAL MONEYLENDER or apart of a Social group | To assess engagement with financial institutions, microfinance, pension and so on. | Encoded as Banked and Not_Banked, MFI and Not_MFI and so on.                                                                                                                                             |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+We will use the following code chunk to one-hot encode all the nominal variables as mentioned above.
+
+```{r}
+#| eval: False
+tanzania_encoded <- tanzania_fin %>%
+  mutate(districts = tanzania_fin$dist_name)%>%
+  mutate(dist_name = as.factor(dist_name)) %>%
+  mutate(value = 1) %>% 
+  pivot_wider(names_from = dist_name, 
+              values_from = value, 
+              values_fill = 0, 
+              names_prefix = "dist_") %>%
+  mutate(
+    Urban = ifelse(`Cluster.type` == "Urban", 1, 0),
+    Rural = ifelse(`Cluster.type` == "Rural", 1, 0)) %>%
+  mutate(
+    HHH = ifelse(`C2..Who.is.the.head.of.this.household.` == "Respondent is hhh", 1, 0), 
+    NotHHH = ifelse(`C2..Who.is.the.head.of.this.household.` == "Respondent not hhh", 1, 0))%>%
+  mutate(
+    Male = ifelse(`C9..Respondent.gender.Interviewer.to.observe` == "Male", 1, 0), 
+    Female = ifelse(`C9..Respondent.gender.Interviewer.to.observe` == "Female", 1, 0))%>% 
+  mutate(
+    NoFormalEducation = ifelse(`C11..Highest.level.of.education.completed..Can.read.out` == "No formal education", 1, 0),
+    SomePrimary = ifelse(`C11..Highest.level.of.education.completed..Can.read.out` == "Some primary", 1, 0),
+    PrimaryCompleted = ifelse(`C11..Highest.level.of.education.completed..Can.read.out` == "Primary completed", 1, 0),
+    PostPrimaryTechnicalTraining = ifelse(`C11..Highest.level.of.education.completed..Can.read.out` == "Post primary technical training", 1, 0),
+    SomeSecondary = ifelse(`C11..Highest.level.of.education.completed..Can.read.out` == "Some secondary", 1, 0),
+    SecondaryCompleted_OLevel = ifelse(`C11..Highest.level.of.education.completed..Can.read.out` == "Secondary competed-O level", 1, 0),
+    SomeUniversityOrHigherEducation = ifelse(`C11..Highest.level.of.education.completed..Can.read.out` == "Some University or other higher education", 1, 0),
+    UniversityOrHigherEducationCompleted = ifelse(`C11..Highest.level.of.education.completed..Can.read.out` == "University or higher education completed", 1, 0))%>%
+  mutate(
+    MobilePhone = ifelse(`C23..Which.of.the.following.do.you.have.access..to..Mobile.phone` == "Yes", 1, 0),
+    Internet = ifelse(`C23..Which.of.the.following.do.you.have.access..to..Internet` == "Yes", 1, 0),
+    Laptop = ifelse(`C23..Which.of.the.following.do.you.have.access..to..Laptop.or.desktop.or.tablet` == "Yes", 1, 0))%>%
+  mutate(
+    MobileYes = ifelse(`C24.1..Do.you.personally.own.a.mobile.phone.` == "Yes", 1, 0),
+    MobileNo = ifelse(`C24.1..Do.you.personally.own.a.mobile.phone.` == "No", 1, 0)
+  ) %>%
+  mutate(
+    BusinessRegistered_Yes = ifelse(`X6.4a.Is.your.business.registered.with.any.government.authority.` == "Yes", 1, 0),
+    BusinessRegistered_No = ifelse(`X6.4a.Is.your.business.registered.with.any.government.authority.` == "No", 1, 0)
+  ) %>%
+  mutate(
+    TriedButNot = ifelse(`X6.4c.Please.tell.me.why.you.have.not.registered.this.business..Tried.but.was.not` == "Yes", 1, 0),
+    NoTime = ifelse(`X6.4c.Please.tell.me.why.you.have.not.registered.this.business..Don.t.have.time` == "Yes", 1, 0),
+    NoMoney = ifelse(`X6.4c..Why.you.have.not.registered.this.business..Dont.have.money` == "Yes", 1, 0),
+    TooComplicated = ifelse(`X6.4c.Please.tell.me.why.you.have.not.registered.this.business..It.is.too.complicated` == "Yes", 1, 0),
+    NoBenefit = ifelse(`X6.4c.Please.tell.me.why.you.have.not.registered.this.business..No.benefit` == "Yes", 1, 0),
+    BusinessTooSmall = ifelse(`X6.4c.Please.tell.me.why.you.have.not.registered.this.business..Business.is.too.small` == "Yes", 1, 0),
+    NoPayment = ifelse(`X6.4c..Why.you.have.not.registered.this.business..Don.t.want.to.pay` == "Yes", 1, 0),
+    DontKnowHow = ifelse(`X6.4c.Please.tell.me.why.you.have.not.registered.this.business..Dontt.know.how` == "Yes", 1, 0),
+    RegistrationInProcess = ifelse(`X6.4c.Please.tell.me.why.you.have.not.registered.this.business..Registration.is.being.processed` == "Yes", 1, 0))%>%
+  mutate(
+    Formal_sector_salaried = ifelse(Main.Income.Source == "Formal sector salaried", 1, 0),
+    Informal_sector_salaried = ifelse(Main.Income.Source == "Informal sector salaried", 1, 0),
+    Farmers_and_fishers = ifelse(Main.Income.Source == "Farmers and fishers", 1, 0),
+    Traders_agricultural_products = ifelse(Main.Income.Source == "Traders - agricultural products", 1, 0),
+    Traders_non_agricultural = ifelse(Main.Income.Source == "Traders - non-agricultural", 1, 0),
+    Service_providers = ifelse(Main.Income.Source == "Service providers", 1, 0),
+    Piece_work_casual_labor = ifelse(Main.Income.Source == "Piece work/casual labor", 1, 0),
+    Rental_income = ifelse(Main.Income.Source == "Rental income", 1, 0),
+    Interest_from_savings_investments_stocks_unit_trusts = ifelse(Main.Income.Source == "Interest from savings, investments, stocks, unit trusts etc.", 1, 0),
+    Pension = ifelse(Main.Income.Source == "Pension", 1, 0),
+    Welfare = ifelse(Main.Income.Source == "Welfare", 1, 0),
+    Gambling = ifelse(Main.Income.Source == "Gambling", 1, 0),
+    Dependents = ifelse(Main.Income.Source == "Dependents", 1, 0),
+    Other = ifelse(Main.Income.Source == "Other", 1, 0)
+  )%>%
+  mutate(
+    Advice_HouseholdMember = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..A.household.member` == "Yes", 1, 0),
+    Advice_FamilyMember = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Another.family.member` == "Yes", 1, 0),
+    Advice_Employer = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Employer` == "Yes", 1, 0),
+    Advice_Bank = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Bank` == "Yes", 1, 0),
+    Advice_Microfinance = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Microfinance.institution` == "Yes", 1, 0),
+    Advice_SACCOS = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Savings.and.credit.cooperative..SACCOS.` == "Yes", 1, 0),
+    Advice_FinancialAdvisor = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Financial.advisor` == "Yes", 1, 0),
+    Advice_FarmersAssociation = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Farmers.association` == "Yes", 1, 0),
+    Advice_BusinessAssociation = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Business.association` == "Yes", 1, 0),
+    Advice_SavingsGroup = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Savings.group` == "Yes", 1, 0),
+    Advice_Moneylender = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Moneylender.in.community` == "Yes", 1, 0),
+    Advice_GovernmentOfficial = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Government.official` == "Yes", 1, 0),
+    Advice_VillageElder = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Village.elder.elder` == "Yes", 1, 0),
+    Advice_OtherSpecify = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..Other.specify` == "Yes", 1, 0),
+    Advice_NoOne = ifelse(`E.3.3..Who.do.you.talk.with.for.advice.about.money.matters..I.do.not.speak.with.anyone` == "Yes", 1, 0)
+  )%>%
+  mutate(
+    UsedSavings = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Used.savings` == "Yes", 1, 0),
+    BorrowedFromBank = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Borrowed.from.a.bank.MFI.SACCO` == "Yes", 1, 0),
+    BorrowedThroughMM = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Borrowed.money.through.MM` == "Yes", 1, 0),
+    BorrowedFromMoneyLender = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Borrowed.from.money.lender` == "Yes", 1, 0),
+    BorrowedFromFriendFamily = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Borrowed.from.friend.family.community` == "Yes", 1, 0),
+    GotAssistanceFromFamily = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Got.assistance.from.family.friends.community..that.I.did.not.need.to.repay.` == "Yes", 1, 0),
+    SoldLivestock = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Sold.livestock` == "Yes", 1, 0),
+    CutSpending = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Cut.spending` == "Yes", 1, 0),
+    WorkedMore = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Worked.more` == "Yes", 1, 0),
+    Others = ifelse(`E.7.N.1..Last.12.months...what.did.you.do.when.you.couldn.t.meet.your.regular.spending.needs._Others` == "Yes", 1, 0)
+  )%>%
+  mutate(
+    ComfortableWithBank_Yes = ifelse(`E.5.1..You.feel.comfortable.to.go.into.a.bank.or.another.financial.institution` == "Yes", 1, 0),
+    ComfortableWithBank_No = ifelse(`E.5.1..You.feel.comfortable.to.go.into.a.bank.or.another.financial.institution` == "No", 1, 0), ReceivedFinancialEducation_Yes = ifelse(`E.5.2..You.have.received.some.financial.education.in.your.life` == "Yes", 1, 0),
+    ReceivedFinancialEducation_No = ifelse(`E.5.2..You.have.received.some.financial.education.in.your.life` == "No", 1, 0),
+    Old_Savings = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Savings", 1, 0),
+    Old_ChildrenWillTakeCareOfMe = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Children will take care of me", 1, 0),
+    Old_MoneyFromFriendsRelatives = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Money from friends/relatives", 1, 0),
+    Old_LandProperty = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Land/property", 1, 0),
+    Old_OwnBusiness = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Own business", 1, 0),
+    Old_RentalIncome = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Rental income", 1, 0),
+    Old_DividendsFromShares = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Dividends from shares", 1, 0),
+    Old_FarmingAgricultureLivestock = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Farming/agriculture/livestock", 1, 0),
+    Old_Pension = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Pension", 1, 0),
+    Old_InsurancePolicy = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Insurance policy", 1, 0),
+    Old_NoPlans = ifelse(`E.10..How.will.you.mainly.ensure.that.you.have.money.to.meet.your.needs.when.you.are.old.and.can.no.longer.work.` == "Don’t know/Have no plans/Have not yet thought about how/where I would get the money for this purpose", 1, 0),
+    ConfidentWithBanks = ifelse(`F.3.2.1..I.will.read.for.you.a.list.of.institutions..and.pease.tell.me.which.you.feel.confident.with.SAVINGS.your.money.with._Banks` == "Yes", 1, 0),
+    ConfidentWithMFIs = ifelse(`F.3.2.1..I.will.read.for.you.a.list.of.institutions..and.pease.tell.me.which.you.feel.confident.with.SAVINGS.your.money.with._MFIs` == "Yes", 1, 0),
+    ConfidentWithSACCOs = ifelse(`F.3.2.1..I.will.read.for.you.a.list.of.institutions..and.pease.tell.me.which.you.feel.confident.with.SAVINGS.your.money.with._SACCOs` == "Yes", 1, 0),
+    ConfidentWithMobileMoney = ifelse(`F.3.2.1..I.will.read.for.you.a.list.of.institutions..and.pease.tell.me.which.you.feel.confident.with.SAVINGS.your.money.with._Mobile.money.operators` == "Yes", 1, 0),
+    ConfidentWithPensionFund = ifelse(`F.3.2.1..I.will.read.for.you.a.list.of.institutions..and.pease.tell.me.which.you.feel.confident.with.SAVINGS.your.money.with._Pension.fund` == "Yes", 1, 0),
+    ConfidentWithSavingsGroups = ifelse(`F.3.2.1..I.will.read.for.you.a.list.of.institutions..and.pease.tell.me.which.you.feel.confident.with.SAVINGS.your.money.with._Savings.groups.CMGs` == "Yes", 1, 0),
+    ConfidentWithFamilyFriends = ifelse(`F.3.2.1..I.will.read.for.you.a.list.of.institutions..and.pease.tell.me.which.you.feel.confident.with.SAVINGS.your.money.with._Family.friends` == "Yes", 1, 0),
+    ConfidentWithUTTs = ifelse(`F.3.2.1..I.will.read.for.you.a.list.of.institutions..and.pease.tell.me.which.you.feel.confident.with.SAVINGS.your.money.with._UTTs` == "Yes", 1, 0),
+    PayingBack_Yes = ifelse(`G.2.4..Have.you..in.the.past.12.months..been.paying.back.money.that.you.borrowed.` == "Yes", 1, 0),
+    PayingBack_No = ifelse(`G.2.4..Have.you..in.the.past.12.months..been.paying.back.money.that.you.borrowed.` == "No", 1, 0),
+    BorrowedFrom_Bank = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..Bank` == "Yes", 1, 0),
+    BorrowedFrom_MFI = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..Microfinance.institution.such.as` == "Yes", 1, 0),
+    BorrowedFrom_SACCO = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..SACCOS` == "Yes", 1, 0),
+    BorrowedFrom_MobileMoney = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..A.mobile.money.service.provider` == "Yes", 1, 0),
+    BorrowedFrom_PensionFund = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..A.pension.fund` == "Yes", 1, 0),
+    BorrowedFrom_Employer = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..Your.employer` == "Yes", 1, 0),
+    BorrowedFrom_Family_PayBack = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..Family.friends.that.you.had.to.pay.back` == "Yes", 1, 0),
+    BorrowedFrom_Family_NoPayBack = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..Family.friends.that.you.did.not.have.to.pay.back` == "Yes", 1, 0),
+    BorrowedFrom_SavingsGroup = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..Savings.group` == "Yes", 1, 0),
+    BorrowedFrom_CommunityLender = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..Someone.in.the.community.who.lend` == "Yes", 1, 0),
+    BorrowedFrom_OtherSource = ifelse(`G.5.2.Did.you.borrow.money.from.the.following..Did.you.borrow.money.from.another.source` == "Yes", 1, 0),
+    Used_Cash = ifelse(`X2.1.In.the.past.12.months..how.often.did.you.use.the.Cash.for.purchases.of.goods` == "Yes", 1, 0),
+    Used_ATM_DebitCard = ifelse(`X2.2.In.the.past.12.months..how.often.did.you.use.the.ATM...Debit.card.for.purchases.of.goods` == "Yes", 1, 0),
+    Used_CreditCard = ifelse(`X2.3.In.the.past.12.months..how.often.did.you.use.the.Credit.card.for.purchases.of.goods` == "Yes", 1, 0),
+    Used_BankTransfer = ifelse(`X2.4.In.the.past.12.months..how.often.did.you.use.the.Bank.transfer.for.purchases.of.goods` == "Yes", 1, 0),
+    Used_MobileMoney = ifelse(`X2.5.In.the.past.12.months..how.often.did.you.use.the.Mobile.money.for.purchases.of.goods` == "Yes", 1, 0),
+    Used_Cryptocurrency = ifelse(`X2.6.In.the.past.12.months..how.often.did.you.use.the.Cryptocurrency.for.purchases.of.goods` == "Yes", 1, 0),
+    Used_QR_Code = ifelse(`X3.1.In.the.past.12.months..how.often.did.you.use.the.QR.code..for.purchases.of.goods` == "Yes", 1, 0),
+    Used_POS = ifelse(`X3.2.In.the.past.12.months..how.often.did.you.use.the.POS.for.purchases.of.goods` == "Yes", 1, 0),
+    Used_LipaNamba = ifelse(`X3.3.In.the.past.12.months..how.often.did.you.use.the.Lipa.Namba.for.purchases.of.goods` == "Yes", 1, 0),
+    Used_AZAMPay = ifelse(`X3.4.In.the.past.12.months..how.often.did.you.use.the.AZAM.Pay.for.purchases.of.goods` == "Yes", 1, 0),
+    Basic_TASAF_Cash_Transfer = ifelse(`X1..You.indicated.earlier.that.you.get.assistance.from.Government.or.NGO..please.tell.me.which...Basic.TASAF.cash.transfer` == "Yes", 1, 0),
+    Additional_Conditional_TASAF_Cash_Transfer = ifelse(`X1..You.indicated.earlier.that.you.get.assistance.from.Government.or.NGO..please.tell.me.which...Additional.Conditional.TASAF.cash.transfer` == "Yes", 1, 0),
+    Pension_for_Elders = ifelse(`X1..You.indicated.earlier.that.you.get.assistance.from.Government.or.NGO..please.tell.me.which...Pension.for.elders..Znz.only.` == "Yes", 1, 0),
+    Others_Assistance = ifelse(`X1..You.indicated.earlier.that.you.get.assistance.from.Government.or.NGO..please.tell.me.which...Others` == "Yes", 1, 0),
+    
+    Payment_Was_Late = ifelse(`X2.Please.tell.me.which.of.the.following.problems.do.you.experience.with.these.payments._Payment.was.late` == "Yes", 1, 0),
+    Gave_Money_To_Official = ifelse(`X2.Please.tell.me.which.of.the.following.problems.do.you.experience.with.these.payments._You.had.to.give.money.to.an.official` == "Yes", 1, 0),
+    Money_Didnt_Come = ifelse(`X2.Please.tell.me.which.of.the.following.problems.do.you.experience.with.these.payments._Money.didn.t.come.at.all` == "Yes", 1, 0),
+    Received_Less_Money = ifelse(`X2.Please.tell.me.which.of.the.following.problems.do.you.experience.with.these.payments._You.received.less.money.than.should.have` == "Yes", 1, 0),
+    Household_Not_On_Register = ifelse(`X2.Please.tell.me.which.of.the.following.problems.do.you.experience.with.these.payments._Your.household.not.on.the.register` == "Yes", 1, 0),
+    Unable_To_Collection_Point = ifelse(`X2.Please.tell.me.which.of.the.following.problems.do.you.experience.with.these.payments._You.were.not.able.to.go.to.the.collection.point.and.you.didn.t.get.the.payment` == "Yes", 1, 0),
+    No_Proof_Of_Identity = ifelse(`X2.Please.tell.me.which.of.the.following.problems.do.you.experience.with.these.payments._You.didn.t.have.proof.of.identity.and.didn.t.g.et.the.money` == "Yes", 1, 0),
+    Do_Not_Know_Where_To_Go = ifelse(`J1.7.Why.don.t.you.report.problems..I.do.not.know.where.to.go` == "Yes", 1, 0),
+    Places_Not_In_My_Area = ifelse(`J1.7.Why.don.t.you.report.problems..The.places.are.not.in.my.area` == "Yes", 1, 0),
+    Do_Not_Think_They_Care = ifelse(`J1.7.Why.don.t.you.report.problems..I.do.not.think.they.care.about` == "Yes", 1, 0),
+     Trust_Insurance_Companies = ifelse(`X1.3.Please.tell.me.which.of.the.following.you.is.true.for.you...You.trust.insurance.companies.to.pay.out.when.something.does.go.wrong` == "True", 1, 0),
+    Insurance_Good_Idea = ifelse(`X1.3.Please.tell.me.which.of.the.following.you.is.true.for.you...Insurance.is.a.good.idea.for.everyone` == "True", 1, 0),
+    Need_Insurance = ifelse(`X1.3.Please.tell.me.which.of.the.following.you.is.true.for.you...You.don.t.need.insurance.as.you.get.money.if.things.go.wrong` == "True", 1, 0),
+    Have_Insurance_Cover = ifelse(`X2.Do.you.have.insurance.cover.` == "Yes", 1, 0),
+    Motor_Vehicle_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Motor.vehicle.insurance` == "Yes", 1, 0),
+    Households_Contents_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Households.contents.insura` == "Yes", 1, 0),
+    Private_Health_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Private.health.insurance` == "Yes", 1, 0),
+    National_Health_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..National.health.insurance` == "Yes", 1, 0),
+    Community_Health_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Community.health.insurance` == "Yes", 1, 0),
+    TIKA_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..TIKA..Tiba.Kwa.Kadi.` == "Yes", 1, 0),
+    Social_Health_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Social.Health.Insurance.Be` == "Yes", 1, 0),
+    Personal_Accident_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Personal.accident.insuranc` == "Yes", 1, 0),
+    Life_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Life.insurance` == "Yes", 1, 0),
+    Loan_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Loan.insurance.in.case.of` == "Yes", 1, 0),
+    Building_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Building.insurance` == "Yes", 1, 0),
+    Education_Policy = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Education.policy` == "Yes", 1, 0),
+    Funeral_Cover = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Funeral.cover` == "Yes", 1, 0),
+    Agricultural_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Agricultural.insurance` == "Yes", 1, 0),
+    Ushirika_Afya = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Ushirika.afya` == "Yes", 1, 0),
+    Motorcycle_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Motorcycle.insurance` == "Yes", 1, 0),
+    Livestock_Insurance = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Livestock.insurance` == "Yes", 1, 0),
+    Other_Insurance_Products = ifelse(`X3.1.1.Please.tell.me.which.of.the.following.you.have..Any.other.insurance.produc` == "Yes", 1, 0),
+    Network_Failure = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Network.failure` == "Yes", 1, 0),
+    Agent_Absent = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Agent.absent.not.available` == "Yes", 1, 0),
+    Agent_No_Cash_Float = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Agent.didn.t.have.enough.cash.float` == "Yes", 1, 0),
+    Agent_Overcharged = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Agent.overcharged.for.transactions` == "Yes", 1, 0),
+    Lost_Money = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Lost.money` == "Yes", 1, 0),
+    Agent_Requested_PIN = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Agent.wanted.you.to.reveal.your.PIN.number` == "Yes", 1, 0),
+    Other_Problems = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Any.other.problem` == "Yes", 1, 0),
+    Moneylender_Access = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..You.can.use.or.access.your.moneylender.whenever.you.need.to` == "Agree", 1, 0),
+    Moneylender_TreatsWell = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..Your.moneylender.always.treats.you.well` == "Agree", 1, 0),
+    Moneylender_InfoClear = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..Before.you.took.out.a.loan.with.your.moneylender..you.got.as.much.info.as.needed.and.it.was.easy.to.understand` == "Agree", 1, 0),
+    Moneylender_NeedsMet = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..The.products.and.services.offered.by.your.moneylender.meets.your.financial.needs` == "Agree", 1, 0),
+    Moneylender_FeesReasonable = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..Your.moneylender.s.fees.and.charges.are.reasonable` == "Agree", 1, 0),
+    Moneylender_CustomerSupport = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..You.are.satisfied.with.your.moneylender.s.customer.support` == "Agree", 1, 0),
+    Banked = ifelse(Banked == "Yes", 1, 0),
+    Not_Banked = ifelse(Banked == "No", 1, 0),
+    MFI = ifelse(MFI == "Yes", 1, 0),
+    Not_MFI = ifelse(MFI == "No", 1, 0),
+    PENSION = ifelse(PENSION == "Yes", 1, 0),
+    Not_PENSION = ifelse(PENSION == "No", 1, 0),
+    INSURANCE = ifelse(INSURANCE == "Yes", 1, 0),
+    Not_INSURANCE = ifelse(INSURANCE == "No", 1, 0),
+    SACCO = ifelse(SACCO == "Yes", 1, 0),
+    Not_SACCO = ifelse(SACCO == "No", 1, 0),
+    CAPITALM_FUND_MANAGERS = ifelse(CAPITALM_FUND_MANAGERS == "Yes", 1, 0),
+    Not_CAPITALM_FUND_MANAGERS = ifelse(CAPITALM_FUND_MANAGERS == "No", 1, 0),
+    FORM_INVESTMENTS = ifelse(FORM_INVESTMENTS == "Yes", 1, 0),
+    Not_FORM_INVESTMENTS = ifelse(FORM_INVESTMENTS == "No", 1, 0),
+    CMG = ifelse(CMG == "Yes", 1, 0),
+    Not_CMG = ifelse(CMG == "No", 1, 0),
+    INFORMAL_MONEYLENDER = ifelse(INFORMAL_MONEYLENDER == "Yes", 1, 0),
+    Not_INFORMAL_MONEYLENDER = ifelse(INFORMAL_MONEYLENDER == "No", 1, 0),
+    SOCIAL_GROUPS = ifelse(SOCIAL_GROUPS == "Yes", 1, 0),
+    Not_SOCIAL_GROUPS = ifelse(SOCIAL_GROUPS == "No", 1, 0)
+  )
+
+
+ 
+```
+
+```{r}
+#| eval: False
+#| echo: False
+write_rds(tanzania_encoded,"data/rds/tanzania_encoded")
+```
+
+```{r}
+#| echo: False
+tanzania_encoded <- read_rds("data/rds/tanzania_encoded")
+```
+
+Lastly, we will select the cleaned encoded columns as our final dataframe and replace all the missing values in encoded variables with 0. We will exclude geometry column in the process with the following code.
+
+```{r}
+#| eval: False
+tanzania_cleaned <- tanzania_encoded %>%
+  select(7,121, 200:529)%>%
+  mutate(across(-c(geometry), ~ ifelse(is.na(.), 0, .)))
+```
+
+There is now 13 records with age 0. We will impute age with the mean of the remaining respondents.
+
+```{r}
+#| eval: False
+mean_age <- mean(tanzania_cleaned$Age, na.rm = TRUE)
+tanzania_cleaned$Age[tanzania_cleaned$Age == 0] <- mean_age
+```
+
+Now, our dataframe is ready and cleaned with our chosen variables. We will save it.
+
+::: panel-tabset
+## Save
+
+```{r}
+#| eval: False
+write_rds(tanzania_cleaned,"data/rds/tanzania_cleaned.rds")
+```
+
+## Load
+
+```{r}
+tanzania_cleaned <- read_rds("data/rds/tanzania_cleaned.rds")
+```
+:::
+
+# References
+
+United Nations Capital Development Fund (UNCDF). (2024). *Insights from Tanzania: Global data reveals financial inclusion for women*. Retrieved from <https://policyaccelerator.uncdf.org/whats-new/insights-tanzania-global-data-reveals-financial-inclusion-women>
+
+World Bank. (17 April, 2024). *Financial inclusion in Sub-Saharan Africa: Overview*. Retrieved from <https://www.worldbank.org/en/publication/globalfindex/brief/financial-inclusion-in-sub-saharan-africa-overview>
+
+World Bank. (2022). *Global financial inclusion: A comprehensive overview*. Retrieved from <https://documents1.worldbank.org/curated/en/099305408252329233/pdf/SECBOS1e6ff9a00041b4261bcdc9c154a7b.pdf>
