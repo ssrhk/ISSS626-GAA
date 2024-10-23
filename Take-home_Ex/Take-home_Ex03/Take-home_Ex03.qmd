@@ -29,23 +29,15 @@ Specifically, the objectives are:
 
 -   **Examine Regional Variation**: Explore how the effects of these factors vary across different districts, providing a localized understanding of financial inclusion.
 
-## 1.3 Defining Financial Inclusion
-
-Financial inclusion refers to the process of ensuring that individuals and businesses have access to useful and affordable financial products and services that meet their needs such as transactions, payments, savings, credit, and insurance. According to the World Bank, financial inclusion is a "key enabler in reducing poverty and boosting shared prosperity by providing the unbanked and underserved populations access to essential financial services" (World Bank, 2023).
-
-A well-functioning financial inclusion system enables individuals to manage risks, invest in education, and build sustainable livelihoods. In the context of Tanzania, financial inclusion is particularly vital for rural populations, where access to traditional banking infrastructure is limited, and reliance on informal financial services can hinder economic opportunities. The development of digital financial services, such as mobile money, has significantly expanded financial inclusion in Sub-Saharan Africa, enabling millions to access financial services without needing to visit a physical bank (World Bank Group, 2024).
-
-While progress has been made, the uneven distribution of financial services and the varying levels of inclusion between rural and urban areas highlight the need to explore the determinants of financial inclusion at a local level. Identifying these factors is crucial for improving access to financial services and promoting inclusive economic development.
-
-------------------------------------------------------------------------
-
 # 2 Methodology
 
 The explanatory model will be developed using Geographically Weighted Regression (GWR), which is a spatial extension of multiple linear regression that allows for localized variations in the relationships between predictors and the response variable—in this case, financial inclusion.
 
 The process will follow these steps:
 
--   **Variable Selection**: Identify key predictor variables from the FinScope dataset, such as income levels, education, proximity to financial institutions, population density, and mobile money adoption. These will serve as explanatory variables in the model.
+-   **Defining dependent variable (y)**: Derive dependent variable which represents financial inclusion from the FinScope dataset.
+
+-   **Explanatory Variable Selection (x)**: Identify key predictor variables from the FinScope dataset, such as income levels, education and mobile money adoption. These will serve as explanatory variables in the model.
 
 -   **Model Building**: Build the explanatory model using multiple linear regression techniques, enhanced by GWR to account for geographical variations. This will allow us to evaluate the influence of each predictor on financial inclusion across different districts.
 
@@ -125,7 +117,7 @@ Then, the data was prepared for analysis with the following steps:
 ```{r}
 tanzania <- read_csv("data/rawdata/FinScope_Tanzania.csv")%>%
   select(5,9,11,13:14,16,61,65:67,71,95:96,98:103,107:119,124:125,140,142:151,160:174,177:178,188,183:192,196,215:223,
-         276:278,294:306,344:353,361:372,374:378,395:397,455:460,507:529,574:588,680:685,697:698,700:716,718) %>%
+         275:278,294:306,344:353,361:372,374:378,395:397,455:460,495,497,507:529,574:588,591, 612,650:651,653,655,657,678,680:685,697:698,700:716,718) %>%
   select(where(~ !all(is.na(.))))
 ```
 
@@ -219,7 +211,156 @@ Next, we will create a tourism economy indicators layer by left joining the geos
 :::
 
 ```{r}
+#| eval: False
 tanzania_fin <- left_join(tanzbounds,tanzania)
+```
+
+# 5 Deriving the Dependent Variable
+
+## **5.1 Financial Inclusion in Tanzania**
+
+Financial inclusion refers to the process of ensuring that individuals and businesses have access to affordable and useful financial products and services that meet their needs—ranging from transactions, payments, savings, and credit to insurance. According to the World Bank, financial inclusion is a "key enabler in reducing poverty and boosting shared prosperity by providing the unbanked and underserved populations access to essential financial services" (World Bank, 2023).
+
+A robust financial inclusion system allows individuals to manage risks, invest in education, and build sustainable livelihoods. In Tanzania, financial inclusion is especially critical for rural populations, where access to traditional banking infrastructure is limited. Many rely on informal financial services, which can hinder their ability to seize economic opportunities. The growth of digital financial services, particularly mobile money, has dramatically expanded financial inclusion across Sub-Saharan Africa, enabling millions to access financial products without needing to visit a physical bank (World Bank Group, 2024).
+
+Despite significant progress, the uneven distribution of financial services between rural and urban areas underscores the need to examine the factors driving financial inclusion at a local level. Understanding these determinants is essential for enhancing access to financial services and fostering inclusive economic development. This study aims to derive a dependent variable representing financial inclusion from the FinScope dataset, focusing on key financial behaviors.
+
+## **5.2 The Dependent Variable - Financial Inclusion Index**
+
+Research by Demirgüç-Kunt and Klapper (World Bank,2018) indicates that financial inclusion is multi-dimensional, encompassing access to credit, savings, and various financial services. Composite indices, such as the Global Financial Inclusion Index, often aggregate multiple financial behaviors to capture the complexity of financial inclusion. For this study, we will construct a composite measure of the **access to credit and** **financial support** to represent financial inclusion in Tanzania.
+
+The dependent variable will be derived from **total borrowings** and **government/NGO support**, for the following reasons:
+
+1.  **Borrowing Amounts**:
+
+    Borrowing is a crucial indicator of financial inclusion as it reflects an individual's ability to access formal financial institutions. Borrowing, particularly from formal sources like banks or cooperatives, allows individuals to invest in business ventures, manage emergencies, and smooth consumption. Access to credit is widely regarded as a critical dimension of financial inclusion, as it integrates individuals into the financial system. Studies by World Bank (2018) and other financial inclusion research confirm that borrowing from formal institutions directly correlates with increased financial inclusion. In Tanzania, access to loans is an important means by which individuals participate in the financial system, particularly in rural and low-income areas where formal banking is less accessible.
+
+    -   Borrowing-related Variables:
+        -   How much total money did you borrow the last time you borrowed (from Financial Institutions, Employers, MFI, Pension Funds)? in TZS
+        -   How much did you borrow the last time you borrowed from the SACCO? TZS
+        -   How much did you borrow the last time you borrowed from mobile money? TZS
+        -   How much did you borrow the last time you borrowed from a group TZS
+        -   How much did you borrow the last time you borrowed from a moneylender? TZS
+
+2.  **Government/NGO Support**:
+
+    Government and NGO support is another essential mechanism that facilitates financial inclusion, particularly for vulnerable populations. Cash transfers and other forms of assistance often require recipients to engage with formal financial services, such as opening bank accounts or using mobile money platforms. This engagement with the formal financial system is a critical step toward broader financial inclusion. Receiving support from government or NGOs not only provides immediate financial relief but also encourages the use of formal financial products and services. Empirical research shows that these programs significantly boost financial inclusion, especially in developing countries, by offering individuals a pathway to financial services that they might otherwise lack access to.
+
+    -   Variable:
+        -   The last time you received money (from Government or NGO), how much money did you receive? in TZS
+
+3.  Amount Owed
+
+    Including the amount owed is critical to understanding the financial health of individuals within the context of their borrowing and support. It highlights the individual's debt burden relative to their financial resources. The amount owed is indicative of financial obligations that must be managed, making it a relevant factor in assessing overall financial inclusion.
+
+By focusing on total borrowings, government/NGO support, and the amount owed as core components of the dependent variable, we capture three key dimensions of financial inclusion: access to credit, participation in social safety nets, and the management of debt. These factors are particularly relevant in Tanzania, where many individuals rely on government assistance and microfinance to meet their financial needs. This composite approach aligns with global best practices in financial inclusion research, ensuring a comprehensive measure of overall financial activity.
+
+**Financial Inclusion Index (FII)**, our dependent variable, will be derived with the following formula:
+
+$FII_i =AmountOwed_I/ (TotalBorrowing_i + GovNGOSupport_i)$
+
+where:
+
+-   $AmountOwed_i$ = Total money owed or debt
+
+-   $TotalBorrowing_i$ = Total borrowing amount for individual i
+
+    -   It is calculated by summing up all the borrowing-related variables for individual i
+
+        $TotalBorrowing_i = Borrowings_i + SACCOBorrow_i + MobileMoneyBorrow_i +$
+
+        $GroupBorrow_I + MoneylenderBorrow_i$
+
+        Where:
+
+        -   $Borrowings_i$​ = Amount borrowed from Financial Institutions, MFI, Pension Funds
+
+        -   $SACCOBorrow_i$ = Borrowed from SACCO
+
+        -   $MobileMoneyBorrow_i$​ = Borrowed from Mobile Money
+
+        -   $GroupBorrow_I$ = Borrowed from Social groups
+
+        -   $MoneylenderBorrow_i$ = Borrowed from moneylenders
+
+-   $GovNGOSupport_i​$ = Total money received from government or NGOs by individual i
+
+-   $w_1​,w2​​$ = Weights to balance the contribution of each component
+
+[**Financial Inclusion Index Implications**]{.underline}
+
+This formula allows us to assess an individual's ability to manage their debt in relation to their borrowing capacity and external financial support. A higher value of FII indicates that the amount owed is significant compared to available financial resources, which could imply financial stress or vulnerability. A result of **1 or less** indicates that an individual’s debt is manageable relative to their financial resources, while a result **greater than 1** could indicate a concerning level of debt with less financial resources available. A larger index score will indicate less accessibility to financial products.
+
+A FII score of 0 would indicates a complete lack of financial inclusion for the particular individual. It could be one of the two possibilities:
+
+1.  The individual does not have access to any formal financial services, such as banking accounts, credit, or savings options. This can occur in situations where people are entirely reliant on informal financial systems, like borrowing from friends or family.
+
+2.  The individual does not need to or has never borrowed money or received any form of financial assistance from these sources.
+
+Before we further prepare our variables, we will convert the column names into a more R-friendly format using `make.names()`.
+
+```{r}
+#| eval: False
+colnames(tanzania_fin) <- make.names(colnames(tanzania_fin))
+```
+
+The following code chunk will be used to rename the columns and replace empty spaces of these columns with 0 for further use.
+
+```{r}
+#| eval: False
+tanzania_fin <- tanzania_fin %>%
+  mutate(
+    `G.2.6..Approximately.how.much.money.do.you.owe..in.TZS` = 
+      gsub("Can't remember|Refused", "0", 
+           `G.2.6..Approximately.how.much.money.do.you.owe..in.TZS`, 
+           ignore.case = TRUE), 
+    AmountOwed = as.numeric(`G.2.6..Approximately.how.much.money.do.you.owe..in.TZS`) 
+  ) %>%
+  rename(
+    GovtNGOSupport = `X3.The.last.time.you.received.money..how.much.money.did.you.receive..in.TZS`,
+    Borrowings = `G.2.3..How.much.money.did.you.borrow.the.last.time.you.borrowed..in.TZS`,
+    SACCO_Borrow = `X5.2.How.much.did.you.borrow.the.last.time.you.borrowed.from.the.SACCO..TZS`,
+    Mobile_Borrow = `X13.How.much.did.you.borrow.the.last.time.you.borrowed..TZS`,
+    Group_Borrow = `X4.10.How.much.did.you.borrow.the.last.time.you.borrowed.from.a.group.TZS`,
+    Moneylender_Borrow = `X4.How.much.did.you.borrow.the.last.time.you.borrowed.from.a.moneylender..TZS`
+  ) %>%
+  mutate(
+    GovtNGOSupport = ifelse(is.na(GovtNGOSupport), 0, GovtNGOSupport),
+    AmountOwed = ifelse(is.na(AmountOwed), 0, AmountOwed),
+    Borrowings = ifelse(is.na(Borrowings), 0, Borrowings),
+    SACCO_Borrow = ifelse(is.na(SACCO_Borrow), 0, SACCO_Borrow),
+    Mobile_Borrow = ifelse(is.na(Mobile_Borrow), 0, Mobile_Borrow),
+    Group_Borrow = ifelse(is.na(Group_Borrow), 0, Group_Borrow),
+    Moneylender_Borrow = ifelse(is.na(Moneylender_Borrow), 0, Moneylender_Borrow)
+  )
+
+```
+
+To ensure all these columns are numeric, we use the following code chunk.
+
+```{r}
+#| eval: False
+tanzania_fin <- tanzania_fin %>%
+  mutate(
+    GovtNGOSupport = as.numeric(GovtNGOSupport),
+    AmountOwed = as.numeric(AmountOwed),
+    Borrowings = as.numeric(Borrowings),
+    SACCO_Borrow = as.numeric(SACCO_Borrow),
+    Mobile_Borrow = as.numeric(Mobile_Borrow),
+    Group_Borrow = as.numeric(Group_Borrow),
+    Moneylender_Borrow = as.numeric(Moneylender_Borrow)
+  )
+
+```
+
+Finally, we will derive our dependent variable and create a new column **Financial Inclusion Index (FII**). To ensure that division by zero does not occur, this code will also handle cases where `Borrowings` and `GovtNGOSupport` both equal zero.
+
+```{r}
+#| eval: False
+tanzania_fin <- tanzania_fin %>%
+  mutate(
+    FII = ifelse((Borrowings+ SACCO_Borrow + Mobile_Borrow+ Group_Borrow + Moneylender_Borrow+ GovtNGOSupport) == 0, 0, AmountOwed / (Borrowings+ SACCO_Borrow + Mobile_Borrow+ Group_Borrow + Moneylender_Borrow+ GovtNGOSupport))
+  )
 ```
 
 ::: panel-tabset
@@ -237,7 +378,25 @@ tanzania_fin<- read_rds("data/rds/tanzania_fin.rds")
 ```
 :::
 
-# 5 Variable Selection
+We will use the following code to view the top 5 FII observations from our newly created dependent variable.
+
+```{r}
+top_5_fii <- tanzania_fin %>%
+  arrange(desc(FII)) %>%
+  select(dist_name, FII) %>%
+  head(5)
+
+print(top_5_fii)
+```
+
+We see that the top observation is an outlier with a FII value of 2000 while the following observations are around 400 and 300. We will exclude this one observation from our study to ensure that interpretation of our results is not affected.
+
+```{r}
+tanzania_fin <- tanzania_fin %>%
+  filter(FII != 2000)
+```
+
+# **6 Explanatory Variables of Interest**
 
 In the development of a robust multiple linear regression model, the selection of appropriate variables is critical to ensuring the model's accuracy and interpretability. This section focuses on the identification and selection of both nominal and continuous variables that will serve as predictors in our regression analysis.
 
@@ -245,56 +404,51 @@ Initially, we will establish a preliminary set of variables based on theoretical
 
 Once we have constructed our initial model using these variables, we will conduct a comprehensive model assessment to evaluate its performance. This will involve calculating the Variance Inflation Factor (VIF) to assess multicollinearity among the independent variables. High VIF values indicate potential redundancy among variables, which can compromise the model's reliability. Consequently, we will refine our variable selection by identifying and retaining only those variables that significantly contribute to explaining the variance in our dependent variable, financial inclusion.
 
-## 5.1 Continuous Variables
+## 6.1 Continuous Variables
 
 The following are the continuous variables selected.
 
-+----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **Variable**                           | **Justification for Selection**                                                                                                                                                                                                                                                                                                                                                                                 |
-+========================================+=================================================================================================================================================================================================================================================================================================================================================================================================================+
-| Age                                    | Age is a critical demographic variable that often influences various socio-economic outcomes. It can affect financial behaviors, access to resources, and the types of assistance individuals might require.Research indicates that younger individuals may be more inclined to take risks and invest in education or business ventures, while older individuals might focus on savings and retirement planning |
-+----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Amount received from Government or NGO | The amount received from government programs or NGOs is a key indicator of financial support and social safety nets available to individuals and households. This variable is particularly relevant in understanding the economic vulnerability of respondents and their reliance on external assistance.                                                                                                       |
-+----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Amount the respondent owe              | Understanding the debt levels within a population helps identify financial risks and vulnerabilities, enabling policymakers to design interventions that address excessive indebtedness and promote financial literacy and management skills.                                                                                                                                                                   |
-+----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Variable**                                 | **Justification for Selection**                                                                                                                                                                                                                                                                                                                                                                                 |
++==============================================+=================================================================================================================================================================================================================================================================================================================================================================================================================+
+| Age                                          | Age is a critical demographic variable that often influences various socio-economic outcomes. It can affect financial behaviors, access to resources, and the types of assistance individuals might require.Research indicates that younger individuals may be more inclined to take risks and invest in education or business ventures, while older individuals might focus on savings and retirement planning |
++----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Average Money Spent on Betting               | Studies show that excessive gambling can lead to financial distress and lower overall financial health (Koomson et al., 2022). Lower spending may lead to better financial health and inclusion.                                                                                                                                                                                                                |
++----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Number of Saving Groups respondent belong to | Higher participation in savings groups typically correlates with better savings rates and financial stability.Groups provide social support and financial education.                                                                                                                                                                                                                                            |
++----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Contribution to Saving Groups                | Regular contributions can lead to increased savings and financial stability, improving access to credit and financial services.                                                                                                                                                                                                                                                                                 |
++----------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-Before we prepare our variables, we will convert the column names into a more R-friendly format using `make.names()`.
+For these four continuous variables, we will prepare the data in the following steps:
 
-```{r}
-colnames(tanzania_fin) <- make.names(colnames(tanzania_fin))
-```
+-   Rename the variables
 
-For these three variables, we will prepare the data in the following steps:
+-   Replace NA values with 0
 
--   Rename the variable as AmountOwe and replace "Can't remember" and "Refused" with "0"
+-   Ensure they are in numeric format
 
--   Convert AmountOwe to numeric
-
--   Rename the last variable as MoneyReceivedfromGovt
-
--   Replace NA values for both variables with 0
+-   We found that there are two records that stated that they are in 16,000 and 2000 social groups which is not possible. Therefore, they will be excluded.
 
 ```{r}
-#| eval: False
 tanzania_fin <- tanzania_fin %>%
   mutate(
-    `G.2.6..Approximately.how.much.money.do.you.owe..in.TZS` = 
-      gsub("Can't remember|Refused", "0", 
-           `G.2.6..Approximately.how.much.money.do.you.owe..in.TZS`, 
-           ignore.case = TRUE), 
-    AmountOwe = as.numeric(`G.2.6..Approximately.how.much.money.do.you.owe..in.TZS`) 
+    Group_Belong = as.numeric(replace_na(as.numeric(as.character(X4.3.How.many.savings.groups.do.you.belong.to.in.total.)), 0)),
+    Group_Contribution = as.numeric(replace_na(as.numeric(as.character(X4.8.How.much.do.you.contribute.in.total..to.all.the.groups.you.belong..in.a.mont)), 0)),
+    AmountBetting = as.numeric(replace_na(as.numeric(as.character(X17c.On.average..how.much.do.you.spend.on.betting.in.a.month.)), 0))
   )%>%
-  rename(MoneyReceivedfromGovt = `X3.The.last.time.you.received.money..how.much.money.did.you.receive..in.TZS`) %>%
-  mutate(
-    MoneyReceivedfromGovt = ifelse(is.na(MoneyReceivedfromGovt), 0, MoneyReceivedfromGovt),
-    AmountOwe = ifelse(is.na(AmountOwe), 0, AmountOwe)
-  )
+  filter(Group_Belong != 16000)%>%
+  filter(Group_Belong != 2000)
 ```
 
-## 5.2 Nominal Variables
+## 6.2 Nominal Variables
 
-n our analysis, we will employ one-hot encoding to transform these nominal variables into a format suitable for regression modeling. One-hot encoding allows us to create binary columns for each category, enabling the regression model to assess the impact of each nominal variable effectively. This approach ensures that we capture the distinct effects of categorical factors on the dependent variable while maintaining the integrity of the data.
+We will employ one-hot encoding to transform nominal variables into a format suitable for regression modeling. One-hot encoding allows us to create binary columns for each category, enabling the regression model to assess the impact of each nominal variable effectively. This approach ensures that we capture the distinct effects of categorical factors on the dependent variable while maintaining the integrity of the data.
+
+We will use the following variables and code chunk to one-hot encode all the nominal variables as mentioned above.
+
+::: panel-tabset
+## Variables and Justification
 
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **Variable**                                                                                                                                                         | **Justification for Selection**                                                    | **Modification**                                                                                                                                                                                         |
@@ -352,7 +506,7 @@ n our analysis, we will employ one-hot encoding to transform these nominal varia
 | If respondent is involved with a Bank, MFI, PENSION, INSURANCE, SACCO, CAPITAL Fund Managers, FORMAL INVESTMEN, CMG, INFORMAL MONEYLENDER or apart of a Social group | To assess engagement with financial institutions, microfinance, pension and so on. | Encoded as Banked and Not_Banked, MFI and Not_MFI and so on.                                                                                                                                             |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-We will use the following code chunk to one-hot encode all the nominal variables as mentioned above.
+## Code
 
 ```{r}
 #| eval: False
@@ -566,10 +720,8 @@ tanzania_encoded <- tanzania_fin %>%
     SOCIAL_GROUPS = ifelse(SOCIAL_GROUPS == "Yes", 1, 0),
     Not_SOCIAL_GROUPS = ifelse(SOCIAL_GROUPS == "No", 1, 0)
   )
-
-
- 
 ```
+:::
 
 ```{r}
 #| eval: False
@@ -587,7 +739,7 @@ Lastly, we will select the cleaned encoded columns as our final dataframe and re
 ```{r}
 #| eval: False
 tanzania_cleaned <- tanzania_encoded %>%
-  select(7,121, 200:529)%>%
+  select(7,212:544)%>%
   mutate(across(-c(geometry), ~ ifelse(is.na(.), 0, .)))
 ```
 
@@ -616,7 +768,13 @@ tanzania_cleaned <- read_rds("data/rds/tanzania_cleaned.rds")
 ```
 :::
 
+## 
+
 # References
+
+Demirgüç-Kunt, A., Klapper, L., & Singer, D. (2017). *Financial inclusion and inclusive growth: A review of recent empirical evidence* (WPS8040). Development Research Group, Finance and Private Sector Development Team. https://doi.org/10.1596/1813-9450-8040
+
+Koomson, I., Churchill, S.A. & Munyanyi, M.E. Gambling and Financial Stress. *Soc Indic Res***163**, 473–503 (2022). https://doi.org/10.1007/s11205-022-02898-6
 
 United Nations Capital Development Fund (UNCDF). (2024). *Insights from Tanzania: Global data reveals financial inclusion for women*. Retrieved from <https://policyaccelerator.uncdf.org/whats-new/insights-tanzania-global-data-reveals-financial-inclusion-women>
 
