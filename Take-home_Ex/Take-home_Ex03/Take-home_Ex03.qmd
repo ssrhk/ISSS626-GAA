@@ -215,6 +215,8 @@ Next, we will create a tourism economy indicators layer by left joining the geos
 tanzania_fin <- left_join(tanzbounds,tanzania)
 ```
 
+------------------------------------------------------------------------
+
 # 5 Deriving the Dependent Variable
 
 ## **5.1 Financial Inclusion in Tanzania**
@@ -396,6 +398,8 @@ tanzania_fin <- tanzania_fin %>%
   filter(FII != 2000)
 ```
 
+------------------------------------------------------------------------
+
 # **6 Explanatory Variables of Interest**
 
 In the development of a robust multiple linear regression model, the selection of appropriate variables is critical to ensuring the model's accuracy and interpretability. This section focuses on the identification and selection of both nominal and continuous variables that will serve as predictors in our regression analysis.
@@ -509,7 +513,6 @@ We will use the following variables and code chunk to one-hot encode all the nom
 ## Code
 
 ```{r}
-#| eval: False
 tanzania_encoded <- tanzania_fin %>%
   mutate(districts = tanzania_fin$dist_name)%>%
   mutate(dist_name = as.factor(dist_name)) %>%
@@ -693,32 +696,22 @@ tanzania_encoded <- tanzania_fin %>%
     Lost_Money = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Lost.money` == "Yes", 1, 0),
     Agent_Requested_PIN = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Agent.wanted.you.to.reveal.your.PIN.number` == "Yes", 1, 0),
     Other_Problems = ifelse(`X10.1.In.the.past.12.months.have.you.experienced.any.of.the.following.when.you.wanted.to.use.mobile.money._Any.other.problem` == "Yes", 1, 0),
-    Moneylender_Access = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..You.can.use.or.access.your.moneylender.whenever.you.need.to` == "Agree", 1, 0),
-    Moneylender_TreatsWell = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..Your.moneylender.always.treats.you.well` == "Agree", 1, 0),
-    Moneylender_InfoClear = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..Before.you.took.out.a.loan.with.your.moneylender..you.got.as.much.info.as.needed.and.it.was.easy.to.understand` == "Agree", 1, 0),
-    Moneylender_NeedsMet = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..The.products.and.services.offered.by.your.moneylender.meets.your.financial.needs` == "Agree", 1, 0),
-    Moneylender_FeesReasonable = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..Your.moneylender.s.fees.and.charges.are.reasonable` == "Agree", 1, 0),
-    Moneylender_CustomerSupport = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..You.are.satisfied.with.your.moneylender.s.customer.support` == "Agree", 1, 0),
-    Banked = ifelse(Banked == "Yes", 1, 0),
-    Not_Banked = ifelse(Banked == "No", 1, 0),
-    MFI = ifelse(MFI == "Yes", 1, 0),
-    Not_MFI = ifelse(MFI == "No", 1, 0),
-    PENSION = ifelse(PENSION == "Yes", 1, 0),
-    Not_PENSION = ifelse(PENSION == "No", 1, 0),
-    INSURANCE = ifelse(INSURANCE == "Yes", 1, 0),
-    Not_INSURANCE = ifelse(INSURANCE == "No", 1, 0),
-    SACCO = ifelse(SACCO == "Yes", 1, 0),
-    Not_SACCO = ifelse(SACCO == "No", 1, 0),
-    CAPITALM_FUND_MANAGERS = ifelse(CAPITALM_FUND_MANAGERS == "Yes", 1, 0),
-    Not_CAPITALM_FUND_MANAGERS = ifelse(CAPITALM_FUND_MANAGERS == "No", 1, 0),
-    FORM_INVESTMENTS = ifelse(FORM_INVESTMENTS == "Yes", 1, 0),
-    Not_FORM_INVESTMENTS = ifelse(FORM_INVESTMENTS == "No", 1, 0),
-    CMG = ifelse(CMG == "Yes", 1, 0),
-    Not_CMG = ifelse(CMG == "No", 1, 0),
-    INFORMAL_MONEYLENDER = ifelse(INFORMAL_MONEYLENDER == "Yes", 1, 0),
-    Not_INFORMAL_MONEYLENDER = ifelse(INFORMAL_MONEYLENDER == "No", 1, 0),
-    SOCIAL_GROUPS = ifelse(SOCIAL_GROUPS == "Yes", 1, 0),
-    Not_SOCIAL_GROUPS = ifelse(SOCIAL_GROUPS == "No", 1, 0)
+    Moneylender_Access = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..You.can.use.or.access.your.moneylender.whenever.you.need.to` == "Yes", 1, 0),
+    Moneylender_TreatsWell = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..Your.moneylender.always.treats.you.well` == "Yes", 1, 0),
+    Moneylender_InfoClear = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..Before.you.took.out.a.loan.with.your.moneylender..you.got.as.much.info.as.needed.and.it.was.easy.to.understand` == "Yes", 1, 0),
+    Moneylender_NeedsMet = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..The.products.and.services.offered.by.your.moneylender.meets.your.financial.needs` == "Yes", 1, 0),
+    Moneylender_FeesReasonable = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..Your.moneylender.s.fees.and.charges.are.reasonable` == "Yes", 1, 0),
+    Moneylender_CustomerSupport = ifelse(`X4b.Please.tell.me.which.of.the.following.statements.you.agree.with..You.are.satisfied.with.your.moneylender.s.customer.support` == "Yes", 1, 0),
+    Banked = ifelse(Banked == "Banked", 1, 0),
+    MFI = ifelse(MFI == "MFI", 1, 0),
+    PENSION = ifelse(PENSION == "	PENSION", 1, 0),
+    INSURANCE = ifelse(INSURANCE == "INSURANCE", 1, 0),
+    SACCO = ifelse(SACCO == "SACCO", 1, 0),
+    CAPITALM_FUND_MANAGERS = ifelse(CAPITALM_FUND_MANAGERS == "CAPITALM_FUND_MANAGERS", 1, 0),
+    FORM_INVESTMENTS = ifelse(FORM_INVESTMENTS == "FORM_INVESTMENTS", 1, 0),
+    CMG = ifelse(CMG == "CMG", 1, 0),
+    INFORMAL_MONEYLENDER = ifelse(INFORMAL_MONEYLENDER == "INFORMAL_MONEYLENDER", 1, 0),
+    SOCIAL_GROUPS = ifelse(SOCIAL_GROUPS == "SOCIAL_GROUPS", 1, 0)
   )
 ```
 :::
@@ -734,21 +727,83 @@ write_rds(tanzania_encoded,"data/rds/tanzania_encoded")
 tanzania_encoded <- read_rds("data/rds/tanzania_encoded")
 ```
 
-Lastly, we will select the cleaned encoded columns as our final dataframe and replace all the missing values in encoded variables with 0. We will exclude geometry column in the process with the following code.
+------------------------------------------------------------------------
+
+# **7 Data Cleaning for Model Building**
+
+The following steps will be taken to further clean our data frame to be compatible and be able to build a meaningful model.
+
+1.  We will select the cleaned encoded columns as our final dataframe and replace all the missing values in encoded variables with 0. We will exclude geometry column and rename two district names with symbols that interfere the model with the following code.
 
 ```{r}
 #| eval: False
 tanzania_cleaned <- tanzania_encoded %>%
-  select(7,212:544)%>%
-  mutate(across(-c(geometry), ~ ifelse(is.na(.), 0, .)))
+  select(7,196:205,212:534)%>%
+  mutate(across(-c(geometry), ~ ifelse(is.na(.), 0, .)))%>%
+  rename(
+    dist_Nyanghwale = `dist_Nyang'hwale`,
+    dist_Wangingombe= `dist_Wanging'ombe`,
+    dist_Mafinga_Township_Authority = `dist_Mafinga Township Authority`,
+    dist_Kasulu_Township_Authority = `dist_Kasulu Township Authority`,
+    dist_Masasi_Township_Authority = `dist_Masasi  Township Authority`,
+    dist_Makambako_Township_Authority =`dist_Makambako Township Authority`,
+    dist_Kahama_Township_Authority=`dist_Kahama Township Authority`,
+    dist_Korogwe_Township_Authority=`dist_Korogwe Township Authority`,
+    dist_Kaskazini_A = `dist_Kaskazini A`,
+    dist_Kaskazini_B = `dist_Kaskazini B`,
+    dist_Chake_Chake = `dist_Chake Chake`,
+    dist_Handeni_Mji =`dist_Handeni Mji`)
 ```
 
-There is now 13 records with age 0. We will impute age with the mean of the remaining respondents.
+2.  There is now 13 records with age 0. We will impute age with the mean of the remaining respondents.
 
 ```{r}
 #| eval: False
 mean_age <- mean(tanzania_cleaned$Age, na.rm = TRUE)
 tanzania_cleaned$Age[tanzania_cleaned$Age == 0] <- mean_age
+```
+
+3.  Let's see if there are any columns with all 0s. It means that the respondent did not respond to this particular question of the survey. We will need to remove them since they will impact our model.
+
+    ::: panel-tabset
+    ## Check
+
+    ```{r}
+    nogeom_df <- as.data.frame(st_drop_geometry(tanzania_cleaned))
+    zero_columns <- sapply(nogeom_df, function(col) all(col == 0))
+    columns_with_all_zeros <- names(zero_columns[zero_columns])
+
+    print(columns_with_all_zeros)
+
+    ```
+
+    ## Remove
+
+    The following variables will be removed from building our model.
+
+    ```{r}
+    columns_to_remove <- c( "PENSION", "MobileNo", "ComfortableWithBank_Yes", "ComfortableWithBank_No", 
+                            "ReceivedFinancialEducation_Yes", "ReceivedFinancialEducation_No", 
+                            "Used_Cash", "Used_ATM_DebitCard", "Used_CreditCard", 
+                            "Used_BankTransfer", "Used_MobileMoney", "Used_Cryptocurrency", 
+                            "Used_QR_Code", "Used_POS", "Used_LipaNamba", "Used_AZAMPay", 
+                            "Gave_Money_To_Official", "Trust_Insurance_Companies", 
+                            "Insurance_Good_Idea", "Need_Insurance", "Agricultural_Insurance", 
+                            "Livestock_Insurance")
+
+    tanzania_cleaned <- tanzania_cleaned[, !names(tanzania_cleaned) %in% columns_to_remove]
+
+    ```
+    :::
+
+4.  We noted that the geometry column is in MULTIPOLYGON format. For GWR analysis later on, we will need point geometries to represent specific locations. Leaving the geometry as MULTIPOLYGON can negatively affect the GWR analysis, as the model requires precise locations for its local regression estimations.We will use st_centroid to find the centroid points of each district.
+
+```{r}
+#| eval: False
+tanzania_cleaned$centroids <- st_centroid(tanzania_cleaned$geometry)
+tanzania_cleaned <- tanzania_cleaned %>%
+  mutate(geometry = centroids) %>%
+  select(-centroids)
 ```
 
 Now, our dataframe is ready and cleaned with our chosen variables. We will save it.
@@ -764,11 +819,218 @@ write_rds(tanzania_cleaned,"data/rds/tanzania_cleaned.rds")
 ## Load
 
 ```{r}
-tanzania_cleaned <- read_rds("data/rds/tanzania_cleaned.rds")
+tanzania_cleaned <- read_rds("data/rds/tanzania_cleaned.rds") 
 ```
 :::
 
-## 
+We will visualize the points with **tmap** to ensure they are properly placed (not in water).
+
+```{r}
+tmap_mode('plot')
+tm_shape(tanzbounds) + 
+  tm_polygons(col = "lightblue", border.col = "black") +
+  tm_shape(tanzania_cleaned$geometry) + 
+  tm_dots(size = 0.03, col = "red") +
+  tm_layout(
+    title = "Centroids of Regions in Tanzania", 
+    title.position = c("center", "top"),
+    title.size = 0.8
+  )
+```
+
+------------------------------------------------------------------------
+
+# 8 Correlation Analysis
+
+Since we have around 331 variables chosen, it is hard to visualize a correlation matrix. Therefore we will just display the highly correlated(pairs of variables with absolute correlations greater than 0.8) with the following code chunk.
+
+```{r}
+cor_data <- nogeom_df %>%
+  select(-c(FII, districts))  # Exclude FII and districts columns
+cor_matrix <- cor(cor_data, use = "complete.obs")
+
+high_correlations <- which(abs(cor_matrix) > 0.7, arr.ind = TRUE)
+high_cor_df <- data.frame(
+  Var1 = rownames(cor_matrix)[high_correlations[, 1]],
+  Var2 = colnames(cor_matrix)[high_correlations[, 2]],
+  Correlation = cor_matrix[high_correlations]
+)
+
+high_cor_df <- high_cor_df %>%
+  filter(Var1 != Var2) %>%
+  distinct()
+
+print(high_cor_df)
+```
+
+We observed that there are 16 variables (8 pairs) highly correlated with each other. From these pair, only one variable will be chosen to represent the pair.
+
+| Variable1                   | Variable2                    | Correlation | Excluded Variable                           |
+|:----------------------------|:-----------------------------|:------------|---------------------------------------------|
+| NotHHH                      | HHH                          | -0.9975866  | HHH                                         |
+| Male                        | Female                       | -0.9975741  | Male                                        |
+| Urban                       | Rural                        | -0.9973118  | Rural                                       |
+| PayingBack_No               | PayingBack_Yes               | -0.9960052  | PayingBack_No                               |
+| INFORMAL_MONEYLENDER        | Moneylender_CustomerSupport  | 0.7060127   | Moneylender_CustomerSupport                 |
+| Basic_TASAF_Cash_Transfer   | Payment_Was_Late             | 0.7140976   | Basic_TASAF_Cash_Transfer                   |
+| Farmers_and_fishers         | BusinessRegistered_No        | 0.7148562   | Farmers_and_fishers                         |
+| Moneylender_FeesReasonable  | Moneylender_InfoClear        | 0.7194408   | Moneylender_InfoClear                       |
+| INFORMAL_MONEYLENDER        | Moneylender_NeedsMet         | 0.7253264   | Moneylender_NeedsMet                        |
+| BorrowedFrom_SavingsGroup   | CMG                          | 0.7388170   | CMG                                         |
+| INFORMAL_MONEYLENDER        | Moneylender_TreatsWell       | 0.7441848   | Moneylender_TreatsWell                      |
+| INFORMAL_MONEYLENDER        | BorrowedFrom_CommunityLender | 0.7470478   | BorrowedFrom_CommunityLender                |
+| Moneylender_FeesReasonable  | Moneylender_Access           | 0.7752727   | Moneylender_Access                          |
+| National_Health_Insurance   | INSURANCE                    | 0.7840297   | National_Health_Insurance                   |
+| BusinessRegistered_No       | BusinessTooSmall             | 0.7950249   | BusinessTooSmall                            |
+| INFORMAL_MONEYLENDER        | Moneylender_Access           | 0.8063914   | Moneylender_Access                          |
+| Have_Insurance_Cover        | National_Health_Insurance    | 0.8074941   | Both is represented by INSURANCE            |
+| Moneylender_FeesReasonable  | Moneylender_NeedsMet         | 0.8080053   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_CustomerSupport | Moneylender_InfoClear        | 0.8113425   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_NeedsMet        | Moneylender_InfoClear        | 0.8233834   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_Access          | Moneylender_InfoClear        | 0.8356246   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_FeesReasonable  | Moneylender_TreatsWell       | 0.8358110   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_TreatsWell      | Moneylender_InfoClear        | 0.8436488   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_CustomerSupport | Moneylender_FeesReasonable   | 0.8579669   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_Access          | Moneylender_NeedsMet         | 0.8665302   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_TreatsWell      | Moneylender_NeedsMet         | 0.8798763   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_NeedsMet        | Moneylender_TreatsWell       | 0.8798763   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_CustomerSupport | Moneylender_NeedsMet         | 0.8820151   | Both is represented by INFORMAL_MONEYLENDER |
+| Moneylender_Access          | Moneylender_TreatsWell       | 0.8978552   | Both is represented by INFORMAL_MONEYLENDER |
+| Have_Insurance_Cover        | INSURANCE                    | 0.9709417   | Have_Insurance_Cover                        |
+
+The following code chunk will be used to remove the variables.
+
+```{r}
+tanzania_cleaned <- tanzania_cleaned %>%
+  select(-c(Rural, NotHHH, Male,Moneylender_NeedsMet,Moneylender_TreatsWell,BorrowedFrom_CommunityLender, Moneylender_InfoClear,Moneylender_FeesReasonable, Moneylender_Access,Moneylender_CustomerSupport, BusinessTooSmall, Farmers_and_fishers, PayingBack_No, Basic_TASAF_Cash_Transfer, National_Health_Insurance,CMG,Have_Insurance_Cover))
+```
+
+We will also conduct a VIF test to confirm correlation after building our first linear regression model.
+
+------------------------------------------------------------------------
+
+# 9 The Model
+
+## Hedonic Linear Regression Method
+
+```{r}
+mlr_data <- tanzania_cleaned %>%
+  select(-c(districts)) 
+```
+
+```{r}
+tanzania.mlr <- lm(formula = FII ~ Age + Group_Belong + Group_Contribution + AmountBetting + 
+                       dist_Arusha + dist_Karatu + dist_Longido + dist_Arumeru + 
+                       dist_Monduli + dist_Ngorongoro + dist_Ilala + dist_Kinondoni + 
+                       dist_Temeke + dist_Bahi + dist_Chamwino + dist_Chemba + dist_Dodoma + 
+                       dist_Kondoa + dist_Kongwa + dist_Mpwapwa + dist_Bukombe + dist_Chato + 
+                       dist_Geita + dist_Mbogwe + dist_Nyanghwale + dist_Iringa + 
+                       dist_Kilolo + dist_Mafinga_Township_Authority + dist_Mufindi + 
+                       dist_Biharamulo + dist_Bukoba + dist_Karagwe + dist_Kyerwa + 
+                       dist_Missenyi + dist_Muleba + dist_Ngara + dist_Micheweni + 
+                       dist_Wete + dist_Kaskazini_A + dist_Kaskazini_B + dist_Mlele + 
+                       dist_Mpanda + dist_Buhigwe + dist_Kakonko + dist_Kasulu + 
+                       dist_Kasulu_Township_Authority + dist_Kibondo + dist_Kigoma + 
+                       dist_Uvinza + dist_Hai + dist_Moshi + dist_Mwanga + dist_Rombo + 
+                       dist_Same + dist_Siha + dist_Chake_Chake + dist_Mkoani + 
+                       dist_Kati + dist_Kusini + dist_Kilwa + dist_Lindi + dist_Liwale + 
+                       dist_Nachingwea + dist_Ruangwa + dist_Babati + dist_Hanang + 
+                       dist_Kiteto + dist_Mbulu + dist_Simanjiro + dist_Bunda + 
+                       dist_Butiam + dist_Musoma + dist_Rorya + dist_Serengeti + 
+                       dist_Tarime + dist_Chunya + dist_Kyela + dist_Mbarali + 
+                       dist_Mbeya + dist_Rungwe + dist_Magharibi + dist_Mjini + 
+                       dist_Gairo + dist_Kilombero + dist_Kilosa + dist_Morogoro + 
+                       dist_Mvomero + dist_Ulanga + dist_Masasi + dist_Masasi_Township_Authority + 
+                       dist_Mtwara + dist_Nanyumbu + dist_Newala + dist_Tandahimba + 
+                       dist_Ilemela + dist_Kwimba + dist_Magu + dist_Misungwi + 
+                       dist_Nyamagana + dist_Sengerema + dist_Ukerewe + dist_Ludewa + 
+                       dist_Makambako_Township_Authority + dist_Makete + dist_Njombe + 
+                       dist_Wangingombe + dist_Bagamoyo + dist_Kibaha + 
+                       dist_Kisarawe + dist_Mafia + dist_Mkuranga + dist_Rufiji + 
+                       dist_Kalambo + dist_Nkasi + dist_Sumbawanga + dist_Mbinga + 
+                       dist_Namtumbo + dist_Nyasa + dist_Songea + dist_Tunduru + 
+                       dist_Kahama + dist_Kahama_Township_Authority + dist_Kishapu + 
+                       dist_Shinyanga + dist_Bariadi + dist_Busega + dist_Itilima + 
+                       dist_Maswa + dist_Meatu + dist_Ikungi + dist_Iramba + 
+                       dist_Manyoni + dist_Mkalama + dist_Singida + dist_Ileje + 
+                       dist_Mbozi + dist_Momba + dist_Songwe + dist_Tunduma + 
+                       dist_Igunga + dist_Kaliua + dist_Nzega + dist_Sikonge + 
+                       dist_Tabora + dist_Urambo + dist_Uyui + dist_Handeni + 
+                       dist_Handeni_Mji + dist_Kilindi + dist_Korogwe + 
+                       dist_Korogwe_Township_Authority + dist_Lushoto + dist_Mkinga + 
+                       dist_Muheza + dist_Pangani + dist_Tanga + Urban + HHH + 
+                       Female + NoFormalEducation + SomePrimary + PrimaryCompleted + 
+                       PostPrimaryTechnicalTraining + SomeSecondary + 
+                       SecondaryCompleted_OLevel + SomeUniversityOrHigherEducation + 
+                       UniversityOrHigherEducationCompleted + MobilePhone + Internet + MobileYes+
+                       Laptop + BusinessRegistered_Yes + 
+                       BusinessRegistered_No + TriedButNot + NoTime + NoMoney + 
+                       TooComplicated + NoBenefit + NoPayment + DontKnowHow + 
+                       RegistrationInProcess + Formal_sector_salaried + 
+                       Informal_sector_salaried + Traders_agricultural_products + 
+                       Traders_non_agricultural + Service_providers + 
+                       Piece_work_casual_labor + Rental_income + 
+                       Interest_from_savings_investments_stocks_unit_trusts + 
+                       Pension + Welfare + Gambling + Dependents + 
+                       Advice_HouseholdMember + Advice_FamilyMember + Advice_Employer + 
+                       Advice_Bank + Advice_Microfinance + Advice_SACCOS + 
+                       Advice_FinancialAdvisor + Advice_FarmersAssociation + 
+                       Advice_BusinessAssociation + Advice_SavingsGroup + 
+                       Advice_Moneylender + Advice_GovernmentOfficial + 
+                       Advice_VillageElder + Advice_OtherSpecify + Advice_NoOne + 
+                       UsedSavings + BorrowedFromBank + BorrowedThroughMM + 
+                       BorrowedFromMoneyLender + BorrowedFromFriendFamily + 
+                       GotAssistanceFromFamily + SoldLivestock + CutSpending + 
+                       WorkedMore + Old_Savings + 
+                       Old_ChildrenWillTakeCareOfMe + Old_MoneyFromFriendsRelatives + 
+                       Old_LandProperty + Old_OwnBusiness + Old_RentalIncome + 
+                       Old_DividendsFromShares + Old_FarmingAgricultureLivestock + 
+                       Old_Pension + Old_InsurancePolicy + Old_NoPlans + 
+                       ConfidentWithBanks + ConfidentWithMFIs + 
+                       ConfidentWithSACCOs + ConfidentWithMobileMoney + 
+                       ConfidentWithPensionFund + ConfidentWithSavingsGroups + 
+                       ConfidentWithFamilyFriends + ConfidentWithUTTs + 
+                       PayingBack_Yes + BorrowedFrom_Bank + BorrowedFrom_MFI + 
+                       BorrowedFrom_SACCO + BorrowedFrom_MobileMoney + 
+                       BorrowedFrom_PensionFund + BorrowedFrom_Employer + 
+                       BorrowedFrom_Family_PayBack + BorrowedFrom_Family_NoPayBack + 
+                       BorrowedFrom_SavingsGroup + 
+                       BorrowedFrom_OtherSource +  
+                       Additional_Conditional_TASAF_Cash_Transfer + Pension_for_Elders + 
+                       Others_Assistance + Payment_Was_Late + 
+                       Money_Didnt_Come + Received_Less_Money + 
+                       Household_Not_On_Register + Unable_To_Collection_Point + 
+                       No_Proof_Of_Identity + Do_Not_Know_Where_To_Go + 
+                       Places_Not_In_My_Area + Do_Not_Think_They_Care + 
+                       Motor_Vehicle_Insurance + Households_Contents_Insurance + 
+                       Private_Health_Insurance + Community_Health_Insurance + 
+                       TIKA_Insurance + Social_Health_Insurance + 
+                       Personal_Accident_Insurance + Life_Insurance + 
+                       Loan_Insurance + Building_Insurance + Education_Policy + 
+                       Funeral_Cover + Ushirika_Afya + 
+                       Motorcycle_Insurance + 
+                       Other_Insurance_Products + Network_Failure + 
+                       Agent_Absent + Agent_No_Cash_Float + Agent_Overcharged + 
+                       Lost_Money + Agent_Requested_PIN + Other_Problems + Banked + MFI + INSURANCE + SACCO +
+                       CAPITALM_FUND_MANAGERS + FORM_INVESTMENTS +INFORMAL_MONEYLENDER +SOCIAL_GROUPS, 
+                data=mlr_data)
+```
+
+## **Model assessment: olsrr method**
+
+This tool is used to calibrate regression model, generate a more organized report and do stepwise regression.
+
+```{r}
+ols_regress(tanzania.mlr) 
+```
+
+## **Multicollinearity - VIF**
+
+```{r}
+vif_results <- ols_vif_tol(tanzania.mlr)
+high_vif <- vif_results[vif_results$VIF > 10, ]
+print(high_vif)
+```
 
 # References
 
