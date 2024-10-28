@@ -96,7 +96,7 @@ distmat_km <- as.matrix(distmat/1000)
 
 ### **Computing Hansen’s accessibility**
 
-he code chunk below calculates Hansen’s accessibility using *ac()* of **SpatialAcc** and *data.frame()* is used to save the output in a data frame called `acc_Handsen`.
+The code chunk below calculates Hansen’s accessibility using *ac()* of **SpatialAcc** and *data.frame()* is used to save the output in a data frame called `acc_Handsen`.
 
 ```{r}
 acc_Hansen <- data.frame(ac(hexagons$demand,
@@ -111,24 +111,8 @@ acc_Hansen <- data.frame(ac(hexagons$demand,
 colnames(acc_Hansen) <- "accHansen"
 ```
 
-Next, we will convert the data table into tibble format by using the code chunk below.
-
 ```{r}
-acc_Hansen <- tbl_df(acc_Hansen)
-```
 
-Lastly, *bind_cols()* of dplyr will be used to join the acc_Hansen tibble data frame with the hexagons simple feature data frame. The output is called `hexagon_Hansen`.
-
-```{r}
-hexagon_Hansen <- bind_cols(hexagons, acc_Hansen)
-```
-
-### **Visualising Hansen’s accessibility**
-
-#### Extracting map extend
-
-```{r}
-mapex <- st_bbox(hexagons)
 ```
 
 The code chunk below uses a collection of mapping fucntions of tmap package to create a high cartographic quality accessibility to eldercare centre in Singapore.
