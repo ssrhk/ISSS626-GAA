@@ -14,22 +14,57 @@ execute:
 # Load Packages
 
 ```{r}
-pacman::p_load(tmap, SpatialAcc, sf, 
-               ggstatsplot, reshape2,
-               tidyverse)
+pacman::p_load(SpatialAcc, sf, tidyverse, 
+               tmap, ggstatsplot)
 ```
 
 # Import Data Packages
 
 ```{r}
-mpsz <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_NO_SEA_PL") %>%
+eldercare <- st_read(dsn = "data/geospatial",
+                     layer = "ELDERCARE") %>%
   st_transform(crs = 3414)
 
-hexagons <- st_read(dsn = "data/geospatial", layer = "hexagons") %>%
+CHAS <- st_read("data/CHASClinics.kml") %>%
+  st_transform(crs = 3414)
+```
+
+Next, `st_buffer()` of sf package is used to create a buffer of 1km around each eldercare features
+
+```{r}
+buffer_1km <- st_buffer(eldercare, 
+                        dist = 1000)
+```
+
+```{r}
+tmap_mode("view")
+tm_shape(buffer_1km) +
+  tm_polygons() +
+tm_shape(CHAS) +
+  tm_dots()
+```
+
+Lastly, the code chunk below is used to count the number of CHAS clinics with 1km of each eldercare centre.
+
+```{r}
+buffer_1km$pts_count <- lengths(
+  st_intersects(buffer_1km, CHAS))
+```
+
+# Importing Data
+
+```{r}
+mpsz <- st_read(dsn = "data/geospatial",
+                layer = "MP14_SUBZONE_NO_SEA_PL") %>%
   st_transform(crs = 3414)
 
-eldercare <- st_read(dsn = "data/geospatial", layer = "ELDERCARE") %>%
+hexagons <- st_read(dsn = "data/geospatial",
+                   layer = "hexagons") %>%
   st_transform(crs = 3414)
+
+eldercare <- st_read(dsn = "data/geospatial",
+                     layer = "ELDERCARE") %>%
+  st_transform(csr = 3414)
 ```
 
 ## OD Matrix
@@ -84,17 +119,9 @@ acc_Hansen <- data.frame(ac(hexagons$demand,
 
 ```{r}
 colnames(acc_Hansen) <- "accHansen"
-```
 
-Next, we will convert the data table into tibble format by using the code chunk below.
+acc_Hansen <- as_tibble(acc_Hansen)
 
-```{r}
-acc_Hansen <- tbl_df(acc_Hansen)
-```
-
-Lastly, *bind_cols()* of dplyr will be used to join the acc_Hansen tibble data frame with the hexagons simple feature data frame. The output is called `hexagon_Hansen`.
-
-```{r}
 hexagon_Hansen <- bind_cols(hexagons, acc_Hansen)
 ```
 
@@ -131,6 +158,21 @@ tm_shape(eldercare) +
   tm_compass(type="8star", size = 2) +
   tm_scale_bar(width = 0.15) +
   tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+# Statistical graphic
+
+```{r}
+hexagon_Hansen <- st_join(hexagon_Hansen, mpsz, 
+                          join = st_intersects)
+```
+
+```{r}
+ggbetweenstats(
+  data = hexagon_Hansen,
+  x = REGION_N,
+  y = accHansen,
+  type = "p")
 ```
 
 ## **Modelling and Visualising Accessibility using Spatial Accessibility Measure (SAM) Method**

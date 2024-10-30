@@ -111,9 +111,21 @@ acc_Hansen <- data.frame(ac(hexagons$demand,
 colnames(acc_Hansen) <- "accHansen"
 ```
 
-```{r}
+Lastly, *bind_cols()* of dplyr will be used to join the acc_Hansen tibble data frame with the hexagons simple feature data frame. The output is called `hexagon_Hansen`.
 
+```{r}
+hexagon_Hansen <- bind_cols(hexagons, acc_Hansen)
 ```
+
+### **Visualising Hansen’s accessibility**
+
+#### Extracting map extend
+
+```{r}
+mapex <- st_bbox(hexagons)
+```
+
+Boundary box to reserve the dimension.
 
 The code chunk below uses a collection of mapping fucntions of tmap package to create a high cartographic quality accessibility to eldercare centre in Singapore.
 
