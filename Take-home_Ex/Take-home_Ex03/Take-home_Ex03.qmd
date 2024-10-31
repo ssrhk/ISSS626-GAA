@@ -21,11 +21,11 @@ Despite significant progress in financial inclusion efforts, access to financial
 
 ## 1.2 Objectives
 
-This analysis aims to build an explanatory model using Multiple Linear Regression as well as Geographically Weighted Regression (GWR) to identify the key factors affecting financial inclusion across ***districts in Tanzania***. By focusing on multiple socio-economic and infrastructural variables, this study will provide insights into how these factors vary geographically and influence financial access at a district level.
+This analysis aims to build an explanatory model using Multiple Linear Regression as well as Geographically Weighted Regression (GWR) to identify the key factors affecting financial inclusion across districts in Tanzania. By focusing on multiple socio-economic and infrastructural variables, this study will provide insights into how these factors vary geographically and influence financial access ***at a district level***.
 
 Specifically, the objectives are:
 
--   **Identify Key Determinants**: Determine the primary socio-economic and infrastructural factors that influence financial inclusion, such as income levels, education, proximity to financial institutions, and mobile money adoption.
+-   **Identify Key Determinants**: Determine the primary socio-economic and infrastructural factors that influence financial inclusion.
 
 -   **Examine Regional Variation**: Explore how the effects of these factors vary across different districts, providing a localized understanding of financial inclusion.
 
@@ -37,7 +37,7 @@ The process will follow these steps:
 
 -   **Defining dependent variable (y)**: Derive dependent variable which represents financial inclusion from the FinScope dataset.
 
--   **Explanatory Variable Selection (x)**: Identify key predictor variables, both continuous and categorical, from the FinScope dataset, such as income levels, education and mobile money adoption. These will serve as explanatory variables in the model.
+-   **Explanatory Variable Selection (x)**: Identify key predictor variables, both continuous and categorical, from the FinScope dataset. These will serve as explanatory variables in the model.
 
 -   **Model Building**: Build the explanatory model using multiple linear regression techniques, enhanced by GWR to account for geographical variations. This will allow us to evaluate the influence of each predictor on financial inclusion across different districts.
 
@@ -57,8 +57,6 @@ The following packages were used for this study:
 +-------------+---------------------------------------------------------------------------------------------------------------+
 | Package     | Description                                                                                                   |
 +=============+===============================================================================================================+
-| st          | For displaying summary statistics                                                                             |
-+-------------+---------------------------------------------------------------------------------------------------------------+
 | olsrr       | For creating and evaluating ordinary least squares regression models.                                         |
 +-------------+---------------------------------------------------------------------------------------------------------------+
 | ggstatsplot | for producing statistical visualizations that combine ggplot2 graphics with statistical results               |
@@ -111,12 +109,8 @@ The *FinScope* *Tanzania* dataset from 2023, was imported by using *read_csv()* 
 
 Then, the data was prepared for analysis with the following steps:
 
--   We extract the columns with the variables chosen which will be explained in the Variable Selection section
-
-<!-- -->
-
+-   We extract the columns with the variables chosen which will be explained in the Variable Selection section.
 -   Rename some district names to match the boundary dataset in section 4.3.
-
 -   Remove columns with all missing/NA values.
 
 ```{r}
@@ -233,7 +227,7 @@ tanzbounds<- read_rds("data/rds/tanzbounds.rds")
 
 ------------------------------------------------------------------------
 
-# 5 Data Wrangling of Variables
+# 5 Data Wrangling
 
 In the development of a multiple linear regression model, the selection of appropriate variables is critical to ensuring the model's accuracy and interpretability. This section focuses on the selection of both categorical and continuous variables that will serve as predictors in our regression analysis.
 
@@ -243,7 +237,7 @@ Initially, we will establish a preliminary set of variables based on theoretical
 
 We will employ one-hot encoding to transform categorical variables into a format suitable for regression modeling. One-hot encoding allows us to create binary columns for each category, enabling the regression model to assess the impact of each nominal variable effectively. This approach ensures that we capture the distinct effects of categorical factors on the dependent variable while maintaining the integrity of the data.
 
-Before we further prepare our variables, we will convert the column names into a more R-friendly format using `make.names()`.
+Before we further prepare our variables (which are in the form of survey questions), we will convert the column names into a more R-friendly format using `make.names()`.
 
 ```{r}
 #| eval: False
@@ -527,65 +521,69 @@ Used_AZAMPay = ifelse(`X3.4.In.the.past.12.months..how.often.did.you.use.the.AZA
 
 We will ensure these newly encoded variables are numeric format and all NA will be replaced by 0.
 
+Then we will aggregate the one hot encoded variables to group by district since our analysis on district level and not on each respondent level.
+
 ```{r}
 #| eval: False
 tanzania_onehotencoded <- tanzania_onehotencoded %>%
   mutate_at(vars(182:191,197:373), ~ as.numeric(replace_na(., 0)))
 ```
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| **Variable**                                                                                                                                                         | **District Level Transformation (Group by)**                                                                                                                   |
-+======================================================================================================================================================================+================================================================================================================================================================+
-| Cluster type                                                                                                                                                         | Percentage of Urban for each district ( to reduce multicollinearity in regression as Rural and Urban will add up to 1, we will only choose one out of the two) |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Respondent gender                                                                                                                                                    | Percentage of Male for each district( to reduce multicollinearity in regression as Male and Female will add up to 1, we will only choose one out of the two)   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Education Background                                                                                                                                                 | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Access to Mobile Phone, Internet and Laptop                                                                                                                          | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Financial Documents owned                                                                                                                                            | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Source of Money to Start Business                                                                                                                                    | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| If Business is registered with government and if it is not, why                                                                                                      | Percentage of Yes for each district                                                                                                                            |
-|                                                                                                                                                                      |                                                                                                                                                                |
-|                                                                                                                                                                      | Sum/Count of each 'No' category for each district                                                                                                              |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Respondent's main income source                                                                                                                                      | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Who they discuss their financial matters with                                                                                                                        | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| What they did when they could not meet spending needs                                                                                                                | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Whether respondent is comfortable with banks                                                                                                                         | Percentage of Yes for each district( to reduce multicollinearity in regression as Yes and No will add up to 1, we will only choose one out of the two)         |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Financial Education                                                                                                                                                  | Percentage of Yes for each district( to reduce multicollinearity in regression as Yes and No will add up to 1, we will only choose one out of the two)         |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Retirement plans                                                                                                                                                     | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Confidence in financial institutions                                                                                                                                 | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| If they are paying back money they owe within a year                                                                                                                 | Percentage of Yes for each district( to reduce multicollinearity in regression as Yes and No will add up to 1, we will only choose one out of the two)         |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| If they have borrowed money from any financial institutions                                                                                                          | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| How often a respondent use the payment type for purchases                                                                                                            | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Assistance from Government or NGO and problems they face receiving assistance                                                                                        | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Reporting problems regarding financial matters                                                                                                                       | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Confidence and Trust in Insurance Companies                                                                                                                          | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Insurance ownership and type of insurance                                                                                                                            | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| If they have any issues accessing financial products                                                                                                                 | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Access and relationship with moneylender                                                                                                                             | Sum/Count of each category for each district                                                                                                                   |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| If respondent is involved with a Bank, MFI, PENSION, INSURANCE, SACCO, CAPITAL Fund Managers, FORMAL INVESTMEN, CMG, INFORMAL MONEYLENDER or apart of a Social group | Percentage of Yes for each district( to reduce multicollinearity in regression as Yes and No will add up to 1, we will only choose one out of the two)         |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| **Variable**                                                                                                                                                         | **District Level Transformation (Group by)**                                                                                                                                                                                                                                                                                                                                        |
++======================================================================================================================================================================+=====================================================================================================================================================================================================================================================================================================================================================================================+
+| Cluster type                                                                                                                                                         | Percentage of Urban for each district ( to reduce multicollinearity in regression as Rural and Urban will add up to 1, we will only choose one out of the two)                                                                                                                                                                                                                      |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Respondent gender                                                                                                                                                    | Ratio of Male vs Female (1: equal number, \<1: less Male than Female, \>1: More Male than Female, 0: No male in this district)                                                                                                                                                                                                                                                      |
+|                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                     |
+|                                                                                                                                                                      | \*To reduce multicollinearity, we will not be using the same denominator, number of total respondents in district, as we did in Cluster type.                                                                                                                                                                                                                                       |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Education Background                                                                                                                                                 | Ratio of poeple with No Formal Education vs other categories of education fromPrimary \~ University (1: equal number, \<1: less people with no formal education than people with some formal education, \>1: More people with no formal education than people with some formal education, 0: All respondents have some kind of education in this district; there is no one without) |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Access to Mobile Phone, Internet and Laptop                                                                                                                          | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Financial Documents owned                                                                                                                                            | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Source of Money to Start Business                                                                                                                                    | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If Business is registered with government and if it is not, why                                                                                                      | Ratio of Registered Businesses vs Not Registered (1: equal number, \<1: less Registered Businesses than Not, \>1: More Registered Businesses than Not, 0: No registered business in this district)                                                                                                                                                                                  |
+|                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                     |
+|                                                                                                                                                                      | Sum/Count of each 'No' category for each district                                                                                                                                                                                                                                                                                                                                   |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Respondent's main income source                                                                                                                                      | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Who they discuss their financial matters with                                                                                                                        | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| What they did when they could not meet spending needs                                                                                                                | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Whether respondent is comfortable with banks                                                                                                                         | Ratio of People comfortable with Banks vs Not comfortable (1: equal number, \<1: less people comfortable with banks than Not, \>1: More people comfortable with banks than Not, 0: No one is comfortable with banks in this district)                                                                                                                                               |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Financial Education                                                                                                                                                  | Ratio of People that received financial education vs No financial education (1: equal number, \<1: less people received financial edcation than Not, \>1: More people received financial education than Not, 0: No one received financial education in this district)                                                                                                               |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Retirement plans                                                                                                                                                     | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Confidence in financial institutions                                                                                                                                 | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If they are paying back money they owe within a year                                                                                                                 | Ratio of People that currently owes money vs people that does not (1: equal number, \<1: less people currently owe money than Not, \>1: More people currently owe money than Not, 0: No one currentlyn owe in this district)                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If they have borrowed money from any financial institutions                                                                                                          | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| How often a respondent use the payment type for purchases                                                                                                            | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Assistance from Government or NGO and problems they face receiving assistance                                                                                        | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Reporting problems regarding financial matters                                                                                                                       | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Confidence and Trust in Insurance Companies                                                                                                                          | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Insurance ownership and type of insurance                                                                                                                            | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If they have any issues accessing financial products                                                                                                                 | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Access and relationship with moneylender                                                                                                                             | Sum/Count of each category for each district                                                                                                                                                                                                                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| If respondent is involved with a Bank, MFI, PENSION, INSURANCE, SACCO, CAPITAL Fund Managers, FORMAL INVESTMEN, CMG, INFORMAL MONEYLENDER or apart of a Social group | Percentage of Yes for each district( to reduce multicollinearity in regression as Yes and No will add up to 1, we will only choose one out of the two)                                                                                                                                                                                                                              |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ```{r}
 #| eval: False
@@ -597,35 +595,12 @@ categorical_var <- tanzania_onehotencoded %>%
       0,
       sum(Urban, na.rm = TRUE) / (sum(Urban, na.rm = TRUE) + sum(Rural, na.rm = TRUE))
     ), # Percentage of Urban
-    Male = ifelse(
-      (sum(Male, na.rm = TRUE) + sum(Female, na.rm = TRUE)) == 0,
-      0,
-      sum(Male, na.rm = TRUE) / (sum(Male, na.rm = TRUE) + sum(Female, na.rm = TRUE))
-    ), # Percentage of Male
-    BusinessRegistered_Yes= ifelse(
-      (sum(BusinessRegistered_Yes, na.rm = TRUE) + sum(BusinessRegistered_No, na.rm = TRUE)) == 0,
-      0,
-      sum(BusinessRegistered_Yes, na.rm = TRUE) /
-        (sum(BusinessRegistered_Yes, na.rm = TRUE) + sum(BusinessRegistered_No, na.rm = TRUE))
-    ), # Percentage of Registered Businesses
-    ComfortableWithBank_Yes = ifelse(
-      (sum(ComfortableWithBank_Yes, na.rm = TRUE) + sum(ComfortableWithBank_No, na.rm = TRUE)) == 0,
-      0,
-      sum(ComfortableWithBank_Yes, na.rm = TRUE) /
-        (sum(ComfortableWithBank_Yes, na.rm = TRUE) + sum(ComfortableWithBank_No, na.rm = TRUE))
-    ), # Percentage of Comfortable with Bank
-    ReceivedFinancialEducation_Yes = ifelse(
-      (sum(ReceivedFinancialEducation_Yes, na.rm = TRUE) + sum(ReceivedFinancialEducation_No, na.rm = TRUE)) == 0,
-      0,
-      sum(ReceivedFinancialEducation_Yes, na.rm = TRUE) /
-        (sum(ReceivedFinancialEducation_Yes, na.rm = TRUE) + sum(ReceivedFinancialEducation_No, na.rm = TRUE))
-    ), # Percentage of Received Financial Education
-    PayingBack_Yes = ifelse(
-      (sum(PayingBack_Yes, na.rm = TRUE) + sum(PayingBack_No, na.rm = TRUE)) == 0,
-      0,
-      sum(PayingBack_Yes, na.rm = TRUE) /
-        (sum(PayingBack_Yes, na.rm = TRUE) + sum(PayingBack_No, na.rm = TRUE))
-    ), # Percentage of Paying Back
+    Male_Female_Ratio =sum(Male, na.rm = TRUE) / sum(Female, na.rm = TRUE), # Percentage of Male
+    Registered_YesNo_Ratio =sum(BusinessRegistered_Yes, na.rm = TRUE) / sum(BusinessRegistered_No, na.rm = TRUE)
+, # Ratio of Registered Businesses vs Not Registered
+    ComfortableBank_YesNo_Ratio =sum(ComfortableWithBank_Yes, na.rm = TRUE) / sum(ComfortableWithBank_No, na.rm = TRUE), # Ratio of Comfortable with Bank vs Not Comfortable
+     FinancialEducation_YesNo_Ratio =sum(ReceivedFinancialEducation_Yes, na.rm = TRUE) / sum(ReceivedFinancialEducation_No, na.rm = TRUE), # Ratio of People Received Financial Education vs No Financial Education
+    PayingBack_YesNo_Ratio =sum(PayingBack_Yes, na.rm = TRUE) / sum(PayingBack_No, na.rm = TRUE), # Ratio of People that currently owes money vs people that does not
     Banked = sum(Banked, na.rm = TRUE) / n(), # Percentage of Banked
     MFI = sum(MFI, na.rm = TRUE) / n(), # Percentage of MFI
     PENSION = sum(PENSION, na.rm = TRUE) / n(), # Percentage of Pension
@@ -636,14 +611,8 @@ categorical_var <- tanzania_onehotencoded %>%
     CMG = sum(CMG, na.rm = TRUE) / n(), # Percentage of CMG
     INFORMAL_MONEYLENDER = sum(INFORMAL_MONEYLENDER, na.rm = TRUE) / n(), # Percentage of INFORMAL_MONEYLENDER
     SOCIAL_GROUPS = sum(SOCIAL_GROUPS, na.rm = TRUE) / n(), # Percentage of SOCIAL_GROUPS
-    NoFormalEducation = sum(NoFormalEducation, na.rm = TRUE), 
-    SomePrimary = sum(SomePrimary, na.rm = TRUE),
-    PrimaryCompleted = sum(PrimaryCompleted, na.rm = TRUE),
-    PostPrimaryTechnicalTraining = sum(PostPrimaryTechnicalTraining, na.rm = TRUE), 
-    SomeSecondary = sum(SomeSecondary, na.rm = TRUE),
-    SecondaryCompleted_OLevel = sum(SecondaryCompleted_OLevel, na.rm = TRUE), 
-    SomeUniversityOrHigherEducation = sum(SomeUniversityOrHigherEducation, na.rm = TRUE),
-    UniversityOrHigherEducationCompleted = sum(UniversityOrHigherEducationCompleted, na.rm = TRUE),
+
+    NoEdu_SomeEdu = sum(NoFormalEducation, na.rm = TRUE) / (sum(SomePrimary, na.rm = TRUE) +sum(PrimaryCompleted, na.rm = TRUE) + sum(PostPrimaryTechnicalTraining, na.rm = TRUE) + sum(SomeSecondary, na.rm = TRUE) + sum(SecondaryCompleted_OLevel, na.rm = TRUE) + sum(SomeUniversityOrHigherEducation, na.rm = TRUE) + sum(UniversityOrHigherEducationCompleted, na.rm = TRUE)),
     MobilePhone = sum(MobilePhone, na.rm = TRUE), 
     Internet = sum(Laptop, na.rm = TRUE),
     Laptop = sum(Laptop, na.rm = TRUE), 
@@ -804,7 +773,6 @@ categorical_var <- tanzania_onehotencoded %>%
   )
 
 ```
-
 
 ```{r}
 #| eval: False
@@ -1003,7 +971,7 @@ Exploratory Data Analysis (EDA) is a crucial step allowing us to uncover underly
 
 ## 7.1 Descriptive Statistics and Visualizations
 
-### 7.1.1 Summary Statistics of Key Variables
+### 7.1.1 Visualizing Dependent Variable
 
 ### 7.1.2 Distribution Plots
 
@@ -1020,8 +988,8 @@ nogeom_df <- as.data.frame(st_drop_geometry(tanzania_cleaned))
 cor_data <- nogeom_df %>%
   select(-c(FPAI,dist_name,	Banked, MFI, PENSION, INSURANCE, SACCO, CAPITALM_FUND_MANAGERS, FORM_INVESTMENTS,
             CMG,INFORMAL_MONEYLENDER,SOCIAL_GROUPS, 
-            BankMFIStatement,InsurancePolicy,InsuranceCard,BorrowedFromBank,BorrowedFrom_SACCO,BorrowedFrom_MFI,
-            BorrowedFrom_PensionFund,BorrowedFrom_SavingsGroup
+            BankMFIStatement,Subscription,InsurancePolicy,TaxIDNumber,InsuranceCard,MoneyforBusiness_BankLoan,MoneyforBusiness_SACCOSLoan,MoneyforBusiness_CMGSLoan,BusinessRegistered_Yes,BusinessRegistered_No,Pension_Income,Advice_Bank,Advice_SACCOS,Advice_SavingsGroup,Advice_Moneylender,BorrowedFromBank,BorrowedFrom_SACCO,BorrowedFrom_MFI,
+            BorrowedFrom_PensionFund,BorrowedFrom_SavingsGroup,BorrowedFromMoneyLender,BorrowedFrom_Bank,BorrowedFrom_MFI,BorrowedFrom_SACCO,BorrowedFrom_PensionFund,BorrowedFrom_SavingsGroup,BorrowedFrom_CommunityLender,Have_Insurance_Cover
             ))
 cor_matrix <- cor(cor_data, use = "complete.obs")
 
@@ -1039,42 +1007,197 @@ high_cor_df <- high_cor_df %>%
 print(high_cor_df)
 ```
 
-The following table shows the correlation pairs and the excluded variables highlighted in blue.
+The following table shows the correlation pairs and the excluded variables highlighted in blue.The following code chunk will be used to remove the variables.
 
-![](images/Screenshot%202024-10-29%20at%205.57.19%20PM.png)
+| Var1                   | Var2        | Correlation | Exclude                |
+|------------------------|-------------|-------------|------------------------|
+| Dependents_Income      | MobilePhone | 0.8415763   | Dependents_Income      |
+| Advice_HouseholdMember | MobilePhone | 0.8957760   | Advice_HouseholdMember |
+| UsedSavings            | MobilePhone | 0.8785228   | UsedSavings            |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
+|                        |             |             |                        |
 
-![](images/Screenshot%202024-10-29%20at%205.57.49%20PM.png)
+|             |             |           |             |
+|-------------|-------------|-----------|-------------|
+| UsedSavings | MobilePhone | 0.8785228 | UsedSavings |
 
-The following code chunk will be used to remove the variables.
+|                          |             |           |                          |
+|--------------------------|-------------|-----------|--------------------------|
+| BorrowedFromFriendFamily | MobilePhone | 0.8459579 | BorrowedFromFriendFamily |
+
+|                         |             |           |                         |
+|-------------------------|-------------|-----------|-------------------------|
+| GotAssistanceFromFamily | MobilePhone | 0.8835694 | GotAssistanceFromFamily |
+
+|             |             |           |             |
+|-------------|-------------|-----------|-------------|
+| CutSpending | MobilePhone | 0.8235916 | CutSpending |
+
+|             |             |           |             |
+|-------------|-------------|-----------|-------------|
+| Old_NoPlans | MobilePhone | 0.8171885 | Old_NoPlans |
+
+|                    |             |           |                    |
+|--------------------|-------------|-----------|--------------------|
+| ConfidentWithBanks | MobilePhone | 0.8273782 | ConfidentWithBanks |
+
+|                          |             |           |                          |
+|--------------------------|-------------|-----------|--------------------------|
+| ConfidentWithMobileMoney | MobilePhone | 0.8617921 | ConfidentWithMobileMoney |
+
+|           |             |           |           |
+|-----------|-------------|-----------|-----------|
+| Used_Cash | MobilePhone | 0.9620748 | Used_Cash |
+
+|                  |             |           |                  |
+|------------------|-------------|-----------|------------------|
+| Used_MobileMoney | MobilePhone | 0.8079097 | Used_MobileMoney |
+
+|                         |             |           |                         |
+|-------------------------|-------------|-----------|-------------------------|
+| Do_Not_Know_Where_To_Go | MobilePhone | 0.8345175 | Do_Not_Know_Where_To_Go |
+
+|                           |             |           |                           |
+|---------------------------|-------------|-----------|---------------------------|
+| Trust_Insurance_Companies | MobilePhone | 0.8964594 | Trust_Insurance_Companies |
+
+|                     |             |           |                     |
+|---------------------|-------------|-----------|---------------------|
+| Insurance_Good_Idea | MobilePhone | 0.9238936 | Insurance_Good_Idea |
+
+|                 |             |           |                 |
+|-----------------|-------------|-----------|-----------------|
+| Network_Failure | MobilePhone | 0.8569155 | Network_Failure |
+
+|        |          |           |        |
+|--------|----------|-----------|--------|
+| Laptop | Internet | 1.0000000 | Laptop |
+
+|                            |                  |           |                            |
+|----------------------------|------------------|-----------|----------------------------|
+| Farmers_and_fishers_Income | BusinessTooSmall | 0.8078662 | Farmers_and_fishers_Income |
+
+|                                 |                            |           |                                 |
+|---------------------------------|----------------------------|-----------|---------------------------------|
+| Old_FarmingAgricultureLivestock | Farmers_and_fishers_Income | 0.8149506 | Old_FarmingAgricultureLivestock |
+
+|                          |                        |           |                          |
+|--------------------------|------------------------|-----------|--------------------------|
+| BorrowedFromFriendFamily | Advice_HouseholdMember | 0.8038739 | BorrowedFromFriendFamily |
+
+|                         |                        |           |                         |
+|-------------------------|------------------------|-----------|-------------------------|
+| GotAssistanceFromFamily | Advice_HouseholdMember | 0.8242829 | GotAssistanceFromFamily |
+
+|                     |                        |           |                     |
+|---------------------|------------------------|-----------|---------------------|
+| Insurance_Good_Idea | Advice_HouseholdMember | 0.8232845 | Insurance_Good_Idea |
+
+|                             |                          |           |                             |
+|-----------------------------|--------------------------|-----------|-----------------------------|
+| BorrowedFrom_Family_PayBack | BorrowedFromFriendFamily | 0.8943542 | BorrowedFrom_Family_PayBack |
+
+|           |                        |           |           |
+|-----------|------------------------|-----------|-----------|
+| Used_Cash | Advice_HouseholdMember | 0.8590026 | Used_Cash |
+
+|                     |                          |           |                     |
+|---------------------|--------------------------|-----------|---------------------|
+| Insurance_Good_Idea | BorrowedFromFriendFamily | 0.8123864 | Insurance_Good_Idea |
+
+|             |             |           |             |
+|-------------|-------------|-----------|-------------|
+| CutSpending | UsedSavings | 0.8675488 | CutSpending |
+
+|                    |                          |           |                    |
+|--------------------|--------------------------|-----------|--------------------|
+| ConfidentWithBanks | ConfidentWithMobileMoney | 0.8916325 | ConfidentWithBanks |
+
+|           |                    |           |           |
+|-----------|--------------------|-----------|-----------|
+| Used_Cash | ConfidentWithBanks | 0.8446089 | Used_Cash |
+
+|                           |                          |           |                           |
+|---------------------------|--------------------------|-----------|---------------------------|
+| Trust_Insurance_Companies | ConfidentWithMobileMoney | 0.8376665 | Trust_Insurance_Companies |
+
+|                     |                          |           |                     |
+|---------------------|--------------------------|-----------|---------------------|
+| Insurance_Good_Idea | ConfidentWithMobileMoney | 0.8461074 | Insurance_Good_Idea |
+
+|                           |                         |           |                           |
+|---------------------------|-------------------------|-----------|---------------------------|
+| Trust_Insurance_Companies | GotAssistanceFromFamily | 0.8133255 | Trust_Insurance_Companies |
+
+|                 |                     |           |                 |
+|-----------------|---------------------|-----------|-----------------|
+| Network_Failure | Agent_No_Cash_Float | 0.8285897 | Network_Failure |
+
+|                    |                        |           |                    |
+|--------------------|------------------------|-----------|--------------------|
+| Moneylender_Access | Moneylender_TreatsWell | 0.9259172 | Moneylender_Access |
+
+|                       |                        |           |                       |
+|-----------------------|------------------------|-----------|-----------------------|
+| Moneylender_InfoClear | Moneylender_TreatsWell | 0.9420714 | Moneylender_InfoClear |
+
+|                      |                        |           |                      |
+|----------------------|------------------------|-----------|----------------------|
+| Moneylender_NeedsMet | Moneylender_TreatsWell | 0.9779739 | Moneylender_NeedsMet |
+
+|                            |                        |           |                            |
+|----------------------------|------------------------|-----------|----------------------------|
+| Moneylender_FeesReasonable | Moneylender_TreatsWell | 0.8838490 | Moneylender_FeesReasonable |
+
+|                             |                        |           |                             |
+|-----------------------------|------------------------|-----------|-----------------------------|
+| Moneylender_CustomerSupport | Moneylender_TreatsWell | 0.9335145 | Moneylender_CustomerSupport |
 
 ```{r}
 #| eval: False
 tanzania_cleaned <- tanzania_cleaned %>%
   select(-c(
-  "Payment_Was_Late",
-  "BorrowedFromFriendFamily",
-  "GotAssistanceFromFamily",
-  "Insurance_Good_Idea",
-  "MobilePhone",
-  "Used_Cash",
-  "Agent_No_Cash_Float",
-  "BorrowedFrom_Family_PayBack",
-  "BusinessTooSmall",
-  "Farmers_and_fishers_Inncome",
-  "ConfidentWithMobileMoney",
-  "UsedSavings",
-  "WorkedMore",
-  "Old_NoPlans",
-  "SecondaryCompleted_OLevel",
-  "UniversityOrHigherEducationCompleted",
-  "Have_Insurance_Cover",
-  "Laptop",
-  "Moneylender_CustomerSupport",
-  "Moneylender_InfoClear",
-  "Moneylender_NeedsMet",
-  "Moneylender_TreatsWell",
-  "Trust_Insurance_Companies",
-  "Used_LipaNamba"))
+   "Dependents_Income", "Advice_HouseholdMember", "UsedSavings", "BorrowedFromFriendFamily",
+  "GotAssistanceFromFamily", "CutSpending", "Old_NoPlans", "ConfidentWithBanks",
+  "ConfidentWithMobileMoney","Used_Cash","Used_MobileMoney", "Do_Not_Know_Where_To_Go", "Trust_Insurance_Companies","Insurance_Good_Idea",
+  "Network_Failure", "Laptop", "Farmers_and_fishers_Inncome", "Old_FarmingAgricultureLivestock",
+  "BorrowedFrom_Family_PayBack", "Moneylender_Access", "Moneylender_TreatsWell", "Moneylender_InfoClear","Moneylender_CustomerSupport",
+  "Moneylender_NeedsMet", "Moneylender_FeesReasonable",
+  
+  "BankMFIStatement","Subscription","InsurancePolicy","TaxIDNumber","InsuranceCard","MoneyforBusiness_BankLoan","MoneyforBusiness_SACCOSLoan","MoneyforBusiness_CMGSLoan","BusinessRegistered_Yes","BusinessRegistered_No","Pension_Income","Advice_Bank","Advice_SACCOS","Advice_SavingsGroup","Advice_Moneylender","BorrowedFromBank","BorrowedFrom_SACCO","BorrowedFrom_MFI",
+            "BorrowedFrom_PensionFund","BorrowedFrom_SavingsGroup","BorrowedFromMoneyLender","BorrowedFrom_Bank","BorrowedFrom_MFI","BorrowedFrom_SACCO","BorrowedFrom_PensionFund","BorrowedFrom_SavingsGroup","BorrowedFrom_CommunityLender","Have_Insurance_Cover"))
 ```
 
 We will also conduct a VIF test to confirm correlation after building our first linear regression model later on.
@@ -1102,44 +1225,39 @@ We will constructed our initial model using these variables and conduct a compre
 ## Model
 
 ```{r}
-tanzania.mlr <- lm(FPAI ~ Mean_Age + Mean_AmountOwed + Mean_AmountBetting + Total_GroupBelong + 
-            Total_GroupContribution+ Urban + Male + BusinessRegistered_Yes + ComfortableWithBank_Yes +SomeUniversityOrHigherEducation+
-            ReceivedFinancialEducation_Yes + PayingBack_Yes + Internet + Subscription + 
-            TaxIDNumber + PaySlip + TitleDeed + CertofOccupancy + 
-            MoneyforBusiness_FamilyFriendsLoan + 
-            MoneyforBusiness_FamilyFriendsGift + MoneyforBusiness_Inheritance + 
-            MoneyforBusiness_SaleOfAssets + MoneyforBusiness_SavingsOrSalary + 
-            TriedButNot + NoTime + NoMoney + TooComplicated + 
-            NoBenefit + NoPayment + DontKnowHow + RegistrationInProcess + 
-            Formal_sector_salaried + Informal_sector_salaried + Traders_agricultural_products_Income + 
-            Traders_non_agricultural_Income + Service_providers_Income + 
-            Piece_work_casual_labor_Income + Rental_Income + 
-            Interest_from_savings_investments_stocks_unit_trusts + Pension_Income + 
-            Welfare_Income + Gambling_Income + Dependents_Income + OtherIncome + 
-            Advice_FamilyMember + Advice_Employer + Advice_Bank + 
-            Advice_Microfinance + Advice_SACCOS + Advice_FinancialAdvisor + 
-            Advice_FarmersAssociation + Advice_BusinessAssociation + Advice_SavingsGroup + 
-            Advice_Moneylender + Advice_GovernmentOfficial + Advice_VillageElder + 
-            Advice_OtherSpecify + Advice_NoOne + BorrowedThroughMM + 
-            BorrowedFromMoneyLender + SoldLivestock + CutSpending + Others_CouldntMeetNeeds + 
-            Old_Savings + Old_ChildrenWillTakeCareOfMe + Old_MoneyFromFriendsRelatives + 
-            Old_LandProperty + Old_OwnBusiness + Old_RentalIncome + Old_DividendsFromShares + 
-            Old_FarmingAgricultureLivestock + Old_Pension + Old_InsurancePolicy + 
-            ConfidentWithFamilyFriends + 
-            ConfidentWithUTTs +
-            BorrowedFrom_MobileMoney + BorrowedFrom_Employer + 
-            BorrowedFrom_Family_NoPayBack + 
-            BorrowedFrom_CommunityLender + BorrowedFrom_OtherSource + Used_ATM_DebitCard + 
-            Used_CreditCard + Used_MobileMoney + Used_Cryptocurrency + Used_QR_Code + 
-            Used_POS + Used_AZAMPay + Basic_TASAF_Cash_Transfer + 
-            Additional_Conditional_TASAF_Cash_Transfer + 
-            Money_Didnt_Come + 
-            Received_Less_Money + Household_Not_On_Register + Unable_To_Collection_Point + 
-            No_Proof_Of_Identity + Do_Not_Know_Where_To_Go + Places_Not_In_My_Area + 
-            Do_Not_Think_They_Care + Education_Policy + Funeral_Cover + 
-            Network_Failure + Agent_Absent + Agent_Overcharged + Lost_Money + 
-            Agent_Requested_PIN + Other_Problems + Moneylender_Access + Moneylender_FeesReasonable, 
-            data = tanzania_cleaned)
+tanzania.mlr <- lm(FPAI ~ Urban + Male_Female_Ratio + Registered_YesNo_Ratio + ComfortableBank_YesNo_Ratio + 
+  FinancialEducation_YesNo_Ratio + PayingBack_YesNo_Ratio + NoEdu_SomeEdu + MobilePhone + 
+  Internet + PaySlip + TitleDeed + CertofOccupancy + MoneyforBusiness_FamilyFriendsLoan + 
+  MoneyforBusiness_FamilyFriendsGift + MoneyforBusiness_Inheritance + 
+  MoneyforBusiness_SaleOfAssets + MoneyforBusiness_SavingsOrSalary + TriedButNot + 
+  NoTime + NoMoney + TooComplicated + NoBenefit + BusinessTooSmall + NoPayment + 
+  DontKnowHow + RegistrationInProcess + Formal_sector_salaried + Informal_sector_salaried + 
+  Traders_agricultural_products_Income + Traders_non_agricultural_Income + 
+  Service_providers_Income + Piece_work_casual_labor_Income + Rental_Income + 
+  Interest_from_savings_investments_stocks_unit_trusts + Welfare_Income + Gambling_Income + 
+  OtherIncome + Advice_FamilyMember + Advice_Employer + Advice_Microfinance + 
+  Advice_FinancialAdvisor + Advice_FarmersAssociation + Advice_BusinessAssociation + 
+  Advice_GovernmentOfficial + Advice_VillageElder + Advice_OtherSpecify + Advice_NoOne + 
+  BorrowedThroughMM + SoldLivestock + WorkedMore + Others_CouldntMeetNeeds + Old_Savings + 
+  Old_ChildrenWillTakeCareOfMe + Old_MoneyFromFriendsRelatives + Old_LandProperty + 
+  Old_OwnBusiness + Old_RentalIncome + Old_DividendsFromShares + Old_Pension + 
+  Old_InsurancePolicy + ConfidentWithMFIs + ConfidentWithSACCOs + ConfidentWithPensionFund + 
+  ConfidentWithSavingsGroups + ConfidentWithFamilyFriends + ConfidentWithUTTs + 
+  BorrowedFrom_MobileMoney + BorrowedFrom_Employer + BorrowedFrom_Family_NoPayBack + 
+  BorrowedFrom_OtherSource + Used_ATM_DebitCard + Used_CreditCard + Used_Cryptocurrency + 
+  Used_QR_Code + Used_POS + Used_LipaNamba + Used_AZAMPay + Basic_TASAF_Cash_Transfer + 
+  Additional_Conditional_TASAF_Cash_Transfer + Pension_for_Elders + Others_Assistance + 
+  Payment_Was_Late + Gave_Money_To_Official + Money_Didnt_Come + Received_Less_Money + 
+  Household_Not_On_Register + Unable_To_Collection_Point + No_Proof_Of_Identity + 
+  Places_Not_In_My_Area + Do_Not_Think_They_Care + Need_Insurance + Motor_Vehicle_Insurance + 
+  Households_Contents_Insurance + Private_Health_Insurance + National_Health_Insurance + 
+  Community_Health_Insurance + TIKA_Insurance + Social_Health_Insurance + 
+  Personal_Accident_Insurance + Life_Insurance + Loan_Insurance + Building_Insurance + 
+  Education_Policy + Funeral_Cover + Agricultural_Insurance + Ushirika_Afya + 
+  Motorcycle_Insurance + Livestock_Insurance + Other_Insurance_Products + Agent_Absent + 
+  Agent_No_Cash_Float + Agent_Overcharged + Lost_Money + Agent_Requested_PIN + Other_Problems + 
+  Mean_Age + Mean_AmountOwed + Mean_AmountBetting + Total_GroupBelong + Total_GroupContribution
+, data = tanzania_cleaned)
 ```
 
 ## Summary
@@ -1212,43 +1330,43 @@ print(vif_values)
 
 [*Results of Multiple Linear Regression for Impact of Selected Variables on Support Coverage Ratio*]{.underline}
 
-+--------------------------------+---------------+------------------------+
-| Variable                       | 𝛽 Estimate    | Significance (p-value) |
-+================================+===============+========================+
-| *(Intercept)*                  | -0.005497     | 3.40e-05 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| ReceivedFinancialEducation_Yes | 0.255839      | \< 2e-16 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| BorrowedThroughMM              | 0.123458      | \< 2e-16 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Old_Pension                    | 0.739651      | \< 2e-16 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| ComfortableWithBank_Yes        | 0.134748      | \< 2e-16 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Moneylender_Access             | 0.087127      | 5.60e-11 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Mean_AmountBetting             | 0.008819      | 4.61e-06 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Mean_AmountOwed                | 0.048113      | 4.82e-07 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Dependents_Income              | 0.058193      | 3.27e-07 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Advice_Bank                    | 0.048113      | 2.36e-05 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Total_GroupBelong              | -0.018163     | 3.81e-05 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Urban                          | 0.079030      | 0.000104 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Places_Not_In_My_Area          | 0.028269      | 0.011155 \*            |
-+--------------------------------+---------------+------------------------+
-| Others_Assistance              | -0.013197     | 0.000158 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| PaySlip                        | -0.087738     | 0.000224 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| OtherIncome                    | 0.115531      | 0.000975 \*\*\*        |
-+--------------------------------+---------------+------------------------+
-| Total_GroupContribution        | -0.112593     | 0.078091 .             |
-+--------------------------------+---------------+------------------------+
++--------------------------------+----------------+------------------------+
+| Variable                       | 𝛽 Estimate     | Significance (p-value) |
++================================+================+========================+
+| *(Intercept)*                  | -0.005497      | 3.40e-05 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| ReceivedFinancialEducation_Yes | 0.255839       | \< 2e-16 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| BorrowedThroughMM              | 0.123458       | \< 2e-16 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Old_Pension                    | 0.739651       | \< 2e-16 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| ComfortableWithBank_Yes        | 0.134748       | \< 2e-16 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Moneylender_Access             | 0.087127       | 5.60e-11 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Mean_AmountBetting             | 0.008819       | 4.61e-06 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Mean_AmountOwed                | 0.048113       | 4.82e-07 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Dependents_Income              | 0.058193       | 3.27e-07 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Advice_Bank                    | 0.048113       | 2.36e-05 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Total_GroupBelong              | -0.018163      | 3.81e-05 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Urban                          | 0.079030       | 0.000104 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Places_Not_In_My_Area          | 0.028269       | 0.011155 \*            |
++--------------------------------+----------------+------------------------+
+| Others_Assistance              | -0.013197      | 0.000158 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| PaySlip                        | -0.087738      | 0.000224 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| OtherIncome                    | 0.115531       | 0.000975 \*\*\*        |
++--------------------------------+----------------+------------------------+
+| Total_GroupContribution        | -0.112593      | 0.078091 .             |
++--------------------------------+----------------+------------------------+
 
 : Signif. codes: \*\*\* 0.001, \*\*0.01, \*0.05, . 0.1
 
@@ -1401,7 +1519,6 @@ tm_shape(gwr_sf_adaptive) +
 ```
 
 ### Visualizing coefficient estimates
-
 
 ------------------------------------------------------------------------
 
