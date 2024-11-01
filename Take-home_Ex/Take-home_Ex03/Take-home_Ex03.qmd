@@ -83,11 +83,13 @@ The following packages were used for this study:
 +-------------+---------------------------------------------------------------------------------------------------------------+
 | datawizard  | To handle missing values, recode variables, and perform exploratory data analysis before modeling             |
 +-------------+---------------------------------------------------------------------------------------------------------------+
+| gtsummary   | To create publication ready summary tables                                                                    |
++-------------+---------------------------------------------------------------------------------------------------------------+
 
 ## Code
 
 ```{r}
-pacman::p_load(st,olsrr, ggstatsplot, ggpubr, sf, spdep, sfdep, GWmodel, tmap, tidyverse, gtsummary,see,performance,datawizard)
+pacman::p_load(st,olsrr, ggstatsplot, ggpubr, sf, spdep, sfdep, GWmodel, tmap, tidyverse, gtsummary,see,performance,datawizard,gtsummary)
 ```
 :::
 
@@ -1219,43 +1221,43 @@ tanzania_cleaned <- read_rds("data/rds/tanzania_cleaned.rds")
 
 ## 8.1 Initial Model
 
-We will constructed our initial model using these variables and conduct a comprehensive model assessment to evaluate its performance. This will involve calculating the Variance Inflation Factor (VIF) to assess multicollinearity among the independent variables. High VIF values indicate potential redundancy among variables, which can compromise the model's reliability. We will then refine our variable selection by identifying and retaining only those variables that significantly contribute to explaining the variance in our dependent variable, financial inclusion.
+We will construct our initial model using these derived variables and use summary() to check the initial model's explanatory power.
 
 ::: panel-tabset
 ## Model
 
 ```{r}
 tanzania.mlr <- lm(FPAI ~ Urban + Male_Female_Ratio + Registered_YesNo_Ratio + ComfortableBank_YesNo_Ratio + 
-  FinancialEducation_YesNo_Ratio + PayingBack_YesNo_Ratio + NoEdu_SomeEdu + MobilePhone + 
+  FinancialEducation_YesNo_Ratio + PayingBack_YesNo_Ratio + NoEdu_SomeEdu +
   Internet + PaySlip + TitleDeed + CertofOccupancy + MoneyforBusiness_FamilyFriendsLoan + 
   MoneyforBusiness_FamilyFriendsGift + MoneyforBusiness_Inheritance + 
-  MoneyforBusiness_SaleOfAssets + MoneyforBusiness_SavingsOrSalary + TriedButNot + 
-  NoTime + NoMoney + TooComplicated + NoBenefit + BusinessTooSmall + NoPayment + 
-  DontKnowHow + RegistrationInProcess + Formal_sector_salaried + Informal_sector_salaried + 
+  MoneyforBusiness_SavingsOrSalary + TriedButNot + 
+  NoTime + NoMoney + TooComplicated + NoBenefit  + NoPayment + 
+  DontKnowHow + RegistrationInProcess + Informal_sector_salaried + 
   Traders_agricultural_products_Income + Traders_non_agricultural_Income + 
   Service_providers_Income + Piece_work_casual_labor_Income + Rental_Income + 
   Interest_from_savings_investments_stocks_unit_trusts + Welfare_Income + Gambling_Income + 
   OtherIncome + Advice_FamilyMember + Advice_Employer + Advice_Microfinance + 
   Advice_FinancialAdvisor + Advice_FarmersAssociation + Advice_BusinessAssociation + 
   Advice_GovernmentOfficial + Advice_VillageElder + Advice_OtherSpecify + Advice_NoOne + 
-  BorrowedThroughMM + SoldLivestock + WorkedMore + Others_CouldntMeetNeeds + Old_Savings + 
-  Old_ChildrenWillTakeCareOfMe + Old_MoneyFromFriendsRelatives + Old_LandProperty + 
+  SoldLivestock + Others_CouldntMeetNeeds + Old_Savings + 
+  Old_ChildrenWillTakeCareOfMe + Old_MoneyFromFriendsRelatives + 
   Old_OwnBusiness + Old_RentalIncome + Old_DividendsFromShares + Old_Pension + 
   Old_InsurancePolicy + ConfidentWithMFIs + ConfidentWithSACCOs + ConfidentWithPensionFund + 
   ConfidentWithSavingsGroups + ConfidentWithFamilyFriends + ConfidentWithUTTs + 
   BorrowedFrom_MobileMoney + BorrowedFrom_Employer + BorrowedFrom_Family_NoPayBack + 
   BorrowedFrom_OtherSource + Used_ATM_DebitCard + Used_CreditCard + Used_Cryptocurrency + 
-  Used_QR_Code + Used_POS + Used_LipaNamba + Used_AZAMPay + Basic_TASAF_Cash_Transfer + 
-  Additional_Conditional_TASAF_Cash_Transfer + Pension_for_Elders + Others_Assistance + 
-  Payment_Was_Late + Gave_Money_To_Official + Money_Didnt_Come + Received_Less_Money + 
+  Used_QR_Code + Used_POS + Used_AZAMPay + Basic_TASAF_Cash_Transfer + 
+  Additional_Conditional_TASAF_Cash_Transfer + Pension_for_Elders + 
+  Payment_Was_Late + Money_Didnt_Come + Received_Less_Money + 
   Household_Not_On_Register + Unable_To_Collection_Point + No_Proof_Of_Identity + 
   Places_Not_In_My_Area + Do_Not_Think_They_Care + Need_Insurance + Motor_Vehicle_Insurance + 
-  Households_Contents_Insurance + Private_Health_Insurance + National_Health_Insurance + 
-  Community_Health_Insurance + TIKA_Insurance + Social_Health_Insurance + 
+  Households_Contents_Insurance + Private_Health_Insurance + 
+  TIKA_Insurance + Social_Health_Insurance + 
   Personal_Accident_Insurance + Life_Insurance + Loan_Insurance + Building_Insurance + 
-  Education_Policy + Funeral_Cover + Agricultural_Insurance + Ushirika_Afya + 
-  Motorcycle_Insurance + Livestock_Insurance + Other_Insurance_Products + Agent_Absent + 
-  Agent_No_Cash_Float + Agent_Overcharged + Lost_Money + Agent_Requested_PIN + Other_Problems + 
+  Education_Policy + Funeral_Cover + Ushirika_Afya + 
+  Motorcycle_Insurance + Other_Insurance_Products + Agent_Absent + 
+  Agent_Overcharged + Lost_Money + Agent_Requested_PIN + Other_Problems + 
   Mean_Age + Mean_AmountOwed + Mean_AmountBetting + Total_GroupBelong + Total_GroupContribution
 , data = tanzania_cleaned)
 ```
@@ -1267,37 +1269,23 @@ summary(tanzania.mlr)
 ```
 :::
 
-## 8.2 **Model Assessment: olsrr method**
+The initial model has an adjusted R-squared value of 0.813, meaning that approximately 81% of the variation in the Financial Participation and Access Index (FPAI) is explained by these predictors.
 
-The **OLS Regression with `olsrr` Package** is a powerful approach for calibrating multiple linear regression models, especially when dealing with a large number of predictors like in our case. The `olsrr` package in R provides a streamlined process for diagnosing multicollinearity issues, performing variable selection, and generating organized model assessment reports. This stage is critical for refining our initial model with \_\_ predictors, ensuring each retained variable significantly contributes to explaining the dependent variable, the \_\_.
+::: callout-note
+## In multiple linear regression, adjusted R-squared is prioritized over R-squared because it adjusts for the number of predictors in the model, providing a more accurate assessment of model fit. Unlike R-squared, adjusted R-squared penalizes unnecessary predictors, helping to prevent overfitting and offering a more reliable measure of predictive power.
+:::
 
-```{r}
-ols_regress(tanzania.mlr) 
-```
-
-## **8.3 Multicollinearity - VIF**
-
-Given the large number of variables and low Adjusted R-squared, multicollinearity becomes a concern. High Variance Inflation Factor (VIF) scores indicate that some variables may be highly correlated with one another, which can distort the model's estimates and inflate standard errors. By calculating the VIF for each predictor, we can identify those with excessive multicollinearity—typically with VIF values above 10, suggesting that they should be either removed or consolidated to improve model stability.
-
-```{r}
-vif_results <- ols_vif_tol(tanzania.mlr)
-high_vif <- vif_results[vif_results$VIF > 10, ]
-print(high_vif)
-```
-
-The high VIF values in the initial model is expected for the initial model. This is because our dataframe contains numerous variables capturing related aspects of financial inclusion, such as various forms of access to financial services, borrowing behaviors, and support sources, many of which are conceptually similar and share underlying patterns. In the context of financial inclusion studies, it’s common for predictors to exhibit collinearity due to the complex and overlapping nature of financial behaviors, where access to one service is often related to access to others. The initial model includes all potential predictors to capture as much variation in the response variable as possible, which naturally results in high VIF values. Through stepwise regression, however,we will identify and remove variables that contribute most to multicollinearity without significantly impacting model performance.
-
-## 8.4 The Refined Model - Stepwise Regression
+## 8.2 The Refined Model - Stepwise Regression
 
 In this section, we perform **stepwise regression** for variable selection. This method systematically includes or excludes variables based on specific criteria, such as the Akaike Information Criterion (AIC) or the Bayesian Information Criterion (BIC). Stepwise regression refines the model by retaining only those predictors that significantly contribute to explaining variations in the Financial Inclusion Index, leading to a more parsimonious and interpretable model.
 
-Through this process, the multiple linear regression model is optimized to identify the key factors impacting financial inclusion while addressing multicollinearity and ensuring model stability. This approach ultimately enhances the model's explanatory power, enabling more accurate and actionable insights into the drivers of financial inclusion.
+Through this process, the multiple linear regression model is optimized to identify the key factors impacting FPAI while addressing multicollinearity and ensuring model stability. This approach ultimately enhances the model's explanatory power, enabling more accurate and actionable insights into the drivers of financial inclusion.
 
 ::: callout-note
 ## Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
 :::
 
-We will also use ***oslr*** package to do this.
+We will use the `olsrr` package to do this. The `olsrr` package in R provides a streamlined process for diagnosing multicollinearity issues, performing variable selection, and generating organized model assessment reports. This stage is critical for refining our initial model, ensuring each retained variable significantly contributes to explaining the dependent variable, the FPAI.
 
 Since p value is our defined criteria, we use ***ols_step_forward_p()*** as shown below.
 
@@ -1311,78 +1299,136 @@ tanzania_vs_mlr <- ols_step_forward_p(tanzania.mlr, p_val= 0.05, details=FALSE)
 plot(tanzania_vs_mlr)
 ```
 
-The stepwise regression analysis streamlined the initial variable set to 15 significant predictors, as illustrated in the accompanying plots. This selection process resulted in a decrease in the model's adjusted R-squared value, which fell from 0.835 in the initial model to 0.803 in the final model. Despite this decline, it suggests a greater proportion of the variance in the **Financial Participation and Access Index** (FPAI) explained by the chosen predictors. Ultimately, the final model with 15 predictors achieves a well-balanced trade-off between explanatory power and predictive accuracy.
+The stepwise regression analysis streamlined the initial variable set to 31 significant predictors, as illustrated in the accompanying plots. This selection process resulted in an increase in the model's adjusted R-squared value, which increased from 0.813 in the initial model to 0.830 in the final model. It suggests a greater proportion of the variance in the **Financial Participation and Access Index** (FPAI) explained by the chosen predictors.
 
-### 8.4.1 Variable Selection
+The final model with the final variables selected by stepwise regression is represented as the following code chunk.
 
 ```{r}
-library(car)
-vif_values <- vif(lm(FPAI ~ ReceivedFinancialEducation_Yes + BorrowedThroughMM + 
-                     Old_Pension + Mean_Age + ComfortableWithBank_Yes + 
-                     Moneylender_Access + Mean_AmountBetting + 
-                     Mean_AmountOwed + Dependents_Income + 
-                     Advice_Bank + Total_GroupBelong + Urban + 
-                     Places_Not_In_My_Area + 
-                     OtherIncome + Total_GroupContribution, 
-                     data = tanzania_cleaned))
-print(vif_values)
+final_tanzania.mlr<- lm(FPAI ~ FinancialEducation_YesNo_Ratio + Total_GroupContribution + 
+    Old_Pension + BorrowedFrom_MobileMoney + Other_Insurance_Products + 
+    ConfidentWithSavingsGroups + 
+    SoldLivestock + Mean_AmountOwed + Mean_Age + ConfidentWithSACCOs + 
+    ConfidentWithUTTs + OtherIncome + ConfidentWithFamilyFriends + 
+    Mean_AmountBetting + Places_Not_In_My_Area + DontKnowHow + 
+    CertofOccupancy + Personal_Accident_Insurance + 
+    Agent_Absent + Advice_NoOne + Private_Health_Insurance + 
+    Urban + Traders_non_agricultural_Income + Used_POS + Used_AZAMPay + 
+    Lost_Money + TooComplicated + Household_Not_On_Register, 
+                     data = tanzania_cleaned)
 ```
 
-[*Results of Multiple Linear Regression for Impact of Selected Variables on Support Coverage Ratio*]{.underline}
+## 8.3 Variable Selected
 
-+--------------------------------+----------------+------------------------+
-| Variable                       | 𝛽 Estimate     | Significance (p-value) |
-+================================+================+========================+
-| *(Intercept)*                  | -0.005497      | 3.40e-05 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| ReceivedFinancialEducation_Yes | 0.255839       | \< 2e-16 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| BorrowedThroughMM              | 0.123458       | \< 2e-16 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Old_Pension                    | 0.739651       | \< 2e-16 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| ComfortableWithBank_Yes        | 0.134748       | \< 2e-16 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Moneylender_Access             | 0.087127       | 5.60e-11 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Mean_AmountBetting             | 0.008819       | 4.61e-06 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Mean_AmountOwed                | 0.048113       | 4.82e-07 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Dependents_Income              | 0.058193       | 3.27e-07 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Advice_Bank                    | 0.048113       | 2.36e-05 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Total_GroupBelong              | -0.018163      | 3.81e-05 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Urban                          | 0.079030       | 0.000104 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Places_Not_In_My_Area          | 0.028269       | 0.011155 \*            |
-+--------------------------------+----------------+------------------------+
-| Others_Assistance              | -0.013197      | 0.000158 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| PaySlip                        | -0.087738      | 0.000224 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| OtherIncome                    | 0.115531       | 0.000975 \*\*\*        |
-+--------------------------------+----------------+------------------------+
-| Total_GroupContribution        | -0.112593      | 0.078091 .             |
-+--------------------------------+----------------+------------------------+
+Lastly, we will use the ***tbl_regression()*** from gtsummary package to create publication-ready summary tables in R.
 
-: Signif. codes: \*\*\* 0.001, \*\*0.01, \*0.05, . 0.1
+[*Results of Multiple Linear Regression for Impact of Selected Variables on **Financial Participation and Access Index** (FPAI)*]{.underline}
+
+```{r}
+#| echo: False
+tbl_regression(final_tanzania.mlr, 
+               intercept = TRUE,
+               estimate_fun = purrr::partial(style_sigfig, digits = 4)) %>% 
+  add_glance_source_note(
+    label = list(sigma ~ "\U03C3"),
+    include = c(r.squared, adj.r.squared, 
+                AIC, statistic,
+                p.value, sigma)
+  )
+```
+
+Interpretation of each predictor:
+
+-   **Intercept**: This is the base FPAI value when all other predictors are zero. The nearly zero intercept suggests that FPAI could be intrinsically low when controlling for all other variables. This minimal intercept might reflect baseline conditions where limited or no access to financial resources, products, or education is common.
+
+-   **FinancialEducation_YesNo_Ratio (β = 0.0502)**: Strongly positive, indicating that higher financial education rates correlate with higher financial participation.
+
+-   **Total_GroupContribution (β ≈ 0.0000)**: Although the coefficient rounds to zero, a very small positive effect suggests that higher social group contributions might slightly increase financial access.
+
+-   **Old_Pension (β = 0.0092)**: Indicates that receiving a pension is associated with higher FPAI, likely due to increased financial stability.
+
+-   **BorrowedFrom_MobileMoney (β = 0.0032)**: Positive association suggests that borrowing through mobile money services supports financial access and participation.
+
+-   **Other_Insurance_Products (β = 0.0077)**: Positive, indicating that access to various insurance products promotes financial inclusion.
+
+-   **ConfidentWithSavingsGroups (β = 0.0014)**: Positive, implying that trust in savings groups encourages financial participation.
+
+-   **SoldLivestock (β = -0.0008)**: Negative, which may indicate that reliance on livestock sales for income is linked to lower access to financial products.
+
+-   **Mean_AmountOwed (β ≈ 0.0000)**: Small positive effect, suggesting that slightly higher amounts owed might not significantly impact FPAI.
+
+-   **Mean_Age (β = 0.0010)**: Small positive effect, with older individuals perhaps having better financial access due to accumulated wealth or experience.
+
+-   **ConfidentWithSACCOs (β = -0.0021)**: Negative, which could mean limited financial inclusion among SACCO members if these are viewed as less formal or high-risk.
+
+-   **ConfidentWithUTTs (β = 0.0014)**: Positive, indicating that trust in UTTs (Unit Trusts) may contribute positively to FPAI.
+
+-   **OtherIncome (β = 0.0043)**: Positive, showing that diversified income sources support greater financial access.
+
+-   **ConfidentWithFamilyFriends (β = -0.0004)**: Slightly negative, suggesting that relying on family or friends for financial guidance might limit broader financial engagement.
+
+-   **Mean_AmountBetting (β ≈ 0.0000)**: No meaningful impact; betting doesn’t significantly influence FPAI.
+
+-   **Places_Not_In_My_Area (β = -0.0008)**: Negative, implying that access to financial product is limited if financial institutions are not in areas where respondents reside, which may imply Tanzania still have room to improve infrastructure to include more financial institutions.
+
+-   **DontKnowHow (β = 0.0018)**: Positive, suggesting that people uncertain about financial practices might still engage with financial systems, possibly through informal means.
+
+-   **CertofOccupancy (β = 0.0018)**: Positive, indicating that having official occupancy certification increases financial access.
+
+-   **Personal_Accident_Insurance (β = 0.0169)**: Positive, showing that accident insurance coverage is associated with increased financial participation.
+
+-   **Agent_Absent (β = 0.0007)**: Positive; absence of agents may encourage independent financial engagement, possibly via mobile or digital channels.
+
+-   **Advice_NoOne (β = -0.0007)**: Negative, implying that lacking financial advice limits engagement with financial products.
+
+-   **Private_Health_Insurance (β = 0.0086)**: Positive, indicating that private health insurance access supports financial inclusion.
+
+-   **Urban (β = 0.0301)**: Strongly positive, with urban residency associated with higher FPAI, likely due to better access to financial services.
+
+-   **Traders_non_agricultural_Income (β = -0.0014)**: Negative, suggesting that informal trading income may limit access to formal financial services.
+
+-   **Used_POS (β = -0.0032)**: Negative, potentially indicating that POS usage alone does not enhance financial access.
+
+-   **Used_AZAMPay (β = 0.0019)**: Positive, suggesting that AZAMPay use correlates with higher financial participation.
+
+-   **Lost_Money (β = -0.0030)**: Negative, possibly reflecting decreased trust or resource loss, reducing financial access.
+
+-   **TooComplicated (β = 0.0024)**: Positive; perceiving financial processes as complex doesn’t necessarily discourage financial engagement.
+
+-   **Household_Not_On_Register (β = -0.0127)**: Negative, highlighting that lack of formal registration negatively impacts financial access.
+
+The predictors, especially those with larger positive coefficients like **FinancialEducation_YesNo_Ratio** (0.0502) and **Urban** (0.0301), reveal impactful areas where improvements could directly boost FPAI and financial inclusion. Similarly, variables with negative coefficients, like **Household_Not_On_Register** (-0.0127), suggest barriers that significantly limits access to financial products and would require attention to enhance inclusion.
 
 ## 8.5 Model Diagnostics
 
-### 8.5.1 Test for Non Linearity
+### **8.5.1 Multicollinearity - VIF**
+
+Given the large number of variables and low Adjusted R-squared, multicollinearity becomes a concern. High Variance Inflation Factor (VIF) scores indicate that some variables may be highly correlated with one another, which can distort the model's estimates and inflate standard errors. By calculating the VIF for each predictor, we can identify those with excessive multicollinearity—typically with VIF values above 10, suggesting that they should be either removed or consolidated to improve model stability.
+
+```{r}
+ols_vif_tol(final_tanzania.mlr)
+```
+
+After stepwise regression and significant variables were selected, we can see that there is no VIF greater than 10, indicating no multicollinearity is present in our refined model. High VIF values are only expected in the initial model because our dataframe contains numerous variables capturing related aspects of financial inclusion, such as various forms of access to financial services, borrowing behaviors, and support sources, many of which are conceptually similar and share underlying patterns.
+
+### 8.5.2 Test for Non Linearity
+
+Testing for non-linearity assesses whether the relationship between the predictor variables and the FPAI deviates from a straight line, as linear regression assumes a linear relationship. If non-linearity is present, the residuals will show systematic patterns rather than a random scatter. Testing for non-linearity ensures that the model captures the true relationships within the data and improves predictive accuracy.
 
 ```{r}
 ols_plot_resid_fit(tanzania_vs_mlr$model)
 ```
 
-### 8.5.2 Test for Normality Assumption
+From the figure above, we can confirm that residuals are non linear.
+
+### 8.5.3 Test for Normality Assumption
+
+The normality assumption in linear regression pertains to the distribution of residuals, not the predictor variables. Residuals should follow a normal distribution for valid inference in terms of hypothesis testing and confidence intervals. If residuals are not normally distributed, transformations or robust regression techniques may be needed to satisfy the assumption, ensuring reliable and accurate estimates.
 
 ```{r}
 ols_plot_resid_hist(tanzania_vs_mlr$model)
 ```
+
+From the figure above, we can confirm that residuals are normally distributed.
 
 ### 8.5.3 Test for Spatial Autocorrelation
 
@@ -1414,9 +1460,19 @@ tm_shape(tanzania_cleaned)+
           style= 'quantile')
 ```
 
+From the figure above, we can see that there seem to not be a cluster and the residuals are rather random.
+
 #### 8.5.3.1 Spatially Stationary Test
 
-We will compute distance based weights. longlat= FALSE because we don't want it to do the projection since it already projected.
+To confirm this and measure the degree to which similar or dissimilar values are clustered in space, we will performing Global Moran’s I. If the indicators are independent of space, Moran’s I should show no significant spatial autocorrelation. The following is the hypothesis that we would like to test.
+
+-   **Null Hypothesis (H0):** The FPAI residuals distribution is spatially independent (randomly distributed in space).
+
+-   **Alternative Hypothesis (H1) :** There is spatial dependence, indicating that similar values are clustered or dispersed.
+
+The 95% confident interval will be used. (Significance level of 0.05)
+
+We will first compute distance based weights with ***st_knn*** and ***st_weights*** as shown below.
 
 ```{r}
 tanzania_cleaned <- tanzania_cleaned %>%
@@ -1427,13 +1483,7 @@ tanzania_cleaned <- tanzania_cleaned %>%
           .before = 1)
 ```
 
-To measure the degree to which similar or dissimilar values are clustered in space, we will performing Global Moran’s I. If the indicators are independent of space, Moran’s I should show no significant spatial autocorrelation. The following is the hypothesis that we would like to test.
-
--   **Null Hypothesis (H0):** The SCR residuals distribution is spatially independent (randomly distributed in space).
-
--   **Alternative Hypothesis (H1) :** There is spatial dependence, indicating that similar values are clustered or dispersed.
-
-The 95% confident interval will be used. (Significance level of 0.05)
+Then we are ready to perform Global Moran I with 100 simulations using ***global_moran_perm.***
 
 ```{r}
 global_moran_perm(tanzania_cleaned$MLR_RES,
@@ -1443,7 +1493,7 @@ global_moran_perm(tanzania_cleaned$MLR_RES,
                   nsim=99)
 ```
 
-Since p value (0.26) is greater than 0.05, we will not reject the null hypothesis. This implies that the residuals are randomly distributed.
+Since p value (0.76) is greater than 0.05, we will not reject the null hypothesis. This implies that the residuals are randomly distributed.
 
 Since observed Global Moran I is less than 0, we infer that the residuals do not resemble cluster distribution.
 
@@ -1456,7 +1506,16 @@ Since observed Global Moran I is less than 0, we infer that the residuals do not
 ## Adaptive Bandwidth GWR Model
 
 ```{r}
-bw_adaptive <- bw.gwr(formula = FPAI ~ ReceivedFinancialEducation_Yes + Mean_Age +Old_Pension+ComfortableWithBank_Yes+ Moneylender_Access+Dependents_Income+Advice_Bank+BorrowedThroughMM+Mean_AmountBetting+Mean_AmountOwed+ Total_GroupBelong+ Urban+Places_Not_In_My_Area+PaySlip+OtherIncome+Total_GroupContribution,
+bw_adaptive <- bw.gwr(formula = FPAI ~ FinancialEducation_YesNo_Ratio + Total_GroupContribution + 
+    Old_Pension + BorrowedFrom_MobileMoney + Other_Insurance_Products + 
+    ConfidentWithSavingsGroups + 
+    SoldLivestock + Mean_AmountOwed + Mean_Age + ConfidentWithSACCOs + 
+    ConfidentWithUTTs + OtherIncome + ConfidentWithFamilyFriends + 
+    Mean_AmountBetting + Places_Not_In_My_Area + DontKnowHow + 
+    CertofOccupancy + Personal_Accident_Insurance + 
+    Agent_Absent + Advice_NoOne + Private_Health_Insurance + 
+    Urban + Traders_non_agricultural_Income + Used_POS + Used_AZAMPay + 
+    Lost_Money + TooComplicated + Household_Not_On_Register,
                       data = tanzania_cleaned, 
                       approach="CV", 
                       kernel="gaussian", 
@@ -1464,14 +1523,23 @@ bw_adaptive <- bw.gwr(formula = FPAI ~ ReceivedFinancialEducation_Yes + Mean_Age
                       longlat=FALSE)
 ```
 
-Calculate all the distance pairs and take the largest distance pair, then distance become shorter and shorter as long as CV score decrease. The recommended bandwidth is 463452 meters (463.45 km).
+The adaptive bandwidth values (e.g., 106, 73, 126, 139) control the number of neighboring points included in each localized regression. Each bandwidth produced a Cross-Validation (CV) score, with lower scores indicating a better model fit. Here, an adaptive bandwidth of 139 neighbors provided the lowest CV score (0.02551), suggesting it best balances model accuracy with spatial variability across the regions studied.
 
 ## This function really need the model, won't work without model.
 
 Then we compute the GWR.
 
 ```{r}
-gwr_adaptive <- gwr.basic(formula = FPAI ~ ReceivedFinancialEducation_Yes + Mean_Age +Old_Pension+ComfortableWithBank_Yes+ Moneylender_Access+Dependents_Income+Advice_Bank+BorrowedThroughMM+Mean_AmountBetting+Mean_AmountOwed+ Total_GroupBelong+ Urban+Places_Not_In_My_Area+PaySlip+OtherIncome+Total_GroupContribution,
+gwr_adaptive <- gwr.basic(formula = FPAI ~ FinancialEducation_YesNo_Ratio + Total_GroupContribution + 
+    Old_Pension + BorrowedFrom_MobileMoney + Other_Insurance_Products + 
+    ConfidentWithSavingsGroups + 
+    SoldLivestock + Mean_AmountOwed + Mean_Age + ConfidentWithSACCOs + 
+    ConfidentWithUTTs + OtherIncome + ConfidentWithFamilyFriends + 
+    Mean_AmountBetting + Places_Not_In_My_Area + DontKnowHow + 
+    CertofOccupancy + Personal_Accident_Insurance + 
+    Agent_Absent + Advice_NoOne + Private_Health_Insurance + 
+    Urban + Traders_non_agricultural_Income + Used_POS + Used_AZAMPay + 
+    Lost_Money + TooComplicated + Household_Not_On_Register,
                       data = tanzania_cleaned, 
                           bw=bw_adaptive, 
                           kernel = 'gaussian', 
@@ -1480,12 +1548,6 @@ gwr_adaptive <- gwr.basic(formula = FPAI ~ ReceivedFinancialEducation_Yes + Mean
 gwr_adaptive
 ```
 
-There is no change of the result for global model.
-
-Geographicaly weighted regression: Adjusted r square improved significantly by calibrating the localized model to 32%. We can also look at AIC for changes made.
-
-The coefficient estimates are in a range now. Since it one regression for each observation and its 6 neighbours. So we must map the results.
-
 ## Visualizing GWR Output
 
 ### Converting SDF into sf data.frame
@@ -1493,7 +1555,7 @@ The coefficient estimates are in a range now. Since it one regression for each o
 ```{r}
 gwr_adaptive_output <- as.data.frame(
   gwr_adaptive$SDF)%>%
-  select (-c(2:16))
+  select (-c(2:32))
 ```
 
 We must exclude the intercept in column number 1.
@@ -1519,6 +1581,10 @@ tm_shape(gwr_sf_adaptive) +
 ```
 
 ### Visualizing coefficient estimates
+
+------------------------------------------------------------------------
+
+# Conclusion
 
 ------------------------------------------------------------------------
 
