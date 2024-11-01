@@ -322,8 +322,7 @@ window.Quarto = {
   <li><a href="#descriptive-statistics-and-visualizations" id="toc-descriptive-statistics-and-visualizations" class="nav-link" data-scroll-target="#descriptive-statistics-and-visualizations">7.1 Descriptive Statistics and Visualizations</a>
   <ul class="collapse">
   <li><a href="#visualizing-dependent-variable" id="toc-visualizing-dependent-variable" class="nav-link" data-scroll-target="#visualizing-dependent-variable">7.1.1 Visualizing Dependent Variable</a></li>
-  <li><a href="#distribution-plots" id="toc-distribution-plots" class="nav-link" data-scroll-target="#distribution-plots">7.1.2 Distribution Plots</a></li>
-  <li><a href="#boxplots" id="toc-boxplots" class="nav-link" data-scroll-target="#boxplots">7.1.3 Boxplots</a></li>
+  <li><a href="#histogram-plots-of-predictor-variables" id="toc-histogram-plots-of-predictor-variables" class="nav-link" data-scroll-target="#histogram-plots-of-predictor-variables">7.1.2 Histogram Plots of Predictor Variables</a></li>
   </ul></li>
   <li><a href="#correlation-analysis" id="toc-correlation-analysis" class="nav-link" data-scroll-target="#correlation-analysis">7.2 Correlation Analysis</a></li>
   </ul></li>
@@ -1567,48 +1566,99 @@ To perform a left_join(), we must ensure that there is a common column between t
 <h2 class="anchored" data-anchor-id="descriptive-statistics-and-visualizations">7.1 Descriptive Statistics and Visualizations</h2>
 <section id="visualizing-dependent-variable" class="level3">
 <h3 class="anchored" data-anchor-id="visualizing-dependent-variable">7.1.1 Visualizing Dependent Variable</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span><span class="st">`</span><span class="at">FPAI</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="distribution-plots" class="level3">
-<h3 class="anchored" data-anchor-id="distribution-plots">7.1.2 Distribution Plots</h3>
-</section>
-<section id="boxplots" class="level3">
-<h3 class="anchored" data-anchor-id="boxplots">7.1.3 Boxplots</h3>
+<section id="histogram-plots-of-predictor-variables" class="level3">
+<h3 class="anchored" data-anchor-id="histogram-plots-of-predictor-variables">7.1.2 Histogram Plots of Predictor Variables</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>Age <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">Mean_Age</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>Registered_YesNo_Ratio <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">Registered_YesNo_Ratio</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>Male_Female_Ratio <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">Male_Female_Ratio</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>Urban <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">Urban</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>Formal_sector_salaried <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">Formal_sector_salaried</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>FinancialEducation <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, </span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">FinancialEducation_YesNo_Ratio</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>Mean_AmountBetting <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">Mean_AmountBetting</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>Mean_AmountOwed <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">Mean_AmountOwed</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>MobilePhone <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">MobilePhone</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>Total_GroupContribution <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>tanzania_cleaned, <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">Total_GroupContribution</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(Age, Registered_YesNo_Ratio, Male_Female_Ratio, Urban, Formal_sector_salaried, </span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>          FinancialEducation, Mean_AmountBetting, Mean_AmountOwed,MobilePhone,Total_GroupContribution,</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">nrow =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="correlation-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="correlation-analysis">7.2 Correlation Analysis</h2>
-<p>Since we have around 207 variables chosen, it is hard to visualize a correlation matrix. Therefore we will just display the highly correlated(pairs of variables with absolute correlations greater than 0.8) with the following code chunk.</p>
+<p>Since we have around 160 variables chosen, it is hard to visualize a correlation matrix. Therefore we will just display the highly correlated(pairs of variables with absolute correlations greater than 0.8) with the following code chunk.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>nogeom_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">st_drop_geometry</span>(tanzania_cleaned))</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>cor_data <span class="ot">&lt;-</span> nogeom_df <span class="sc">%&gt;%</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(FPAI,dist_name, Banked, MFI, PENSION, INSURANCE, SACCO, CAPITALM_FUND_MANAGERS, FORM_INVESTMENTS,</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>            CMG,INFORMAL_MONEYLENDER,SOCIAL_GROUPS, </span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>            BankMFIStatement,Subscription,InsurancePolicy,TaxIDNumber,InsuranceCard,MoneyforBusiness_BankLoan,MoneyforBusiness_SACCOSLoan,MoneyforBusiness_CMGSLoan,BusinessRegistered_Yes,BusinessRegistered_No,Pension_Income,Advice_Bank,Advice_SACCOS,Advice_SavingsGroup,Advice_Moneylender,BorrowedFromBank,BorrowedFrom_SACCO,BorrowedFrom_MFI,</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>            BorrowedFrom_PensionFund,BorrowedFrom_SavingsGroup,BorrowedFromMoneyLender,BorrowedFrom_Bank,BorrowedFrom_MFI,BorrowedFrom_SACCO,BorrowedFrom_PensionFund,BorrowedFrom_SavingsGroup,BorrowedFrom_CommunityLender,Have_Insurance_Cover</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>            ))</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>cor_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(cor_data, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>high_correlations <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">abs</span>(cor_matrix) <span class="sc">&gt;</span> <span class="fl">0.8</span>, <span class="at">arr.ind =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>high_cor_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Var1 =</span> <span class="fu">rownames</span>(cor_matrix)[high_correlations[, <span class="dv">1</span>]],</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Var2 =</span> <span class="fu">colnames</span>(cor_matrix)[high_correlations[, <span class="dv">2</span>]],</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Correlation =</span> cor_matrix[high_correlations]</span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>high_cor_df <span class="ot">&lt;-</span> high_cor_df <span class="sc">%&gt;%</span></span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Var1 <span class="sc">!=</span> Var2) <span class="sc">%&gt;%</span></span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(high_cor_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nogeom_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">st_drop_geometry</span>(tanzania_cleaned))</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>cor_data <span class="ot">&lt;-</span> nogeom_df <span class="sc">%&gt;%</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(FPAI,dist_name, Banked, MFI, PENSION, INSURANCE, SACCO, CAPITALM_FUND_MANAGERS, FORM_INVESTMENTS,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>            CMG,INFORMAL_MONEYLENDER,SOCIAL_GROUPS, </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>            BankMFIStatement,Subscription,InsurancePolicy,TaxIDNumber,InsuranceCard,MoneyforBusiness_BankLoan,MoneyforBusiness_SACCOSLoan,MoneyforBusiness_CMGSLoan,BusinessRegistered_Yes,BusinessRegistered_No,Pension_Income,Advice_Bank,Advice_SACCOS,Advice_SavingsGroup,Advice_Moneylender,BorrowedFromBank,BorrowedFrom_SACCO,BorrowedFrom_MFI,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>            BorrowedFrom_PensionFund,BorrowedFrom_SavingsGroup,BorrowedFromMoneyLender,BorrowedFrom_Bank,BorrowedFrom_MFI,BorrowedFrom_SACCO,BorrowedFrom_PensionFund,BorrowedFrom_SavingsGroup,BorrowedFrom_CommunityLender,Have_Insurance_Cover</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>            ))</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>cor_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(cor_data, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>high_correlations <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">abs</span>(cor_matrix) <span class="sc">&gt;</span> <span class="fl">0.8</span>, <span class="at">arr.ind =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>high_cor_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Var1 =</span> <span class="fu">rownames</span>(cor_matrix)[high_correlations[, <span class="dv">1</span>]],</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Var2 =</span> <span class="fu">colnames</span>(cor_matrix)[high_correlations[, <span class="dv">2</span>]],</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Correlation =</span> cor_matrix[high_correlations]</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>high_cor_df <span class="ot">&lt;-</span> high_cor_df <span class="sc">%&gt;%</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Var1 <span class="sc">!=</span> Var2) <span class="sc">%&gt;%</span></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(high_cor_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The following table shows the correlation pairs and the excluded variables highlighted in blue.The following code chunk will be used to remove the variables.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 32%">
-<col style="width: 17%">
-<col style="width: 17%">
-<col style="width: 32%">
+<col style="width: 33%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1638,363 +1688,71 @@ To perform a left_join(), we must ensure that there is a common column between t
 <td>UsedSavings</td>
 </tr>
 <tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td>UsedSavings</td>
-<td>MobilePhone</td>
-<td>0.8785228</td>
-<td>UsedSavings</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 34%">
-<col style="width: 17%">
-<col style="width: 14%">
-<col style="width: 34%">
-</colgroup>
-<tbody>
-<tr class="odd">
 <td>BorrowedFromFriendFamily</td>
 <td>MobilePhone</td>
 <td>0.8459579</td>
 <td>BorrowedFromFriendFamily</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 17%">
-<col style="width: 14%">
-<col style="width: 33%">
-</colgroup>
-<tbody>
 <tr class="odd">
 <td>GotAssistanceFromFamily</td>
 <td>MobilePhone</td>
 <td>0.8835694</td>
 <td>GotAssistanceFromFamily</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
+<tr class="even">
 <td>CutSpending</td>
 <td>MobilePhone</td>
 <td>0.8235916</td>
 <td>CutSpending</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
 <tr class="odd">
 <td>Old_NoPlans</td>
 <td>MobilePhone</td>
 <td>0.8171885</td>
 <td>Old_NoPlans</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
+<tr class="even">
 <td>ConfidentWithBanks</td>
 <td>MobilePhone</td>
 <td>0.8273782</td>
 <td>ConfidentWithBanks</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 34%">
-<col style="width: 17%">
-<col style="width: 14%">
-<col style="width: 34%">
-</colgroup>
-<tbody>
 <tr class="odd">
 <td>ConfidentWithMobileMoney</td>
 <td>MobilePhone</td>
 <td>0.8617921</td>
 <td>ConfidentWithMobileMoney</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
+<tr class="even">
 <td>Used_Cash</td>
 <td>MobilePhone</td>
 <td>0.9620748</td>
 <td>Used_Cash</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
 <tr class="odd">
 <td>Used_MobileMoney</td>
 <td>MobilePhone</td>
 <td>0.8079097</td>
 <td>Used_MobileMoney</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 17%">
-<col style="width: 14%">
-<col style="width: 33%">
-</colgroup>
-<tbody>
-<tr class="odd">
+<tr class="even">
 <td>Do_Not_Know_Where_To_Go</td>
 <td>MobilePhone</td>
 <td>0.8345175</td>
 <td>Do_Not_Know_Where_To_Go</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 34%">
-<col style="width: 16%">
-<col style="width: 14%">
-<col style="width: 34%">
-</colgroup>
-<tbody>
 <tr class="odd">
 <td>Trust_Insurance_Companies</td>
 <td>MobilePhone</td>
 <td>0.8964594</td>
 <td>Trust_Insurance_Companies</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
+<tr class="even">
 <td>Insurance_Good_Idea</td>
 <td>MobilePhone</td>
 <td>0.9238936</td>
 <td>Insurance_Good_Idea</td>
 </tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
 <tr class="odd">
 <td>Network_Failure</td>
 <td>MobilePhone</td>
@@ -2003,324 +1761,18 @@ To perform a left_join(), we must ensure that there is a common column between t
 </tr>
 </tbody>
 </table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td>Laptop</td>
-<td>Internet</td>
-<td>1.0000000</td>
-<td>Laptop</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 32%">
-<col style="width: 21%">
-<col style="width: 12%">
-<col style="width: 32%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Farmers_and_fishers_Income</td>
-<td>BusinessTooSmall</td>
-<td>0.8078662</td>
-<td>Farmers_and_fishers_Income</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 31%">
-<col style="width: 26%">
-<col style="width: 10%">
-<col style="width: 31%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Old_FarmingAgricultureLivestock</td>
-<td>Farmers_and_fishers_Income</td>
-<td>0.8149506</td>
-<td>Old_FarmingAgricultureLivestock</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 29%">
-<col style="width: 27%">
-<col style="width: 12%">
-<col style="width: 29%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>BorrowedFromFriendFamily</td>
-<td>Advice_HouseholdMember</td>
-<td>0.8038739</td>
-<td>BorrowedFromFriendFamily</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 29%">
-<col style="width: 28%">
-<col style="width: 12%">
-<col style="width: 29%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>GotAssistanceFromFamily</td>
-<td>Advice_HouseholdMember</td>
-<td>0.8242829</td>
-<td>GotAssistanceFromFamily</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 27%">
-<col style="width: 31%">
-<col style="width: 14%">
-<col style="width: 27%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Insurance_Good_Idea</td>
-<td>Advice_HouseholdMember</td>
-<td>0.8232845</td>
-<td>Insurance_Good_Idea</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 30%">
-<col style="width: 27%">
-<col style="width: 11%">
-<col style="width: 30%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>BorrowedFrom_Family_PayBack</td>
-<td>BorrowedFromFriendFamily</td>
-<td>0.8943542</td>
-<td>BorrowedFrom_Family_PayBack</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td>Used_Cash</td>
-<td>Advice_HouseholdMember</td>
-<td>0.8590026</td>
-<td>Used_Cash</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 26%">
-<col style="width: 32%">
-<col style="width: 13%">
-<col style="width: 26%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Insurance_Good_Idea</td>
-<td>BorrowedFromFriendFamily</td>
-<td>0.8123864</td>
-<td>Insurance_Good_Idea</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td>CutSpending</td>
-<td>UsedSavings</td>
-<td>0.8675488</td>
-<td>CutSpending</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 33%">
-<col style="width: 14%">
-<col style="width: 25%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>ConfidentWithBanks</td>
-<td>ConfidentWithMobileMoney</td>
-<td>0.8916325</td>
-<td>ConfidentWithBanks</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td>Used_Cash</td>
-<td>ConfidentWithBanks</td>
-<td>0.8446089</td>
-<td>Used_Cash</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 29%">
-<col style="width: 28%">
-<col style="width: 12%">
-<col style="width: 29%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Trust_Insurance_Companies</td>
-<td>ConfidentWithMobileMoney</td>
-<td>0.8376665</td>
-<td>Trust_Insurance_Companies</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 26%">
-<col style="width: 32%">
-<col style="width: 13%">
-<col style="width: 26%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Insurance_Good_Idea</td>
-<td>ConfidentWithMobileMoney</td>
-<td>0.8461074</td>
-<td>Insurance_Good_Idea</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 30%">
-<col style="width: 27%">
-<col style="width: 12%">
-<col style="width: 30%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Trust_Insurance_Companies</td>
-<td>GotAssistanceFromFamily</td>
-<td>0.8133255</td>
-<td>Trust_Insurance_Companies</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td>Network_Failure</td>
-<td>Agent_No_Cash_Float</td>
-<td>0.8285897</td>
-<td>Network_Failure</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 26%">
-<col style="width: 32%">
-<col style="width: 14%">
-<col style="width: 26%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Moneylender_Access</td>
-<td>Moneylender_TreatsWell</td>
-<td>0.9259172</td>
-<td>Moneylender_Access</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 28%">
-<col style="width: 29%">
-<col style="width: 13%">
-<col style="width: 28%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Moneylender_InfoClear</td>
-<td>Moneylender_TreatsWell</td>
-<td>0.9420714</td>
-<td>Moneylender_InfoClear</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 27%">
-<col style="width: 30%">
-<col style="width: 13%">
-<col style="width: 27%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Moneylender_NeedsMet</td>
-<td>Moneylender_TreatsWell</td>
-<td>0.9779739</td>
-<td>Moneylender_NeedsMet</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 30%">
-<col style="width: 26%">
-<col style="width: 12%">
-<col style="width: 30%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Moneylender_FeesReasonable</td>
-<td>Moneylender_TreatsWell</td>
-<td>0.8838490</td>
-<td>Moneylender_FeesReasonable</td>
-</tr>
-</tbody>
-</table>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 31%">
-<col style="width: 25%">
-<col style="width: 11%">
-<col style="width: 31%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Moneylender_CustomerSupport</td>
-<td>Moneylender_TreatsWell</td>
-<td>0.9335145</td>
-<td>Moneylender_CustomerSupport</td>
-</tr>
-</tbody>
-</table>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tanzania_cleaned <span class="ot">&lt;-</span> tanzania_cleaned <span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>   <span class="st">"Dependents_Income"</span>, <span class="st">"Advice_HouseholdMember"</span>, <span class="st">"UsedSavings"</span>, <span class="st">"BorrowedFromFriendFamily"</span>,</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"GotAssistanceFromFamily"</span>, <span class="st">"CutSpending"</span>, <span class="st">"Old_NoPlans"</span>, <span class="st">"ConfidentWithBanks"</span>,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ConfidentWithMobileMoney"</span>,<span class="st">"Used_Cash"</span>,<span class="st">"Used_MobileMoney"</span>, <span class="st">"Do_Not_Know_Where_To_Go"</span>, <span class="st">"Trust_Insurance_Companies"</span>,<span class="st">"Insurance_Good_Idea"</span>,</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Network_Failure"</span>, <span class="st">"Laptop"</span>, <span class="st">"Farmers_and_fishers_Inncome"</span>, <span class="st">"Old_FarmingAgricultureLivestock"</span>,</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BorrowedFrom_Family_PayBack"</span>, <span class="st">"Moneylender_Access"</span>, <span class="st">"Moneylender_TreatsWell"</span>, <span class="st">"Moneylender_InfoClear"</span>,<span class="st">"Moneylender_CustomerSupport"</span>,</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Moneylender_NeedsMet"</span>, <span class="st">"Moneylender_FeesReasonable"</span>,</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BankMFIStatement"</span>,<span class="st">"Subscription"</span>,<span class="st">"InsurancePolicy"</span>,<span class="st">"TaxIDNumber"</span>,<span class="st">"InsuranceCard"</span>,<span class="st">"MoneyforBusiness_BankLoan"</span>,<span class="st">"MoneyforBusiness_SACCOSLoan"</span>,<span class="st">"MoneyforBusiness_CMGSLoan"</span>,<span class="st">"BusinessRegistered_Yes"</span>,<span class="st">"BusinessRegistered_No"</span>,<span class="st">"Pension_Income"</span>,<span class="st">"Advice_Bank"</span>,<span class="st">"Advice_SACCOS"</span>,<span class="st">"Advice_SavingsGroup"</span>,<span class="st">"Advice_Moneylender"</span>,<span class="st">"BorrowedFromBank"</span>,<span class="st">"BorrowedFrom_SACCO"</span>,<span class="st">"BorrowedFrom_MFI"</span>,</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"BorrowedFrom_PensionFund"</span>,<span class="st">"BorrowedFrom_SavingsGroup"</span>,<span class="st">"BorrowedFromMoneyLender"</span>,<span class="st">"BorrowedFrom_Bank"</span>,<span class="st">"BorrowedFrom_MFI"</span>,<span class="st">"BorrowedFrom_SACCO"</span>,<span class="st">"BorrowedFrom_PensionFund"</span>,<span class="st">"BorrowedFrom_SavingsGroup"</span>,<span class="st">"BorrowedFrom_CommunityLender"</span>,<span class="st">"Have_Insurance_Cover"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>tanzania_cleaned <span class="ot">&lt;-</span> tanzania_cleaned <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>   <span class="st">"Dependents_Income"</span>, <span class="st">"Advice_HouseholdMember"</span>, <span class="st">"UsedSavings"</span>, <span class="st">"BorrowedFromFriendFamily"</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"GotAssistanceFromFamily"</span>, <span class="st">"CutSpending"</span>, <span class="st">"Old_NoPlans"</span>, <span class="st">"ConfidentWithBanks"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ConfidentWithMobileMoney"</span>,<span class="st">"Used_Cash"</span>,<span class="st">"Used_MobileMoney"</span>, <span class="st">"Do_Not_Know_Where_To_Go"</span>, <span class="st">"Trust_Insurance_Companies"</span>,<span class="st">"Insurance_Good_Idea"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Network_Failure"</span>, <span class="st">"Laptop"</span>, <span class="st">"Farmers_and_fishers_Inncome"</span>, <span class="st">"Old_FarmingAgricultureLivestock"</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BorrowedFrom_Family_PayBack"</span>, <span class="st">"Moneylender_Access"</span>, <span class="st">"Moneylender_TreatsWell"</span>, <span class="st">"Moneylender_InfoClear"</span>,<span class="st">"Moneylender_CustomerSupport"</span>,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Moneylender_NeedsMet"</span>, <span class="st">"Moneylender_FeesReasonable"</span>,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BankMFIStatement"</span>,<span class="st">"Subscription"</span>,<span class="st">"InsurancePolicy"</span>,<span class="st">"TaxIDNumber"</span>,<span class="st">"InsuranceCard"</span>,<span class="st">"MoneyforBusiness_BankLoan"</span>,<span class="st">"MoneyforBusiness_SACCOSLoan"</span>,<span class="st">"MoneyforBusiness_CMGSLoan"</span>,<span class="st">"BusinessRegistered_Yes"</span>,<span class="st">"BusinessRegistered_No"</span>,<span class="st">"Pension_Income"</span>,<span class="st">"Advice_Bank"</span>,<span class="st">"Advice_SACCOS"</span>,<span class="st">"Advice_SavingsGroup"</span>,<span class="st">"Advice_Moneylender"</span>,<span class="st">"BorrowedFromBank"</span>,<span class="st">"BorrowedFrom_SACCO"</span>,<span class="st">"BorrowedFrom_MFI"</span>,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">"BorrowedFrom_PensionFund"</span>,<span class="st">"BorrowedFrom_SavingsGroup"</span>,<span class="st">"BorrowedFromMoneyLender"</span>,<span class="st">"BorrowedFrom_Bank"</span>,<span class="st">"BorrowedFrom_MFI"</span>,<span class="st">"BorrowedFrom_SACCO"</span>,<span class="st">"BorrowedFrom_PensionFund"</span>,<span class="st">"BorrowedFrom_SavingsGroup"</span>,<span class="st">"BorrowedFrom_CommunityLender"</span>,<span class="st">"Have_Insurance_Cover"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We will also conduct a VIF test to confirm correlation after building our first linear regression model later on.</p>
 <hr>
@@ -2336,44 +1788,44 @@ To perform a left_join(), we must ensure that there is a common column between t
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>tanzania.mlr <span class="ot">&lt;-</span> <span class="fu">lm</span>(FPAI <span class="sc">~</span> Urban <span class="sc">+</span> Male_Female_Ratio <span class="sc">+</span> Registered_YesNo_Ratio <span class="sc">+</span> ComfortableBank_YesNo_Ratio <span class="sc">+</span> </span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  FinancialEducation_YesNo_Ratio <span class="sc">+</span> PayingBack_YesNo_Ratio <span class="sc">+</span> NoEdu_SomeEdu <span class="sc">+</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  Internet <span class="sc">+</span> PaySlip <span class="sc">+</span> TitleDeed <span class="sc">+</span> CertofOccupancy <span class="sc">+</span> MoneyforBusiness_FamilyFriendsLoan <span class="sc">+</span> </span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  MoneyforBusiness_FamilyFriendsGift <span class="sc">+</span> MoneyforBusiness_Inheritance <span class="sc">+</span> </span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  MoneyforBusiness_SavingsOrSalary <span class="sc">+</span> TriedButNot <span class="sc">+</span> </span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  NoTime <span class="sc">+</span> NoMoney <span class="sc">+</span> TooComplicated <span class="sc">+</span> NoBenefit  <span class="sc">+</span> NoPayment <span class="sc">+</span> </span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  DontKnowHow <span class="sc">+</span> RegistrationInProcess <span class="sc">+</span> Informal_sector_salaried <span class="sc">+</span> </span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  Traders_agricultural_products_Income <span class="sc">+</span> Traders_non_agricultural_Income <span class="sc">+</span> </span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  Service_providers_Income <span class="sc">+</span> Piece_work_casual_labor_Income <span class="sc">+</span> Rental_Income <span class="sc">+</span> </span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  Interest_from_savings_investments_stocks_unit_trusts <span class="sc">+</span> Welfare_Income <span class="sc">+</span> Gambling_Income <span class="sc">+</span> </span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  OtherIncome <span class="sc">+</span> Advice_FamilyMember <span class="sc">+</span> Advice_Employer <span class="sc">+</span> Advice_Microfinance <span class="sc">+</span> </span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  Advice_FinancialAdvisor <span class="sc">+</span> Advice_FarmersAssociation <span class="sc">+</span> Advice_BusinessAssociation <span class="sc">+</span> </span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  Advice_GovernmentOfficial <span class="sc">+</span> Advice_VillageElder <span class="sc">+</span> Advice_OtherSpecify <span class="sc">+</span> Advice_NoOne <span class="sc">+</span> </span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  SoldLivestock <span class="sc">+</span> Others_CouldntMeetNeeds <span class="sc">+</span> Old_Savings <span class="sc">+</span> </span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  Old_ChildrenWillTakeCareOfMe <span class="sc">+</span> Old_MoneyFromFriendsRelatives <span class="sc">+</span> </span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  Old_OwnBusiness <span class="sc">+</span> Old_RentalIncome <span class="sc">+</span> Old_DividendsFromShares <span class="sc">+</span> Old_Pension <span class="sc">+</span> </span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>  Old_InsurancePolicy <span class="sc">+</span> ConfidentWithMFIs <span class="sc">+</span> ConfidentWithSACCOs <span class="sc">+</span> ConfidentWithPensionFund <span class="sc">+</span> </span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>  ConfidentWithSavingsGroups <span class="sc">+</span> ConfidentWithFamilyFriends <span class="sc">+</span> ConfidentWithUTTs <span class="sc">+</span> </span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>  BorrowedFrom_MobileMoney <span class="sc">+</span> BorrowedFrom_Employer <span class="sc">+</span> BorrowedFrom_Family_NoPayBack <span class="sc">+</span> </span>
-<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  BorrowedFrom_OtherSource <span class="sc">+</span> Used_ATM_DebitCard <span class="sc">+</span> Used_CreditCard <span class="sc">+</span> Used_Cryptocurrency <span class="sc">+</span> </span>
-<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>  Used_QR_Code <span class="sc">+</span> Used_POS <span class="sc">+</span> Used_AZAMPay <span class="sc">+</span> Basic_TASAF_Cash_Transfer <span class="sc">+</span> </span>
-<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>  Additional_Conditional_TASAF_Cash_Transfer <span class="sc">+</span> Pension_for_Elders <span class="sc">+</span> </span>
-<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>  Payment_Was_Late <span class="sc">+</span> Money_Didnt_Come <span class="sc">+</span> Received_Less_Money <span class="sc">+</span> </span>
-<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>  Household_Not_On_Register <span class="sc">+</span> Unable_To_Collection_Point <span class="sc">+</span> No_Proof_Of_Identity <span class="sc">+</span> </span>
-<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>  Places_Not_In_My_Area <span class="sc">+</span> Do_Not_Think_They_Care <span class="sc">+</span> Need_Insurance <span class="sc">+</span> Motor_Vehicle_Insurance <span class="sc">+</span> </span>
-<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>  Households_Contents_Insurance <span class="sc">+</span> Private_Health_Insurance <span class="sc">+</span> </span>
-<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>  TIKA_Insurance <span class="sc">+</span> Social_Health_Insurance <span class="sc">+</span> </span>
-<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>  Personal_Accident_Insurance <span class="sc">+</span> Life_Insurance <span class="sc">+</span> Loan_Insurance <span class="sc">+</span> Building_Insurance <span class="sc">+</span> </span>
-<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>  Education_Policy <span class="sc">+</span> Funeral_Cover <span class="sc">+</span> Ushirika_Afya <span class="sc">+</span> </span>
-<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>  Motorcycle_Insurance <span class="sc">+</span> Other_Insurance_Products <span class="sc">+</span> Agent_Absent <span class="sc">+</span> </span>
-<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>  Agent_Overcharged <span class="sc">+</span> Lost_Money <span class="sc">+</span> Agent_Requested_PIN <span class="sc">+</span> Other_Problems <span class="sc">+</span> </span>
-<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>  Mean_Age <span class="sc">+</span> Mean_AmountOwed <span class="sc">+</span> Mean_AmountBetting <span class="sc">+</span> Total_GroupBelong <span class="sc">+</span> Total_GroupContribution</span>
-<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a>, <span class="at">data =</span> tanzania_cleaned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>tanzania.mlr <span class="ot">&lt;-</span> <span class="fu">lm</span>(FPAI <span class="sc">~</span> Urban <span class="sc">+</span> Male_Female_Ratio <span class="sc">+</span> Registered_YesNo_Ratio <span class="sc">+</span> ComfortableBank_YesNo_Ratio <span class="sc">+</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  FinancialEducation_YesNo_Ratio <span class="sc">+</span> PayingBack_YesNo_Ratio <span class="sc">+</span> NoEdu_SomeEdu <span class="sc">+</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  Internet <span class="sc">+</span> PaySlip <span class="sc">+</span> TitleDeed <span class="sc">+</span> CertofOccupancy <span class="sc">+</span> MoneyforBusiness_FamilyFriendsLoan <span class="sc">+</span> </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  MoneyforBusiness_FamilyFriendsGift <span class="sc">+</span> MoneyforBusiness_Inheritance <span class="sc">+</span> </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  MoneyforBusiness_SavingsOrSalary <span class="sc">+</span> TriedButNot <span class="sc">+</span> </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  NoTime <span class="sc">+</span> NoMoney <span class="sc">+</span> TooComplicated <span class="sc">+</span> NoBenefit  <span class="sc">+</span> NoPayment <span class="sc">+</span> </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  DontKnowHow <span class="sc">+</span> RegistrationInProcess <span class="sc">+</span> Informal_sector_salaried <span class="sc">+</span> </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  Traders_agricultural_products_Income <span class="sc">+</span> Traders_non_agricultural_Income <span class="sc">+</span> </span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  Service_providers_Income <span class="sc">+</span> Piece_work_casual_labor_Income <span class="sc">+</span> Rental_Income <span class="sc">+</span> </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  Interest_from_savings_investments_stocks_unit_trusts <span class="sc">+</span> Welfare_Income <span class="sc">+</span> Gambling_Income <span class="sc">+</span> </span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  OtherIncome <span class="sc">+</span> Advice_FamilyMember <span class="sc">+</span> Advice_Employer <span class="sc">+</span> Advice_Microfinance <span class="sc">+</span> </span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  Advice_FinancialAdvisor <span class="sc">+</span> Advice_FarmersAssociation <span class="sc">+</span> Advice_BusinessAssociation <span class="sc">+</span> </span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  Advice_GovernmentOfficial <span class="sc">+</span> Advice_VillageElder <span class="sc">+</span> Advice_OtherSpecify <span class="sc">+</span> Advice_NoOne <span class="sc">+</span> </span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  SoldLivestock <span class="sc">+</span> Others_CouldntMeetNeeds <span class="sc">+</span> Old_Savings <span class="sc">+</span> </span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>  Old_ChildrenWillTakeCareOfMe <span class="sc">+</span> Old_MoneyFromFriendsRelatives <span class="sc">+</span> </span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  Old_OwnBusiness <span class="sc">+</span> Old_RentalIncome <span class="sc">+</span> Old_DividendsFromShares <span class="sc">+</span> Old_Pension <span class="sc">+</span> </span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  Old_InsurancePolicy <span class="sc">+</span> ConfidentWithMFIs <span class="sc">+</span> ConfidentWithSACCOs <span class="sc">+</span> ConfidentWithPensionFund <span class="sc">+</span> </span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>  ConfidentWithSavingsGroups <span class="sc">+</span> ConfidentWithFamilyFriends <span class="sc">+</span> ConfidentWithUTTs <span class="sc">+</span> </span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>  BorrowedFrom_MobileMoney <span class="sc">+</span> BorrowedFrom_Employer <span class="sc">+</span> BorrowedFrom_Family_NoPayBack <span class="sc">+</span> </span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>  BorrowedFrom_OtherSource <span class="sc">+</span> Used_ATM_DebitCard <span class="sc">+</span> Used_CreditCard <span class="sc">+</span> Used_Cryptocurrency <span class="sc">+</span> </span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>  Used_QR_Code <span class="sc">+</span> Used_POS <span class="sc">+</span> Used_AZAMPay <span class="sc">+</span> Basic_TASAF_Cash_Transfer <span class="sc">+</span> </span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>  Additional_Conditional_TASAF_Cash_Transfer <span class="sc">+</span> Pension_for_Elders <span class="sc">+</span> </span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  Payment_Was_Late <span class="sc">+</span> Money_Didnt_Come <span class="sc">+</span> Received_Less_Money <span class="sc">+</span> </span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>  Household_Not_On_Register <span class="sc">+</span> Unable_To_Collection_Point <span class="sc">+</span> No_Proof_Of_Identity <span class="sc">+</span> </span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>  Places_Not_In_My_Area <span class="sc">+</span> Do_Not_Think_They_Care <span class="sc">+</span> Need_Insurance <span class="sc">+</span> Motor_Vehicle_Insurance <span class="sc">+</span> </span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>  Households_Contents_Insurance <span class="sc">+</span> Private_Health_Insurance <span class="sc">+</span> </span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>  TIKA_Insurance <span class="sc">+</span> Social_Health_Insurance <span class="sc">+</span> </span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>  Personal_Accident_Insurance <span class="sc">+</span> Life_Insurance <span class="sc">+</span> Loan_Insurance <span class="sc">+</span> Building_Insurance <span class="sc">+</span> </span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>  Education_Policy <span class="sc">+</span> Funeral_Cover <span class="sc">+</span> Ushirika_Afya <span class="sc">+</span> </span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>  Motorcycle_Insurance <span class="sc">+</span> Other_Insurance_Products <span class="sc">+</span> Agent_Absent <span class="sc">+</span> </span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>  Agent_Overcharged <span class="sc">+</span> Lost_Money <span class="sc">+</span> Agent_Requested_PIN <span class="sc">+</span> Other_Problems <span class="sc">+</span> </span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>  Mean_Age <span class="sc">+</span> Mean_AmountOwed <span class="sc">+</span> Mean_AmountBetting <span class="sc">+</span> Total_GroupBelong <span class="sc">+</span> Total_GroupContribution</span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>, <span class="at">data =</span> tanzania_cleaned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tanzania.mlr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tanzania.mlr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -2678,14 +2130,14 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
 <p>We will use the <code>olsrr</code> package to do this. The&nbsp;<code>olsrr</code>&nbsp;package in R provides a streamlined process for diagnosing multicollinearity issues, performing variable selection, and generating organized model assessment reports. This stage is critical for refining our initial model, ensuring each retained variable significantly contributes to explaining the dependent variable, the FPAI.</p>
 <p>Since p value is our defined criteria, we use <strong><em>ols_step_forward_p()</em></strong> as shown below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>tanzania_vs_mlr <span class="ot">&lt;-</span> <span class="fu">ols_step_forward_p</span>(tanzania.mlr, <span class="at">p_val=</span> <span class="fl">0.05</span>, <span class="at">details=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>tanzania_vs_mlr <span class="ot">&lt;-</span> <span class="fu">ols_step_forward_p</span>(tanzania.mlr, <span class="at">p_val=</span> <span class="fl">0.05</span>, <span class="at">details=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tanzania_vs_mlr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tanzania_vs_mlr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="1152"></p>
 </figure>
 </div>
 </div>
@@ -2693,17 +2145,17 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
 <p>The stepwise regression analysis streamlined the initial variable set to 31 significant predictors, as illustrated in the accompanying plots. This selection process resulted in an increase in the model’s adjusted R-squared value, which increased from 0.813 in the initial model to 0.830 in the final model. It suggests a greater proportion of the variance in the <strong>Financial Participation and Access Index</strong> (FPAI) explained by the chosen predictors.</p>
 <p>The final model with the final variables selected by stepwise regression is represented as the following code chunk.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>final_tanzania.mlr<span class="ot">&lt;-</span> <span class="fu">lm</span>(FPAI <span class="sc">~</span> FinancialEducation_YesNo_Ratio <span class="sc">+</span> Total_GroupContribution <span class="sc">+</span> </span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    Old_Pension <span class="sc">+</span> BorrowedFrom_MobileMoney <span class="sc">+</span> Other_Insurance_Products <span class="sc">+</span> </span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    ConfidentWithSavingsGroups <span class="sc">+</span> </span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    SoldLivestock <span class="sc">+</span> Mean_AmountOwed <span class="sc">+</span> Mean_Age <span class="sc">+</span> ConfidentWithSACCOs <span class="sc">+</span> </span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    ConfidentWithUTTs <span class="sc">+</span> OtherIncome <span class="sc">+</span> ConfidentWithFamilyFriends <span class="sc">+</span> </span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    Mean_AmountBetting <span class="sc">+</span> Places_Not_In_My_Area <span class="sc">+</span> DontKnowHow <span class="sc">+</span> </span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    CertofOccupancy <span class="sc">+</span> Personal_Accident_Insurance <span class="sc">+</span> </span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    Agent_Absent <span class="sc">+</span> Advice_NoOne <span class="sc">+</span> Private_Health_Insurance <span class="sc">+</span> </span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    Urban <span class="sc">+</span> Traders_non_agricultural_Income <span class="sc">+</span> Used_POS <span class="sc">+</span> Used_AZAMPay <span class="sc">+</span> </span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    Lost_Money <span class="sc">+</span> TooComplicated <span class="sc">+</span> Household_Not_On_Register, </span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">data =</span> tanzania_cleaned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>final_tanzania.mlr<span class="ot">&lt;-</span> <span class="fu">lm</span>(FPAI <span class="sc">~</span> FinancialEducation_YesNo_Ratio <span class="sc">+</span> Total_GroupContribution <span class="sc">+</span> </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    Old_Pension <span class="sc">+</span> BorrowedFrom_MobileMoney <span class="sc">+</span> Other_Insurance_Products <span class="sc">+</span> </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    ConfidentWithSavingsGroups <span class="sc">+</span> </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    SoldLivestock <span class="sc">+</span> Mean_AmountOwed <span class="sc">+</span> Mean_Age <span class="sc">+</span> ConfidentWithSACCOs <span class="sc">+</span> </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    ConfidentWithUTTs <span class="sc">+</span> OtherIncome <span class="sc">+</span> ConfidentWithFamilyFriends <span class="sc">+</span> </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    Mean_AmountBetting <span class="sc">+</span> Places_Not_In_My_Area <span class="sc">+</span> DontKnowHow <span class="sc">+</span> </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    CertofOccupancy <span class="sc">+</span> Personal_Accident_Insurance <span class="sc">+</span> </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    Agent_Absent <span class="sc">+</span> Advice_NoOne <span class="sc">+</span> Private_Health_Insurance <span class="sc">+</span> </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    Urban <span class="sc">+</span> Traders_non_agricultural_Income <span class="sc">+</span> Used_POS <span class="sc">+</span> Used_AZAMPay <span class="sc">+</span> </span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    Lost_Money <span class="sc">+</span> TooComplicated <span class="sc">+</span> Household_Not_On_Register, </span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">data =</span> tanzania_cleaned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="variable-selected" class="level2">
@@ -2712,23 +2164,23 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
 <p><u><em>Results of Multiple Linear Regression for Impact of Selected Variables on <strong>Financial Participation and Access Index</strong> (FPAI)</em></u></p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="jkxrbeemqr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jkxrbeemqr table {
+<div id="vwhnkccdnk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vwhnkccdnk table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#jkxrbeemqr thead, #jkxrbeemqr tbody, #jkxrbeemqr tfoot, #jkxrbeemqr tr, #jkxrbeemqr td, #jkxrbeemqr th {
+#vwhnkccdnk thead, #vwhnkccdnk tbody, #vwhnkccdnk tfoot, #vwhnkccdnk tr, #vwhnkccdnk td, #vwhnkccdnk th {
   border-style: none;
 }
 
-#jkxrbeemqr p {
+#vwhnkccdnk p {
   margin: 0;
   padding: 0;
 }
 
-#jkxrbeemqr .gt_table {
+#vwhnkccdnk .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2754,12 +2206,12 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-left-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_caption {
+#vwhnkccdnk .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#jkxrbeemqr .gt_title {
+#vwhnkccdnk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2771,7 +2223,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-bottom-width: 0;
 }
 
-#jkxrbeemqr .gt_subtitle {
+#vwhnkccdnk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2783,7 +2235,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-top-width: 0;
 }
 
-#jkxrbeemqr .gt_heading {
+#vwhnkccdnk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2795,13 +2247,13 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-right-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_bottom_border {
+#vwhnkccdnk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_col_headings {
+#vwhnkccdnk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2816,7 +2268,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-right-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_col_heading {
+#vwhnkccdnk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2836,7 +2288,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   overflow-x: hidden;
 }
 
-#jkxrbeemqr .gt_column_spanner_outer {
+#vwhnkccdnk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2848,15 +2300,15 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   padding-right: 4px;
 }
 
-#jkxrbeemqr .gt_column_spanner_outer:first-child {
+#vwhnkccdnk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jkxrbeemqr .gt_column_spanner_outer:last-child {
+#vwhnkccdnk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jkxrbeemqr .gt_column_spanner {
+#vwhnkccdnk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2868,11 +2320,11 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   width: 100%;
 }
 
-#jkxrbeemqr .gt_spanner_row {
+#vwhnkccdnk .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#jkxrbeemqr .gt_group_heading {
+#vwhnkccdnk .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2898,7 +2350,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   text-align: left;
 }
 
-#jkxrbeemqr .gt_empty_group_heading {
+#vwhnkccdnk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2913,15 +2365,15 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   vertical-align: middle;
 }
 
-#jkxrbeemqr .gt_from_md > :first-child {
+#vwhnkccdnk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jkxrbeemqr .gt_from_md > :last-child {
+#vwhnkccdnk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jkxrbeemqr .gt_row {
+#vwhnkccdnk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2940,7 +2392,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   overflow-x: hidden;
 }
 
-#jkxrbeemqr .gt_stub {
+#vwhnkccdnk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2953,7 +2405,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   padding-right: 5px;
 }
 
-#jkxrbeemqr .gt_stub_row_group {
+#vwhnkccdnk .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2967,15 +2419,15 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   vertical-align: top;
 }
 
-#jkxrbeemqr .gt_row_group_first td {
+#vwhnkccdnk .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#jkxrbeemqr .gt_row_group_first th {
+#vwhnkccdnk .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#jkxrbeemqr .gt_summary_row {
+#vwhnkccdnk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2985,16 +2437,16 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   padding-right: 5px;
 }
 
-#jkxrbeemqr .gt_first_summary_row {
+#vwhnkccdnk .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_first_summary_row.thick {
+#vwhnkccdnk .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#jkxrbeemqr .gt_last_summary_row {
+#vwhnkccdnk .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3004,7 +2456,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-bottom-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_grand_summary_row {
+#vwhnkccdnk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3014,7 +2466,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   padding-right: 5px;
 }
 
-#jkxrbeemqr .gt_first_grand_summary_row {
+#vwhnkccdnk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3024,7 +2476,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-top-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_last_grand_summary_row_top {
+#vwhnkccdnk .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3034,11 +2486,11 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-bottom-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_striped {
+#vwhnkccdnk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jkxrbeemqr .gt_table_body {
+#vwhnkccdnk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3047,7 +2499,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-bottom-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_footnotes {
+#vwhnkccdnk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3061,7 +2513,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-right-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_footnote {
+#vwhnkccdnk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3070,7 +2522,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   padding-right: 5px;
 }
 
-#jkxrbeemqr .gt_sourcenotes {
+#vwhnkccdnk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3084,7 +2536,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   border-right-color: #D3D3D3;
 }
 
-#jkxrbeemqr .gt_sourcenote {
+#vwhnkccdnk .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3092,72 +2544,72 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
   padding-right: 5px;
 }
 
-#jkxrbeemqr .gt_left {
+#vwhnkccdnk .gt_left {
   text-align: left;
 }
 
-#jkxrbeemqr .gt_center {
+#vwhnkccdnk .gt_center {
   text-align: center;
 }
 
-#jkxrbeemqr .gt_right {
+#vwhnkccdnk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jkxrbeemqr .gt_font_normal {
+#vwhnkccdnk .gt_font_normal {
   font-weight: normal;
 }
 
-#jkxrbeemqr .gt_font_bold {
+#vwhnkccdnk .gt_font_bold {
   font-weight: bold;
 }
 
-#jkxrbeemqr .gt_font_italic {
+#vwhnkccdnk .gt_font_italic {
   font-style: italic;
 }
 
-#jkxrbeemqr .gt_super {
+#vwhnkccdnk .gt_super {
   font-size: 65%;
 }
 
-#jkxrbeemqr .gt_footnote_marks {
+#vwhnkccdnk .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#jkxrbeemqr .gt_asterisk {
+#vwhnkccdnk .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#jkxrbeemqr .gt_indent_1 {
+#vwhnkccdnk .gt_indent_1 {
   text-indent: 5px;
 }
 
-#jkxrbeemqr .gt_indent_2 {
+#vwhnkccdnk .gt_indent_2 {
   text-indent: 10px;
 }
 
-#jkxrbeemqr .gt_indent_3 {
+#vwhnkccdnk .gt_indent_3 {
   text-indent: 15px;
 }
 
-#jkxrbeemqr .gt_indent_4 {
+#vwhnkccdnk .gt_indent_4 {
   text-indent: 20px;
 }
 
-#jkxrbeemqr .gt_indent_5 {
+#vwhnkccdnk .gt_indent_5 {
   text-indent: 25px;
 }
 
-#jkxrbeemqr .katex-display {
+#vwhnkccdnk .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#jkxrbeemqr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#vwhnkccdnk div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -3352,7 +2804,7 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
 <h3 class="anchored" data-anchor-id="multicollinearity---vif"><strong>8.5.1 Multicollinearity - VIF</strong></h3>
 <p>Given the large number of variables and low Adjusted R-squared, multicollinearity becomes a concern. High Variance Inflation Factor (VIF) scores indicate that some variables may be highly correlated with one another, which can distort the model’s estimates and inflate standard errors. By calculating the VIF for each predictor, we can identify those with excessive multicollinearity—typically with VIF values above 10, suggesting that they should be either removed or consolidated to improve model stability.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ols_vif_tol</span>(final_tanzania.mlr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ols_vif_tol</span>(final_tanzania.mlr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                         Variables Tolerance      VIF
 1   FinancialEducation_YesNo_Ratio 0.4206136 2.377479
@@ -3391,11 +2843,11 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
 <h3 class="anchored" data-anchor-id="test-for-non-linearity">8.5.2 Test for Non Linearity</h3>
 <p>Testing for non-linearity assesses whether the relationship between the predictor variables and the FPAI deviates from a straight line, as linear regression assumes a linear relationship. If non-linearity is present, the residuals will show systematic patterns rather than a random scatter. Testing for non-linearity ensures that the model captures the true relationships within the data and improves predictive accuracy.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ols_plot_resid_fit</span>(tanzania_vs_mlr<span class="sc">$</span>model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ols_plot_resid_fit</span>(tanzania_vs_mlr<span class="sc">$</span>model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -3406,11 +2858,11 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
 <h3 class="anchored" data-anchor-id="test-for-normality-assumption">8.5.3 Test for Normality Assumption</h3>
 <p>The normality assumption in linear regression pertains to the distribution of residuals, not the predictor variables. Residuals should follow a normal distribution for valid inference in terms of hypothesis testing and confidence intervals. If residuals are not normally distributed, transformations or robust regression techniques may be needed to satisfy the assumption, ensuring reliable and accurate estimates.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ols_plot_resid_hist</span>(tanzania_vs_mlr<span class="sc">$</span>model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ols_plot_resid_hist</span>(tanzania_vs_mlr<span class="sc">$</span>model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -3422,28 +2874,28 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
 <p>Testing for spatial autocorrelation is crucial when working with geographically clustered data, as it assesses whether residuals are correlated across spatial locations. Spatial autocorrelation implies that observations close in space may influence each other, violating the independence assumption in linear regression. Moran’s I statistic will be used to detect spatial autocorrelation in residuals.</p>
 <p>First we will extract the residuals from the model.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mlr_output <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(tanzania_vs_mlr<span class="sc">$</span>model<span class="sc">$</span>residuals)<span class="sc">%&gt;%</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span> (<span class="st">'VS_MLR_RES'</span> <span class="ot">=</span> <span class="st">'tanzania_vs_mlr$model$residuals'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>mlr_output <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(tanzania_vs_mlr<span class="sc">$</span>model<span class="sc">$</span>residuals)<span class="sc">%&gt;%</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span> (<span class="st">'VS_MLR_RES'</span> <span class="ot">=</span> <span class="st">'tanzania_vs_mlr$model$residuals'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then we will use <strong>cbind</strong> (since there is no unique identifier) to join the newly created df of residuals with our point feature data.frame, tanzania_cleaned, to plot the distribution.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>tanzania_cleaned <span class="ot">&lt;-</span> <span class="fu">cbind</span>(tanzania_cleaned,</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                         mlr_output<span class="sc">$</span>VS_MLR_RES) <span class="sc">%&gt;%</span></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span> (<span class="st">'MLR_RES'</span><span class="ot">=</span><span class="st">'mlr_output.VS_MLR_RES'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>tanzania_cleaned <span class="ot">&lt;-</span> <span class="fu">cbind</span>(tanzania_cleaned,</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>                         mlr_output<span class="sc">$</span>VS_MLR_RES) <span class="sc">%&gt;%</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span> (<span class="st">'MLR_RES'</span><span class="ot">=</span><span class="st">'mlr_output.VS_MLR_RES'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">'plot'</span>)</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span> (tanzbounds) <span class="sc">+</span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tmap_options</span>(<span class="at">check.and.fix =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">alpha=</span><span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(tanzania_cleaned)<span class="sc">+</span></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>(<span class="at">col=</span> <span class="st">'MLR_RES'</span>,</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">alpha =</span> <span class="dv">1</span>,</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">style=</span> <span class="st">'quantile'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">'plot'</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span> (tanzbounds) <span class="sc">+</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tmap_options</span>(<span class="at">check.and.fix =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">alpha=</span><span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(tanzania_cleaned)<span class="sc">+</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>(<span class="at">col=</span> <span class="st">'MLR_RES'</span>,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">alpha =</span> <span class="dv">1</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">style=</span> <span class="st">'quantile'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -3459,20 +2911,20 @@ Criteria for Variable Selection: Reject p-value greater than alpha value of 0.05
 <p>The 95% confident interval will be used. (Significance level of 0.05)</p>
 <p>We will first compute distance based weights with <strong><em>st_knn</em></strong> and <strong><em>st_weights</em></strong> as shown below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>tanzania_cleaned <span class="ot">&lt;-</span> tanzania_cleaned <span class="sc">%&gt;%</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> (<span class="at">nb =</span> <span class="fu">st_knn</span>(geometry, <span class="at">k =</span> <span class="dv">6</span>,</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">longlat=</span> <span class="cn">FALSE</span>),</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">wt =</span> <span class="fu">st_weights</span>(nb,</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">style =</span> <span class="st">'W'</span>),</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">.before =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>tanzania_cleaned <span class="ot">&lt;-</span> tanzania_cleaned <span class="sc">%&gt;%</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> (<span class="at">nb =</span> <span class="fu">st_knn</span>(geometry, <span class="at">k =</span> <span class="dv">6</span>,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">longlat=</span> <span class="cn">FALSE</span>),</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">wt =</span> <span class="fu">st_weights</span>(nb,</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">style =</span> <span class="st">'W'</span>),</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">.before =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then we are ready to perform Global Moran I with 100 simulations using <strong><em>global_moran_perm.</em></strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_perm</span>(tanzania_cleaned<span class="sc">$</span>MLR_RES,</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>                  tanzania_cleaned<span class="sc">$</span>nb,</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>                  tanzania_cleaned<span class="sc">$</span>wt,</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">alternative =</span> <span class="st">"two.sided"</span>,</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nsim=</span><span class="dv">99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_perm</span>(tanzania_cleaned<span class="sc">$</span>MLR_RES,</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>                  tanzania_cleaned<span class="sc">$</span>nb,</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>                  tanzania_cleaned<span class="sc">$</span>wt,</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">alternative =</span> <span class="st">"two.sided"</span>,</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nsim=</span><span class="dv">99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Monte-Carlo simulation of Moran I
@@ -3481,7 +2933,7 @@ data:  x
 weights: listw  
 number of simulations + 1: 100 
 
-statistic = -0.0098019, observed rank = 54, p-value = 0.92
+statistic = -0.0098019, observed rank = 53, p-value = 0.94
 alternative hypothesis: two.sided</code></pre>
 </div>
 </div>
@@ -3500,21 +2952,21 @@ alternative hypothesis: two.sided</code></pre>
 <section id="adaptive-bandwidth-gwr-model" class="level2">
 <h2 class="anchored" data-anchor-id="adaptive-bandwidth-gwr-model">Adaptive Bandwidth GWR Model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>bw_adaptive <span class="ot">&lt;-</span> <span class="fu">bw.gwr</span>(<span class="at">formula =</span> FPAI <span class="sc">~</span> FinancialEducation_YesNo_Ratio <span class="sc">+</span> Total_GroupContribution <span class="sc">+</span> </span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    Old_Pension <span class="sc">+</span> BorrowedFrom_MobileMoney <span class="sc">+</span> Other_Insurance_Products <span class="sc">+</span> </span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    ConfidentWithSavingsGroups <span class="sc">+</span> </span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    SoldLivestock <span class="sc">+</span> Mean_AmountOwed <span class="sc">+</span> Mean_Age <span class="sc">+</span> ConfidentWithSACCOs <span class="sc">+</span> </span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    ConfidentWithUTTs <span class="sc">+</span> OtherIncome <span class="sc">+</span> ConfidentWithFamilyFriends <span class="sc">+</span> </span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>    Mean_AmountBetting <span class="sc">+</span> Places_Not_In_My_Area <span class="sc">+</span> DontKnowHow <span class="sc">+</span> </span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    CertofOccupancy <span class="sc">+</span> Personal_Accident_Insurance <span class="sc">+</span> </span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    Agent_Absent <span class="sc">+</span> Advice_NoOne <span class="sc">+</span> Private_Health_Insurance <span class="sc">+</span> </span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    Urban <span class="sc">+</span> Traders_non_agricultural_Income <span class="sc">+</span> Used_POS <span class="sc">+</span> Used_AZAMPay <span class="sc">+</span> </span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>    Lost_Money <span class="sc">+</span> TooComplicated <span class="sc">+</span> Household_Not_On_Register,</span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> tanzania_cleaned, </span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>                      <span class="at">approach=</span><span class="st">"CV"</span>, </span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>                      <span class="at">kernel=</span><span class="st">"gaussian"</span>, </span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>                      <span class="at">adaptive=</span><span class="cn">TRUE</span>, </span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>                      <span class="at">longlat=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>bw_adaptive <span class="ot">&lt;-</span> <span class="fu">bw.gwr</span>(<span class="at">formula =</span> FPAI <span class="sc">~</span> FinancialEducation_YesNo_Ratio <span class="sc">+</span> Total_GroupContribution <span class="sc">+</span> </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    Old_Pension <span class="sc">+</span> BorrowedFrom_MobileMoney <span class="sc">+</span> Other_Insurance_Products <span class="sc">+</span> </span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    ConfidentWithSavingsGroups <span class="sc">+</span> </span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    SoldLivestock <span class="sc">+</span> Mean_AmountOwed <span class="sc">+</span> Mean_Age <span class="sc">+</span> ConfidentWithSACCOs <span class="sc">+</span> </span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    ConfidentWithUTTs <span class="sc">+</span> OtherIncome <span class="sc">+</span> ConfidentWithFamilyFriends <span class="sc">+</span> </span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    Mean_AmountBetting <span class="sc">+</span> Places_Not_In_My_Area <span class="sc">+</span> DontKnowHow <span class="sc">+</span> </span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    CertofOccupancy <span class="sc">+</span> Personal_Accident_Insurance <span class="sc">+</span> </span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    Agent_Absent <span class="sc">+</span> Advice_NoOne <span class="sc">+</span> Private_Health_Insurance <span class="sc">+</span> </span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    Urban <span class="sc">+</span> Traders_non_agricultural_Income <span class="sc">+</span> Used_POS <span class="sc">+</span> Used_AZAMPay <span class="sc">+</span> </span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    Lost_Money <span class="sc">+</span> TooComplicated <span class="sc">+</span> Household_Not_On_Register,</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> tanzania_cleaned, </span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>                      <span class="at">approach=</span><span class="st">"CV"</span>, </span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>                      <span class="at">kernel=</span><span class="st">"gaussian"</span>, </span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>                      <span class="at">adaptive=</span><span class="cn">TRUE</span>, </span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>                      <span class="at">longlat=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Adaptive bandwidth: 106 CV score: 0.02564928 
 Adaptive bandwidth: 73 CV score: 0.02608017 
@@ -3528,27 +2980,27 @@ Adaptive bandwidth: 139 CV score: 0.02551064 </code></pre>
 <h2 class="anchored" data-anchor-id="this-function-really-need-the-model-wont-work-without-model.">This function really need the model, won’t work without model.</h2>
 <p>Then we compute the GWR.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>gwr_adaptive <span class="ot">&lt;-</span> <span class="fu">gwr.basic</span>(<span class="at">formula =</span> FPAI <span class="sc">~</span> FinancialEducation_YesNo_Ratio <span class="sc">+</span> Total_GroupContribution <span class="sc">+</span> </span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    Old_Pension <span class="sc">+</span> BorrowedFrom_MobileMoney <span class="sc">+</span> Other_Insurance_Products <span class="sc">+</span> </span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    ConfidentWithSavingsGroups <span class="sc">+</span> </span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    SoldLivestock <span class="sc">+</span> Mean_AmountOwed <span class="sc">+</span> Mean_Age <span class="sc">+</span> ConfidentWithSACCOs <span class="sc">+</span> </span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    ConfidentWithUTTs <span class="sc">+</span> OtherIncome <span class="sc">+</span> ConfidentWithFamilyFriends <span class="sc">+</span> </span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    Mean_AmountBetting <span class="sc">+</span> Places_Not_In_My_Area <span class="sc">+</span> DontKnowHow <span class="sc">+</span> </span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    CertofOccupancy <span class="sc">+</span> Personal_Accident_Insurance <span class="sc">+</span> </span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    Agent_Absent <span class="sc">+</span> Advice_NoOne <span class="sc">+</span> Private_Health_Insurance <span class="sc">+</span> </span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    Urban <span class="sc">+</span> Traders_non_agricultural_Income <span class="sc">+</span> Used_POS <span class="sc">+</span> Used_AZAMPay <span class="sc">+</span> </span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    Lost_Money <span class="sc">+</span> TooComplicated <span class="sc">+</span> Household_Not_On_Register,</span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> tanzania_cleaned, </span>
-<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">bw=</span>bw_adaptive, </span>
-<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>                          <span class="at">kernel =</span> <span class="st">'gaussian'</span>, </span>
-<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>                          <span class="at">adaptive=</span><span class="cn">TRUE</span>, </span>
-<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>                          <span class="at">longlat =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>gwr_adaptive</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>gwr_adaptive <span class="ot">&lt;-</span> <span class="fu">gwr.basic</span>(<span class="at">formula =</span> FPAI <span class="sc">~</span> FinancialEducation_YesNo_Ratio <span class="sc">+</span> Total_GroupContribution <span class="sc">+</span> </span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    Old_Pension <span class="sc">+</span> BorrowedFrom_MobileMoney <span class="sc">+</span> Other_Insurance_Products <span class="sc">+</span> </span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    ConfidentWithSavingsGroups <span class="sc">+</span> </span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    SoldLivestock <span class="sc">+</span> Mean_AmountOwed <span class="sc">+</span> Mean_Age <span class="sc">+</span> ConfidentWithSACCOs <span class="sc">+</span> </span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    ConfidentWithUTTs <span class="sc">+</span> OtherIncome <span class="sc">+</span> ConfidentWithFamilyFriends <span class="sc">+</span> </span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>    Mean_AmountBetting <span class="sc">+</span> Places_Not_In_My_Area <span class="sc">+</span> DontKnowHow <span class="sc">+</span> </span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>    CertofOccupancy <span class="sc">+</span> Personal_Accident_Insurance <span class="sc">+</span> </span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>    Agent_Absent <span class="sc">+</span> Advice_NoOne <span class="sc">+</span> Private_Health_Insurance <span class="sc">+</span> </span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>    Urban <span class="sc">+</span> Traders_non_agricultural_Income <span class="sc">+</span> Used_POS <span class="sc">+</span> Used_AZAMPay <span class="sc">+</span> </span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>    Lost_Money <span class="sc">+</span> TooComplicated <span class="sc">+</span> Household_Not_On_Register,</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> tanzania_cleaned, </span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">bw=</span>bw_adaptive, </span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>                          <span class="at">kernel =</span> <span class="st">'gaussian'</span>, </span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>                          <span class="at">adaptive=</span><span class="cn">TRUE</span>, </span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>                          <span class="at">longlat =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>gwr_adaptive</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   ***********************************************************************
    *                       Package   GWmodel                             *
    ***********************************************************************
-   Program starts at: 2024-11-01 16:11:03.014558 
+   Program starts at: 2024-11-01 16:36:47.84668 
    Call:
    gwr.basic(formula = FPAI ~ FinancialEducation_YesNo_Ratio + Total_GroupContribution + 
     Old_Pension + BorrowedFrom_MobileMoney + Other_Insurance_Products + 
@@ -3703,7 +3155,7 @@ Adaptive bandwidth: 139 CV score: 0.02551064 </code></pre>
    Adjusted R-square value:  0.829154 
 
    ***********************************************************************
-   Program stops at: 2024-11-01 16:11:03.048545 </code></pre>
+   Program stops at: 2024-11-01 16:36:47.879874 </code></pre>
 </div>
 </div>
 </section>
@@ -3712,32 +3164,32 @@ Adaptive bandwidth: 139 CV score: 0.02551064 </code></pre>
 <section id="converting-sdf-into-sf-data.frame" class="level3">
 <h3 class="anchored" data-anchor-id="converting-sdf-into-sf-data.frame">Converting SDF into sf data.frame</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>gwr_adaptive_output <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  gwr_adaptive<span class="sc">$</span>SDF)<span class="sc">%&gt;%</span></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span> (<span class="sc">-</span><span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">32</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>gwr_adaptive_output <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  gwr_adaptive<span class="sc">$</span>SDF)<span class="sc">%&gt;%</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span> (<span class="sc">-</span><span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">32</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We must exclude the intercept in column number 1.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>gwr_sf_adaptive <span class="ot">&lt;-</span> <span class="fu">cbind</span>(tanzania_cleaned,</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                         gwr_adaptive_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>gwr_sf_adaptive <span class="ot">&lt;-</span> <span class="fu">cbind</span>(tanzania_cleaned,</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>                         gwr_adaptive_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="visualizing-local-r2" class="level3">
 <h3 class="anchored" data-anchor-id="visualizing-local-r2">Visualizing local R2</h3>
 <p>Using the localized model, the model performance goes up all the way to 0.95 for some particularly locations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(tanzbounds)<span class="sc">+</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(gwr_sf_adaptive) <span class="sc">+</span>  </span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>(<span class="at">col =</span> <span class="st">"Local_R2"</span>,</span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"gray"</span>,</span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>(<span class="at">set.zoom.limits =</span> <span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">14</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(tanzbounds)<span class="sc">+</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(gwr_sf_adaptive) <span class="sc">+</span>  </span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>(<span class="at">col =</span> <span class="st">"Local_R2"</span>,</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.col =</span> <span class="st">"gray"</span>,</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">border.lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>(<span class="at">set.zoom.limits =</span> <span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">14</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-home_Ex03_files/figure-html/unnamed-chunk-50-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

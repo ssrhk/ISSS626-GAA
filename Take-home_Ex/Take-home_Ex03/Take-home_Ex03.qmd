@@ -975,13 +975,53 @@ Exploratory Data Analysis (EDA) is a crucial step allowing us to uncover underly
 
 ### 7.1.1 Visualizing Dependent Variable
 
-### 7.1.2 Distribution Plots
+```{r}
+ggplot(data=tanzania_cleaned, aes(x=`FPAI`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+```
 
-### 7.1.3 Boxplots
+### 7.1.2 Histogram Plots of Predictor Variables
+
+```{r}
+Age <- ggplot(data=tanzania_cleaned, aes(x= `Mean_Age`)) + 
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+Registered_YesNo_Ratio <- ggplot(data=tanzania_cleaned, aes(x= `Registered_YesNo_Ratio`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+Male_Female_Ratio <- ggplot(data=tanzania_cleaned, aes(x= `Male_Female_Ratio`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+Urban <- ggplot(data=tanzania_cleaned, aes(x= `Urban`)) + 
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+Formal_sector_salaried <- ggplot(data=tanzania_cleaned, aes(x= `Formal_sector_salaried`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+FinancialEducation <- ggplot(data=tanzania_cleaned, 
+                               aes(x= `FinancialEducation_YesNo_Ratio`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+Mean_AmountBetting <- ggplot(data=tanzania_cleaned, aes(x= `Mean_AmountBetting`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+Mean_AmountOwed <- ggplot(data=tanzania_cleaned, aes(x= `Mean_AmountOwed`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+MobilePhone <- ggplot(data=tanzania_cleaned, aes(x= `MobilePhone`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+Total_GroupContribution <- ggplot(data=tanzania_cleaned, aes(x= `Total_GroupContribution`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+ggarrange(Age, Registered_YesNo_Ratio, Male_Female_Ratio, Urban, Formal_sector_salaried, 
+          FinancialEducation, Mean_AmountBetting, Mean_AmountOwed,MobilePhone,Total_GroupContribution,
+          ncol = 2, nrow = 5)
+```
 
 ## 7.2 Correlation Analysis
 
-Since we have around 207 variables chosen, it is hard to visualize a correlation matrix. Therefore we will just display the highly correlated(pairs of variables with absolute correlations greater than 0.8) with the following code chunk.
+Since we have around 160 variables chosen, it is hard to visualize a correlation matrix. Therefore we will just display the highly correlated(pairs of variables with absolute correlations greater than 0.8) with the following code chunk.
 
 ```{r}
 #| eval: False
@@ -1011,181 +1051,23 @@ print(high_cor_df)
 
 The following table shows the correlation pairs and the excluded variables highlighted in blue.The following code chunk will be used to remove the variables.
 
-| Var1                   | Var2        | Correlation | Exclude                |
-|------------------------|-------------|-------------|------------------------|
-| Dependents_Income      | MobilePhone | 0.8415763   | Dependents_Income      |
-| Advice_HouseholdMember | MobilePhone | 0.8957760   | Advice_HouseholdMember |
-| UsedSavings            | MobilePhone | 0.8785228   | UsedSavings            |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-|                        |             |             |                        |
-
-|             |             |           |             |
-|-------------|-------------|-----------|-------------|
-| UsedSavings | MobilePhone | 0.8785228 | UsedSavings |
-
-|                          |             |           |                          |
-|--------------------------|-------------|-----------|--------------------------|
-| BorrowedFromFriendFamily | MobilePhone | 0.8459579 | BorrowedFromFriendFamily |
-
-|                         |             |           |                         |
-|-------------------------|-------------|-----------|-------------------------|
-| GotAssistanceFromFamily | MobilePhone | 0.8835694 | GotAssistanceFromFamily |
-
-|             |             |           |             |
-|-------------|-------------|-----------|-------------|
-| CutSpending | MobilePhone | 0.8235916 | CutSpending |
-
-|             |             |           |             |
-|-------------|-------------|-----------|-------------|
-| Old_NoPlans | MobilePhone | 0.8171885 | Old_NoPlans |
-
-|                    |             |           |                    |
-|--------------------|-------------|-----------|--------------------|
-| ConfidentWithBanks | MobilePhone | 0.8273782 | ConfidentWithBanks |
-
-|                          |             |           |                          |
-|--------------------------|-------------|-----------|--------------------------|
-| ConfidentWithMobileMoney | MobilePhone | 0.8617921 | ConfidentWithMobileMoney |
-
-|           |             |           |           |
-|-----------|-------------|-----------|-----------|
-| Used_Cash | MobilePhone | 0.9620748 | Used_Cash |
-
-|                  |             |           |                  |
-|------------------|-------------|-----------|------------------|
-| Used_MobileMoney | MobilePhone | 0.8079097 | Used_MobileMoney |
-
-|                         |             |           |                         |
-|-------------------------|-------------|-----------|-------------------------|
-| Do_Not_Know_Where_To_Go | MobilePhone | 0.8345175 | Do_Not_Know_Where_To_Go |
-
-|                           |             |           |                           |
-|---------------------------|-------------|-----------|---------------------------|
-| Trust_Insurance_Companies | MobilePhone | 0.8964594 | Trust_Insurance_Companies |
-
-|                     |             |           |                     |
-|---------------------|-------------|-----------|---------------------|
-| Insurance_Good_Idea | MobilePhone | 0.9238936 | Insurance_Good_Idea |
-
-|                 |             |           |                 |
-|-----------------|-------------|-----------|-----------------|
-| Network_Failure | MobilePhone | 0.8569155 | Network_Failure |
-
-|        |          |           |        |
-|--------|----------|-----------|--------|
-| Laptop | Internet | 1.0000000 | Laptop |
-
-|                            |                  |           |                            |
-|----------------------------|------------------|-----------|----------------------------|
-| Farmers_and_fishers_Income | BusinessTooSmall | 0.8078662 | Farmers_and_fishers_Income |
-
-|                                 |                            |           |                                 |
-|---------------------------------|----------------------------|-----------|---------------------------------|
-| Old_FarmingAgricultureLivestock | Farmers_and_fishers_Income | 0.8149506 | Old_FarmingAgricultureLivestock |
-
-|                          |                        |           |                          |
-|--------------------------|------------------------|-----------|--------------------------|
-| BorrowedFromFriendFamily | Advice_HouseholdMember | 0.8038739 | BorrowedFromFriendFamily |
-
-|                         |                        |           |                         |
-|-------------------------|------------------------|-----------|-------------------------|
-| GotAssistanceFromFamily | Advice_HouseholdMember | 0.8242829 | GotAssistanceFromFamily |
-
-|                     |                        |           |                     |
-|---------------------|------------------------|-----------|---------------------|
-| Insurance_Good_Idea | Advice_HouseholdMember | 0.8232845 | Insurance_Good_Idea |
-
-|                             |                          |           |                             |
-|-----------------------------|--------------------------|-----------|-----------------------------|
-| BorrowedFrom_Family_PayBack | BorrowedFromFriendFamily | 0.8943542 | BorrowedFrom_Family_PayBack |
-
-|           |                        |           |           |
-|-----------|------------------------|-----------|-----------|
-| Used_Cash | Advice_HouseholdMember | 0.8590026 | Used_Cash |
-
-|                     |                          |           |                     |
-|---------------------|--------------------------|-----------|---------------------|
-| Insurance_Good_Idea | BorrowedFromFriendFamily | 0.8123864 | Insurance_Good_Idea |
-
-|             |             |           |             |
-|-------------|-------------|-----------|-------------|
-| CutSpending | UsedSavings | 0.8675488 | CutSpending |
-
-|                    |                          |           |                    |
-|--------------------|--------------------------|-----------|--------------------|
-| ConfidentWithBanks | ConfidentWithMobileMoney | 0.8916325 | ConfidentWithBanks |
-
-|           |                    |           |           |
-|-----------|--------------------|-----------|-----------|
-| Used_Cash | ConfidentWithBanks | 0.8446089 | Used_Cash |
-
-|                           |                          |           |                           |
-|---------------------------|--------------------------|-----------|---------------------------|
-| Trust_Insurance_Companies | ConfidentWithMobileMoney | 0.8376665 | Trust_Insurance_Companies |
-
-|                     |                          |           |                     |
-|---------------------|--------------------------|-----------|---------------------|
-| Insurance_Good_Idea | ConfidentWithMobileMoney | 0.8461074 | Insurance_Good_Idea |
-
-|                           |                         |           |                           |
-|---------------------------|-------------------------|-----------|---------------------------|
-| Trust_Insurance_Companies | GotAssistanceFromFamily | 0.8133255 | Trust_Insurance_Companies |
-
-|                 |                     |           |                 |
-|-----------------|---------------------|-----------|-----------------|
-| Network_Failure | Agent_No_Cash_Float | 0.8285897 | Network_Failure |
-
-|                    |                        |           |                    |
-|--------------------|------------------------|-----------|--------------------|
-| Moneylender_Access | Moneylender_TreatsWell | 0.9259172 | Moneylender_Access |
-
-|                       |                        |           |                       |
-|-----------------------|------------------------|-----------|-----------------------|
-| Moneylender_InfoClear | Moneylender_TreatsWell | 0.9420714 | Moneylender_InfoClear |
-
-|                      |                        |           |                      |
-|----------------------|------------------------|-----------|----------------------|
-| Moneylender_NeedsMet | Moneylender_TreatsWell | 0.9779739 | Moneylender_NeedsMet |
-
-|                            |                        |           |                            |
-|----------------------------|------------------------|-----------|----------------------------|
-| Moneylender_FeesReasonable | Moneylender_TreatsWell | 0.8838490 | Moneylender_FeesReasonable |
-
-|                             |                        |           |                             |
-|-----------------------------|------------------------|-----------|-----------------------------|
-| Moneylender_CustomerSupport | Moneylender_TreatsWell | 0.9335145 | Moneylender_CustomerSupport |
+| Var1                      | Var2        | Correlation | Exclude                   |
+|---------------------------|-------------|-------------|---------------------------|
+| Dependents_Income         | MobilePhone | 0.8415763   | Dependents_Income         |
+| Advice_HouseholdMember    | MobilePhone | 0.8957760   | Advice_HouseholdMember    |
+| UsedSavings               | MobilePhone | 0.8785228   | UsedSavings               |
+| BorrowedFromFriendFamily  | MobilePhone | 0.8459579   | BorrowedFromFriendFamily  |
+| GotAssistanceFromFamily   | MobilePhone | 0.8835694   | GotAssistanceFromFamily   |
+| CutSpending               | MobilePhone | 0.8235916   | CutSpending               |
+| Old_NoPlans               | MobilePhone | 0.8171885   | Old_NoPlans               |
+| ConfidentWithBanks        | MobilePhone | 0.8273782   | ConfidentWithBanks        |
+| ConfidentWithMobileMoney  | MobilePhone | 0.8617921   | ConfidentWithMobileMoney  |
+| Used_Cash                 | MobilePhone | 0.9620748   | Used_Cash                 |
+| Used_MobileMoney          | MobilePhone | 0.8079097   | Used_MobileMoney          |
+| Do_Not_Know_Where_To_Go   | MobilePhone | 0.8345175   | Do_Not_Know_Where_To_Go   |
+| Trust_Insurance_Companies | MobilePhone | 0.8964594   | Trust_Insurance_Companies |
+| Insurance_Good_Idea       | MobilePhone | 0.9238936   | Insurance_Good_Idea       |
+| Network_Failure           | MobilePhone | 0.8569155   | Network_Failure           |
 
 ```{r}
 #| eval: False
