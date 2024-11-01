@@ -904,9 +904,9 @@ tm_shape(tanzbounds) +
 
 ------------------------------------------------------------------------
 
-## 6 The Dependent Variable
+# 6 The Dependent Variable
 
-### **6.1.1 Financial Inclusion in Tanzania**
+## **6.1 Financial Inclusion in Tanzania**
 
 Financial inclusion refers to the process of ensuring that individuals and businesses have access to affordable and useful financial products and services that meet their needs—ranging from transactions, payments, savings, and credit to insurance. According to the World Bank, financial inclusion is a "key enabler in reducing poverty and boosting shared prosperity by providing the unbanked and underserved populations access to essential financial services" (World Bank, 2023).
 
@@ -914,7 +914,7 @@ A robust financial inclusion system allows individuals to manage risks, invest i
 
 Despite significant progress, the uneven distribution of financial services between rural and urban areas underscores the need to examine the factors driving financial inclusion at a local level. Understanding these determinants is essential for enhancing access to financial services and fostering inclusive economic development. This study aims to derive a dependent variable representing financial inclusion from the FinScope dataset, focusing on key financial behaviors.
 
-### **6.1.2 Deriving The Dependent Variable - Financial Inclusion Index**
+## **6.2 Deriving The Dependent Variable - Financial Inclusion Index**
 
 Research by Demirgüç-Kunt and Klapper (World Bank,2018) indicates that financial inclusion is multi-dimensional, encompassing access to credit, savings, and various financial services. Composite indices, such as the Global Financial Inclusion Index, often aggregate multiple financial behaviors to capture the complexity of financial inclusion.
 
@@ -951,7 +951,7 @@ tanzania_cleaned <- tanzania_cleaned %>%
                  INFORMAL_MONEYLENDER + SOCIAL_GROUPS) / 10)
 ```
 
-### 6.1.3 Dependent Variable Implications
+## 6.3 Dependent Variable Implications
 
 -   **Higher FPAI Values:**
 
@@ -1157,6 +1157,12 @@ The initial model has an adjusted R-squared value of 0.813, meaning that approxi
 ## In multiple linear regression, adjusted R-squared is prioritized over R-squared because it adjusts for the number of predictors in the model, providing a more accurate assessment of model fit. Unlike R-squared, adjusted R-squared penalizes unnecessary predictors, helping to prevent overfitting and offering a more reliable measure of predictive power.
 :::
 
+```{r}
+vif_values <- ols_vif_tol(tanzania.mlr)
+high_vif_values <- vif_values[vif_values$VIF > 10, ]
+high_vif_values
+```
+
 ## 8.2 The Refined Model - Stepwise Regression
 
 In this section, we perform **stepwise regression** for variable selection. This method systematically includes or excludes variables based on specific criteria, such as the Akaike Information Criterion (AIC) or the Bayesian Information Criterion (BIC). Stepwise regression refines the model by retaining only those predictors that significantly contribute to explaining variations in the Financial Inclusion Index, leading to a more parsimonious and interpretable model.
@@ -1280,9 +1286,9 @@ Interpretation of each predictor:
 
 The predictors, especially those with larger positive coefficients like **FinancialEducation_YesNo_Ratio** (0.0502) and **Urban** (0.0301), reveal impactful areas where improvements could directly boost FPAI and financial inclusion. Similarly, variables with negative coefficients, like **Household_Not_On_Register** (-0.0127), suggest barriers that significantly limits access to financial products and would require attention to enhance inclusion.
 
-## 8.5 Model Diagnostics
+## 8.4 Model Diagnostics
 
-### **8.5.1 Multicollinearity - VIF**
+### **8.4.1 Multicollinearity - VIF**
 
 Given the large number of variables and low Adjusted R-squared, multicollinearity becomes a concern. High Variance Inflation Factor (VIF) scores indicate that some variables may be highly correlated with one another, which can distort the model's estimates and inflate standard errors. By calculating the VIF for each predictor, we can identify those with excessive multicollinearity—typically with VIF values above 10, suggesting that they should be either removed or consolidated to improve model stability.
 
@@ -1292,7 +1298,7 @@ ols_vif_tol(final_tanzania.mlr)
 
 After stepwise regression and significant variables were selected, we can see that there is no VIF greater than 10, indicating no multicollinearity is present in our refined model. High VIF values are only expected in the initial model because our dataframe contains numerous variables capturing related aspects of financial inclusion, such as various forms of access to financial services, borrowing behaviors, and support sources, many of which are conceptually similar and share underlying patterns.
 
-### 8.5.2 Test for Non Linearity
+### 8.4.2 Test for Non Linearity
 
 Testing for non-linearity assesses whether the relationship between the predictor variables and the FPAI deviates from a straight line, as linear regression assumes a linear relationship. If non-linearity is present, the residuals will show systematic patterns rather than a random scatter. Testing for non-linearity ensures that the model captures the true relationships within the data and improves predictive accuracy.
 
@@ -1302,7 +1308,7 @@ ols_plot_resid_fit(tanzania_vs_mlr$model)
 
 From the figure above, we can confirm that residuals are non linear.
 
-### 8.5.3 Test for Normality Assumption
+### 8.4.3 Test for Normality Assumption
 
 The normality assumption in linear regression pertains to the distribution of residuals, not the predictor variables. Residuals should follow a normal distribution for valid inference in terms of hypothesis testing and confidence intervals. If residuals are not normally distributed, transformations or robust regression techniques may be needed to satisfy the assumption, ensuring reliable and accurate estimates.
 
@@ -1312,7 +1318,7 @@ ols_plot_resid_hist(tanzania_vs_mlr$model)
 
 From the figure above, we can confirm that residuals are normally distributed.
 
-### 8.5.3 Test for Spatial Autocorrelation
+### 8.4.4 Test for Spatial Autocorrelation
 
 Testing for spatial autocorrelation is crucial when working with geographically clustered data, as it assesses whether residuals are correlated across spatial locations. Spatial autocorrelation implies that observations close in space may influence each other, violating the independence assumption in linear regression. Moran’s I statistic will be used to detect spatial autocorrelation in residuals.
 
@@ -1344,7 +1350,7 @@ tm_shape(tanzania_cleaned)+
 
 From the figure above, we can see that there seem to not be a cluster and the residuals are rather random.
 
-#### 8.5.3.1 Spatially Stationary Test
+#### 8.4.4.1 Spatially Stationary Test
 
 To confirm this and measure the degree to which similar or dissimilar values are clustered in space, we will performing Global Moran’s I. If the indicators are independent of space, Moran’s I should show no significant spatial autocorrelation. The following is the hypothesis that we would like to test.
 
@@ -1430,7 +1436,7 @@ gwr_adaptive <- gwr.basic(formula = FPAI ~ FinancialEducation_YesNo_Ratio + Tota
 gwr_adaptive
 ```
 
-## Visualizing GWR Output
+## 9.1 Visualizing GWR Output
 
 ### Converting SDF into sf data.frame
 
@@ -1447,7 +1453,7 @@ gwr_sf_adaptive <- cbind(tanzania_cleaned,
                          gwr_adaptive_output)
 ```
 
-### Visualizing local R2
+### 9.1.2 Visualizing local R2
 
 Using the localized model, the model performance goes up all the way to 0.95 for some particularly locations.
 
@@ -1462,7 +1468,7 @@ tm_shape(gwr_sf_adaptive) +
   tm_view(set.zoom.limits = c(11,14))
 ```
 
-### Visualizing coefficient estimates
+### 9.2.2 Visualizing coefficient estimates
 
 ------------------------------------------------------------------------
 
