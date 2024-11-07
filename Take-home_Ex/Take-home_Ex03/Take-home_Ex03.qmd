@@ -54,39 +54,39 @@ The process will follow these steps:
 
 The following packages were used for this study:
 
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| Package     | Description                                                                                                   |
-+=============+===============================================================================================================+
-| olsrr       | For creating and evaluating ordinary least squares regression models.                                         |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| ggstatsplot | for producing statistical visualizations that combine ggplot2 graphics with statistical results               |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| e1071       | For checking skewness of variables                                                                            |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| ggpubr      | To create publication-ready visualizations with ggplot2 and arranging multiple plots                          |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| sf          | For importing, managing, and handling geospatial data                                                         |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| sfdep       | To analyze spatial relationships and incorporate them into regression models                                  |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| spdep       | For calculating spatial weights and conducting tests for spatial relationships                                |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| GWmodel     | To explore spatially varying relationships between the dependent and independent variables                    |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| tmap        | For thematic mapping, allowing us to visualize spatial data in an intuitive and aesthetically pleasing manner |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| tidyverse   | For data manipulation, cleaning, and visualization                                                            |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| gtsummary   | To create summary tables for regression results, providing a clear and concise presentation of model outputs  |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| see         | For visualizing model diagnostics and results                                                                 |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| performance | For evaluating model performance and diagnostics                                                              |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| datawizard  | To handle missing values, recode variables, and perform exploratory data analysis before modeling             |
-+-------------+---------------------------------------------------------------------------------------------------------------+
-| gtsummary   | To create publication ready summary tables                                                                    |
-+-------------+---------------------------------------------------------------------------------------------------------------+
++--------------+---------------------------------------------------------------------------------------------------------------+
+| Package      | Description                                                                                                   |
++==============+===============================================================================================================+
+| olsrr        | For creating and evaluating ordinary least squares regression models.                                         |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| ggstatsplot  | for producing statistical visualizations that combine ggplot2 graphics with statistical results               |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| e1071        | For checking skewness of variables                                                                            |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| ggpubr       | To create publication-ready visualizations with ggplot2 and arranging multiple plots                          |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| sf           | For importing, managing, and handling geospatial data                                                         |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| sfdep        | To analyze spatial relationships and incorporate them into regression models                                  |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| spdep        | For calculating spatial weights and conducting tests for spatial relationships                                |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| GWmodel      | To explore spatially varying relationships between the dependent and independent variables                    |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| tmap         | For thematic mapping, allowing us to visualize spatial data in an intuitive and aesthetically pleasing manner |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| tidyverse    | For data manipulation, cleaning, and visualization                                                            |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| gtsummary    | To create summary tables for regression results, providing a clear and concise presentation of model outputs  |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| see          | For visualizing model diagnostics and results                                                                 |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| performance  | For evaluating model performance and diagnostics                                                              |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| datawizard   | To handle missing values, recode variables, and perform exploratory data analysis before modeling             |
++--------------+---------------------------------------------------------------------------------------------------------------+
+| gtsummary    | To create publication ready summary tables                                                                    |
++--------------+---------------------------------------------------------------------------------------------------------------+
 
 ## Code
 
@@ -762,6 +762,25 @@ To start, we will create a dataframe that includes the geoboundaries by left joi
 tanzania_cleaned <- left_join(tanzbounds,tanzania_combined)
 ```
 
+We will also save a polygon version for choloropleth map analysis in later sections.
+
+```{r}
+#| eval: False
+tanzania_cleaned_polygons <- left_join(tanzbounds,tanzania_combined)
+```
+
+```{r}
+#| eval: False
+#| echo: False
+write_rds(tanzania_cleaned_polygons,"data/rds/tanzania_cleaned_polygons")
+```
+
+```{r}
+#| echo: False
+tanzania_cleaned_polygons <- read_rds("data/rds/tanzania_cleaned_polygons")
+```
+
+\
 With the following code ***st_point_on_surface*** we find the centroids on the joined dataframe.
 
 ```{r}
@@ -1201,29 +1220,44 @@ mlr_output <- as.data.frame(tanzania_vs_mlr$model$residuals)%>%
   rename ('VS_MLR_RES' = 'tanzania_vs_mlr$model$residuals')
 ```
 
-Then we will use **cbind** (since there is no unique identifier) to join the newly created dataframe of residuals with our point feature data.frame, tanzania_cleaned, to plot the distribution.
+Then we will use **cbind** (since there is no unique identifier) to join the newly created dataframe of residuals with our point feature data.frame, tanzania_cleaned_polygons, to plot the distribution.
 
 ```{r}
-tanzania_cleaned <- cbind(tanzania_cleaned,
+tanzania_cleaned_polygons <- cbind(tanzania_cleaned_polygons,
                          mlr_output$VS_MLR_RES) %>%
   rename ('MLR_RES'='mlr_output.VS_MLR_RES')
 ```
 
 ```{r}
 #| echo: False
-tmap_mode('plot')
-tm_shape (tanzbounds) +
+tanzania_cleaned <- cbind(tanzania_cleaned,
+                         mlr_output$VS_MLR_RES) %>%
+  rename ('MLR_RES'='mlr_output.VS_MLR_RES')
+```
+
+We will visualize the MLR residual values in a choloropleth map as follows.
+
+```{r}
+#| echo: False
+district_centroids <- st_centroid(tanzania_cleaned_polygons) #for displaying district name
+
+tmap_mode("plot")
+tm_shape(tanzania_cleaned_polygons) +
   tmap_options(check.and.fix = TRUE) +
-  tm_polygons(alpha=0.4) +
-tm_shape(tanzania_cleaned)+
-  tm_dots(col= 'MLR_RES',
-          alpha = 1,
-          style= 'quantile')
+  tm_polygons(col = "MLR_RES",   
+              style = "quantile",
+              alpha = 0.8,
+              title = "MLR Residuals") +
+  tm_shape(district_centroids) +
+  tm_text("dist_name", size = 0.3, col = "black") + 
+  tm_layout(legend.outside = TRUE,
+            title = "Choropleth Map of MLR Residuals with District Names")
+
 ```
 
 The map displays the spatial distribution of residuals from our multiple linear regression model across various districts in Tanzania. Each dot represents a point in the dataset, colored based on quantiles of residual values, ranging from low residuals (dark red) to high residuals (dark green). Negative residuals (red to yellow shades) suggest areas where the model underestimates the observed values, while positive residuals (yellow to green shades) indicate overestimations.
 
-Clusters of similar residual values are visible in several regions. For instance, areas in the eastern parts of Tanzania show concentrations of positive residuals (green dots), whereas some central and northern regions display clusters of negative residuals (red dots). These clusters suggest spatial patterns in the model's performance, indicating that it may overestimate or underestimate values systematically in specific areas.
+Clusters of similar residual values are visible in several regions. For instance, areas in the eastern parts of Tanzania show concentrations of positive residuals, whereas some **central** (Manyoni, Sikonge,Urambo) and **northern regions** (Karagwe,Ngara) display clusters of negative residuals. These clusters suggest spatial patterns in the model's performance, indicating that it may overestimate or underestimate values systematically in specific areas.
 
 #### 8.4.4.1 Spatially Stationary Test
 
@@ -1312,7 +1346,7 @@ gwr_adaptive_output <- as.data.frame(
 Next, we combine the cleaned Tanzania dataset with the GWR output to create a new spatial data frame, `gwr_sf_adaptive`, which includes both the geographical information and the localized regression results
 
 ```{r}
-gwr_sf_adaptive <- cbind(tanzania_cleaned,
+gwr_sf_adaptive_poly <- cbind(tanzania_cleaned_polygons,
                          gwr_adaptive_output)
 ```
 
@@ -1320,15 +1354,29 @@ gwr_sf_adaptive <- cbind(tanzania_cleaned,
 
 The localized model demonstrates a significant enhancement in performance, with the local $R^2$ values reaching as high as 0.72 for specific locations. This improvement illustrates the effectiveness of GWR in capturing spatial variations in model performance across different regions. The following code generates a map that overlays the Tanzania boundary with the localized $R^2$ values represented as dots.
 
+To visualize a choloropleth map we will take the following steps:
+
+1.  Set geometry of gwr_sf_adaptive to the polygons
+2.  Plot the choloropleth map of aggregated values
+
 ```{r}
-tmap_mode("plot")
-tm_shape(tanzbounds)+
-  tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Local_R2",
-          border.col = "gray",
-          border.lwd = 1) +
-  tm_view(set.zoom.limits = c(11,14))
+#| echo: False
+gwr_sf_adaptive_poly <- gwr_sf_adaptive_poly %>%
+  st_set_geometry("geometry")
+
+tm_shape(tanzbounds) +
+  tm_polygons(alpha = 0.1) +  
+  tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Local_R2", 
+              palette = "YlOrRd",     
+              border.col = "gray",    
+              border.lwd = 1,         
+              title = "Local R²") + 
+  tm_shape(district_centroids) +
+  tm_text("dist_name", size = 0.3, col = "black") +
+  tm_layout(legend.outside = TRUE,
+            title = "Choropleth Map of Local R² by District")
+
 ```
 
 The map displays the spatial distribution of local $R^2$ values from the geographically weighted regression (GWR) model, overlaid on Tanzania's district boundaries. Each dot represents a location with a local $R^2$ value, color-coded according to its range. Darker shades indicate higher local $R^2$ values, while lighter shades indicate lower values.
@@ -1346,8 +1394,8 @@ Lastly, we will visualize the standard error and t-value maps of the key signifi
 tmap_mode("plot")
 FinancialEducation_YesNo_Ratio_SE <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "FinancialEducation_YesNo_Ratio_SE",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "FinancialEducation_YesNo_Ratio_SE",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1355,8 +1403,8 @@ tm_shape(gwr_sf_adaptive) +
 
 FinancialEducation_YesNo_Ratio_TV <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "FinancialEducation_YesNo_Ratio_TV",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "FinancialEducation_YesNo_Ratio_TV",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1364,8 +1412,8 @@ tm_shape(gwr_sf_adaptive) +
 
 ComfortableBank_YesNo_Ratio_SE <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "ComfortableBank_YesNo_Ratio_SE",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "ComfortableBank_YesNo_Ratio_SE",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1373,8 +1421,8 @@ tm_shape(gwr_sf_adaptive) +
 
 ComfortableBank_YesNo_Ratio_TV <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "ComfortableBank_YesNo_Ratio_TV",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "ComfortableBank_YesNo_Ratio_TV",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1397,10 +1445,6 @@ tmap_arrange(FinancialEducation_YesNo_Ratio_SE, FinancialEducation_YesNo_Ratio_T
 2. **ComfortableBank_YesNo_Ratio (Bottom Row)**
 
 -   **Left (SE):** Darker colors in northern regions indicate greater variability, reflecting more uncertainty in the influence of comfort with banking on Mobile banking in these areas. Lighter colors elsewhere suggest more stable estimates of this effect.
-
-```{=html}
-<!-- -->
-```
 -   **Right (TV):** The t-value map represents the strength and direction of the effect of comfort with banking services on Mobile Money Usage. Darker shades indicate stronger positive effects, where a higher proportion of individuals comfortable with banking correlates with higher levels of financial inclusion. The coastal and southern districts, with darker orange dots, show that comfort with banking has a particularly positive influence on MMU in these areas.
 
 #### 9.3.2.2 Demographics
@@ -1410,8 +1454,8 @@ tmap_arrange(FinancialEducation_YesNo_Ratio_SE, FinancialEducation_YesNo_Ratio_T
 tmap_mode("plot")
 Urban_SE <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Urban_SE",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Urban_SE",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1419,8 +1463,8 @@ tm_shape(gwr_sf_adaptive) +
 
 Urban_TV <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Urban_TV",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Urban_TV",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1428,8 +1472,8 @@ tm_shape(gwr_sf_adaptive) +
 
 Mean_Age_SE <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Mean_Age_SE",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Mean_Age_SE",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1437,8 +1481,8 @@ tm_shape(gwr_sf_adaptive) +
 
 Mean_Age_TV <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Mean_Age_TV",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Mean_Age_TV",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1468,8 +1512,8 @@ tmap_arrange(Urban_SE, Urban_TV,Mean_Age_SE ,Mean_Age_TV,
 tmap_mode("plot")
 Used_CreditCard_SE <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Used_CreditCard_SE",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Used_CreditCard_SE",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1477,8 +1521,8 @@ tm_shape(gwr_sf_adaptive) +
 
 Used_CreditCard_TV <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Used_CreditCard_TV",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Used_CreditCard_TV",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1486,8 +1530,8 @@ tm_shape(gwr_sf_adaptive) +
 
 BadPhoneConnection_SE <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "BadPhoneConnection_SE",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "BadPhoneConnection_SE",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1495,8 +1539,8 @@ tm_shape(gwr_sf_adaptive) +
 
 BadPhoneConnection_TV <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "BadPhoneConnection_TV",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "BadPhoneConnection_TV",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1526,8 +1570,8 @@ tmap_arrange(Used_CreditCard_SE, Used_CreditCard_TV,BadPhoneConnection_TV ,BadPh
 tmap_mode("plot")
 Do_Not_Think_They_Care_SE <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Do_Not_Think_They_Care_SE",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Do_Not_Think_They_Care_SE",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1535,8 +1579,8 @@ tm_shape(gwr_sf_adaptive) +
 
 Do_Not_Think_They_Care_TV <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Do_Not_Think_They_Care_TV",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Do_Not_Think_They_Care_TV",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1544,8 +1588,8 @@ tm_shape(gwr_sf_adaptive) +
 
 Advice_Bank_SE <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Advice_Bank_SE",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Advice_Bank_SE",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
@@ -1553,8 +1597,8 @@ tm_shape(gwr_sf_adaptive) +
 
 Advice_Bank_TV <- tm_shape(tanzbounds)+
   tm_polygons(alpha = 0.1) +
-tm_shape(gwr_sf_adaptive) +  
-  tm_dots(col = "Advice_Bank_TV",
+tm_shape(gwr_sf_adaptive_poly) +  
+  tm_polygons(col = "Advice_Bank_TV",
           border.col = "gray60",
           border.lwd = 1) +
   tm_view(set.zoom.limits = c(11,14)) +
